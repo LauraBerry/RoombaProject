@@ -61,6 +61,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="arrayClass.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -92,6 +93,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="allThreeClicked.png" />
+    <Resource Include="blueClicked.png" />
+    <Resource Include="greenAndblueClicked.png" />
+    <Resource Include="greenAndredClicked.png" />
+    <Resource Include="greenClicked.png" />
+    <Resource Include="redAndblueClicked.png" />
+    <Resource Include="redClicked.png" />
+    <Resource Include="unclicked.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
