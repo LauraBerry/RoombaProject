@@ -1,0 +1,27 @@
+﻿<Window x:Class="WpfApplication1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="275" Width="533">
+    <Grid Margin="0,0,2,17">
+        <Button x:Name="Roomba1" Content="Peter" HorizontalAlignment="Left" Height="38" Margin="435,49,0,0" VerticalAlignment="Top" Width="82" Background="#FFB00505" Click="button_click"/>
+        <Button x:Name="Roomba2" Content="Paul" HorizontalAlignment="Left" Height="38" Margin="435,86,0,0" VerticalAlignment="Top" Width="82" Background="#FF0D29A8" Click="button_click1"/>
+        <Button x:Name="Roomba3" Content="Mary" HorizontalAlignment="Left" Height="38" Margin="435,124,0,0" VerticalAlignment="Top" Width="82" Background="#FF079300" Click="button_click2"/>
+        <Button x:Name="Grid_11" Content="" HorizontalAlignment="Left" Height="46" Margin="48,22,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_12" Content="" HorizontalAlignment="Left" Height="46" Margin="97,22,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_13" Content="" HorizontalAlignment="Left" Height="46" Margin="146,22,0,0" VerticalAlignment="Top" Width="50"/>
+        <Button x:Name="Grid_14" Content="" HorizontalAlignment="Left" Height="46" Margin="196,22,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_21" Content="" HorizontalAlignment="Left" Height="46" Margin="48,68,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_22" Content="" HorizontalAlignment="Left" Height="46" Margin="97,68,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_23" Content="" HorizontalAlignment="Left" Height="46" Margin="146,68,0,0" VerticalAlignment="Top" Width="50"/>
+        <Button x:Name="Grid_24" Content="" HorizontalAlignment="Left" Height="46" Margin="196,68,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_31" Content="" HorizontalAlignment="Left" Height="46" Margin="48,114,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_32" Content="" HorizontalAlignment="Left" Height="46" Margin="97,114,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_33" Content="" HorizontalAlignment="Left" Height="46" Margin="146,114,0,0" VerticalAlignment="Top" Width="50"/>
+        <Button x:Name="Grid_34" Content="" HorizontalAlignment="Left" Height="46" Margin="196,114,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_41" Content="" HorizontalAlignment="Left" Height="46" Margin="48,160,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_42" Content="" HorizontalAlignment="Left" Height="46" Margin="97,160,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="Grid_43" Content="" HorizontalAlignment="Left" Height="46" Margin="146,160,0,0" VerticalAlignment="Top" Width="50"/>
+        <Button x:Name="Grid_44" Content="" HorizontalAlignment="Left" Height="46" Margin="196,160,0,0" VerticalAlignment="Top" Width="49"/>
+
+    </Grid>
+</Window>
