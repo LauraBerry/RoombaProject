@@ -7,47 +7,47 @@
         <Button x:Name="Roomba2" Content="Nayru" HorizontalAlignment="Left" Height="38" Margin="435,86,0,0" VerticalAlignment="Top" Width="82" Background="#FF0D29A8" Click="button_click1"/>
         <Button x:Name="Roomba3" Content="Farore" HorizontalAlignment="Left" Height="38" Margin="435,124,0,0" VerticalAlignment="Top" Width="82" Background="#FF079300" Click="button_click2"/>
 
-        <StackPanel x:Name="Grid_11" HorizontalAlignment="Left" Height="46" Margin="48,22,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False">
-            <Rectangle x:Name="Rec_111" Fill="#FFF4F4F5" Height="15" MouseRightButtonUp="grid_11_click"/>
-            <Rectangle x:Name="Rec_112" Fill="#FFF4F4F5" Height="15" MouseRightButtonUp="grid_11_click" MouseLeftButtonDown="grid_11_click"/>
-            <Rectangle x:Name="Rec_113" Fill="#FFF4F4F5" Height="15" MouseRightButtonUp="grid_11_click"/>
+        <StackPanel x:Name="Grid_11" HorizontalAlignment="Left" Height="46" Margin="48,22,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False" MouseLeftButtonDown="grid_11_click">
+            <Rectangle x:Name="Rec_111" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_112" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_113" Fill="#FFF4F4F5" Height="15"/>
         </StackPanel>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="48" Margin="48,22,0,0" VerticalAlignment="Top" Width="49"/>
-        <StackPanel x:Name="Grid_12" HorizontalAlignment="Left" Height="46" Margin="97,22,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False">
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
+        <StackPanel x:Name="Grid_12" HorizontalAlignment="Left" Height="46" Margin="97,22,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False" MouseLeftButtonDown="click_12">
+            <Rectangle x:Name="Rec_121" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_122" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_123" Fill="#FFF4F4F5" Height="15"/>
         </StackPanel>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="48" Margin="97,22,0,0" VerticalAlignment="Top" Width="49"/>
-        <StackPanel x:Name="Grid_13" HorizontalAlignment="Left" Height="46" Margin="146,22,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False">
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
+        <StackPanel x:Name="Grid_13" HorizontalAlignment="Left" Height="46" Margin="146,22,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False" MouseLeftButtonDown="click_13">
+            <Rectangle x:Name="Rec_131" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_132" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_133" Fill="#FFF4F4F5" Height="15"/>
         </StackPanel>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="48" Margin="146,22,0,0" VerticalAlignment="Top" Width="49"/>
-        <StackPanel x:Name="Grid_14" HorizontalAlignment="Left" Height="46" Margin="196,22,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False">
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
+        <StackPanel x:Name="Grid_14" HorizontalAlignment="Left" Height="46" Margin="196,22,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False" MouseLeftButtonDown="click_14">
+            <Rectangle x:Name="Rec_141" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_142" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_143" Fill="#FFF4F4F5" Height="15"/>
         </StackPanel>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="48" Margin="195,22,0,0" VerticalAlignment="Top" Width="49"/>
 
-        <StackPanel x:Name="Grid_21" HorizontalAlignment="Left" Height="46" Margin="48,68,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False">
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
+        <StackPanel x:Name="Grid_21" HorizontalAlignment="Left" Height="46" Margin="48,68,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False" MouseLeftButtonDown="click_21">
+            <Rectangle x:Name="Rec_211" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_212" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_213" Fill="#FFF4F4F5" Height="15"/>
         </StackPanel>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="48" Margin="48,68,0,0" VerticalAlignment="Top" Width="49"/>
-        <StackPanel x:Name="Grid_22" HorizontalAlignment="Left" Height="46" Margin="97,68,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False">
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
+        <StackPanel x:Name="Grid_22" HorizontalAlignment="Left" Height="46" Margin="97,68,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False" MouseLeftButtonDown="click_22">
+            <Rectangle x:Name="Rec_221" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_222" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_223" Fill="#FFF4F4F5" Height="15"/>
         </StackPanel>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="48" Margin="97,68,0,0" VerticalAlignment="Top" Width="49"/>
-        <StackPanel x:Name="Grid_23" HorizontalAlignment="Left" Height="46" Margin="146,68,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False">
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
-            <Rectangle Fill="#FFF4F4F5" Height="15"/>
+        <StackPanel x:Name="Grid_23" HorizontalAlignment="Left" Height="46" Margin="146,68,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False" MouseLeftButtonDown="click_23">
+            <Rectangle x:Name="Rec_231" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_232" Fill="#FFF4F4F5" Height="15"/>
+            <Rectangle x:Name="Rec_233" Fill="#FFF4F4F5" Height="15"/>
         </StackPanel>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="48" Margin="146,68,0,0" VerticalAlignment="Top" Width="49"/>
         <StackPanel x:Name="Grid_24" HorizontalAlignment="Left" Height="46" Margin="196,68,0,0" VerticalAlignment="Top" Width="49" UseLayoutRounding="False">
