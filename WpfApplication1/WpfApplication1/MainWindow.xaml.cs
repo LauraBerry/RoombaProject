@@ -131,6 +131,50 @@ namespace WpfApplication1
         {
             change(Rec_231, Rec_232, Rec_233);
         }
+        private void click_24(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_241, Rec_242, Rec_243);
+        }
+
+        private void click_31(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_311, Rec_312, Rec_313);
+        }
+
+        private void click_32(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_321, Rec_322, Rec_323);
+        }
+
+        private void click_33(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_331, Rec_332, Rec_333);
+        }
+
+        private void click_34(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_341, Rec_342, Rec_343);
+        }
+
+        private void click_41(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_411, Rec_412, Rec_413);
+        }
+
+        private void click_42(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_421, Rec_422, Rec_423);
+        }
+
+        private void click_43(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_431, Rec_432, Rec_433);
+        }
+
+        private void click_44(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_441, Rec_442, Rec_443);
+        }
 
         public void change( Rectangle Rec1, Rectangle Rec2, Rectangle Rec3)
         {
@@ -164,11 +208,18 @@ namespace WpfApplication1
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     arr.board[0, 0] = 6;
                 }
-                else if ((arr.board[0, 0] == 4) || (arr.board[0, 0] == 5))
+                else if (arr.board[0, 0] == 4)
+                  {
+                      Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                      Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                      Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    arr.board[0, 0] = 1;
+                }  
+                else if (arr.board[0, 0] == 5)
                 {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     arr.board[0, 0] = 1;
                 }
                 else if (arr.board[0, 0] == 1)
@@ -200,7 +251,7 @@ namespace WpfApplication1
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[0, 0] = 5;
+                    arr.board[0, 0] = 6;
                 }
                 else if (arr.board[0, 0] == 5)
                 {
@@ -214,7 +265,7 @@ namespace WpfApplication1
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[0, 0] = 6;
+                    arr.board[0, 0] = 5;
                 }
                 else if (arr.board[0, 0] == 4)
                 {
@@ -252,14 +303,14 @@ namespace WpfApplication1
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[0, 0] = 4;
+                    arr.board[0, 0] = 5;
                 }
                 else if (arr.board[0, 0] == 2)
                 {
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[0, 0] = 5;
+                    arr.board[0, 0] = 6;
                 }
                 else if (arr.board[0, 0] == 4)
                 {
@@ -273,7 +324,7 @@ namespace WpfApplication1
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[0, 0] = 6;
+                    arr.board[0, 0] = 4;
                 }
                 else if (arr.board[0, 0] == 5)
                 {
@@ -287,14 +338,14 @@ namespace WpfApplication1
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[0, 0] = 3;
+                    arr.board[0, 0] = 2;
                 }
-                else if (arr.board[0, 0] == 2)
+                else if (arr.board[0, 0] == 3)
                 {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    arr.board[0, 0] = 6;
+                    arr.board[0, 0] = 0;
                 }
                 else
                 {
@@ -306,7 +357,5 @@ namespace WpfApplication1
             }
 
         }
-
-
     }
 }
