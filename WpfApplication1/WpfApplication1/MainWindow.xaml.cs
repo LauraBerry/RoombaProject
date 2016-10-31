@@ -213,14 +213,14 @@ namespace WpfApplication1
                       Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                       Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                       Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[0, 0] = 1;
+                    arr.board[0, 0] = 2;
                 }  
                 else if (arr.board[0, 0] == 5)
                 {
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    arr.board[0, 0] = 1;
+                    arr.board[0, 0] = 3;
                 }
                 else if (arr.board[0, 0] == 1)
                 {
@@ -242,7 +242,7 @@ namespace WpfApplication1
                 if (arr.board[0, 0] == 1)
                 {
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
                     arr.board[0, 0] = 4;
                 }
@@ -301,7 +301,7 @@ namespace WpfApplication1
                 if (arr.board[0, 0] == 1)
                 {
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
                     arr.board[0, 0] = 5;
                 }
@@ -343,7 +343,7 @@ namespace WpfApplication1
                 else if (arr.board[0, 0] == 3)
                 {
                     Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
                     Rec3.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
                     arr.board[0, 0] = 0;
                 }
