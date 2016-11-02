@@ -106,5 +106,7 @@
             <Rectangle x:Name="Rec_443" Fill="#FFF4F4F5" Height="15"/>
         </StackPanel>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="48" Margin="195,160,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button Content="Start" HorizontalAlignment="Left" Margin="268,131,0,0" VerticalAlignment="Top" Width="77" Height="49" Click="start_clicke"/>
+        <Button Content="clear" HorizontalAlignment="Left" Margin="353,131,0,0" VerticalAlignment="Top" Width="64" Height="51" Click="clear_grid"/>
     </Grid>
 </Window>
