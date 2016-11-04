@@ -43,21 +43,21 @@ namespace WpfApplication1
         {
             if (roomba1_pressed == false)
             {
-                Roomba1.Margin = new Thickness(425, 49, 0, 0);
+                Roomba1.Margin = new Thickness(425, 43, 0, 0);
                 Roomba1.Width = 95;
                 roomba1_pressed = true;
 
-                Roomba2.Margin = new Thickness(435, 86, 0, 0);
+                Roomba2.Margin = new Thickness(435, 80, 0, 0);
                 Roomba2.Width = 82;
                 roomba2_pressed = false;
 
-                Roomba3.Margin = new Thickness(435, 124, 0, 0);
+                Roomba3.Margin = new Thickness(435, 118, 0, 0);
                 Roomba3.Width = 82;
                 roomba3_pressed = false;
             }
             else
             {
-                Roomba1.Margin = new Thickness(435, 49, 0, 0);
+                Roomba1.Margin = new Thickness(435, 43, 0, 0);
                 Roomba1.Width = 82;
                 roomba1_pressed = false;
                 roomba2_pressed = false;
@@ -70,21 +70,21 @@ namespace WpfApplication1
         {
             if (roomba2_pressed == false)
             {
-                Roomba2.Margin = new Thickness(425, 86, 0, 0);
+                Roomba2.Margin = new Thickness(425, 80, 0, 0);
                 Roomba2.Width = 95;
                 roomba2_pressed = true;
 
-                Roomba1.Margin = new Thickness(435, 49, 0, 0);
+                Roomba1.Margin = new Thickness(435, 43, 0, 0);
                 Roomba1.Width = 82;
                 roomba1_pressed = false;
 
-                Roomba3.Margin = new Thickness(435, 124, 0, 0);
+                Roomba3.Margin = new Thickness(435, 118, 0, 0);
                 Roomba3.Width = 82;
                 roomba3_pressed = false;
             }
             else
             {
-                Roomba2.Margin = new Thickness(435, 86, 0, 0);
+                Roomba2.Margin = new Thickness(435, 80, 0, 0);
                 Roomba2.Width = 82;
                 roomba1_pressed = false;
                 roomba2_pressed = false;
@@ -97,21 +97,21 @@ namespace WpfApplication1
         {
             if (roomba3_pressed == false)
             {
-                Roomba3.Margin = new Thickness(425, 124, 0, 0);
+                Roomba3.Margin = new Thickness(425, 118, 0, 0);
                 Roomba3.Width = 95;
                 roomba3_pressed = true;
 
-                Roomba2.Margin = new Thickness(435, 86, 0, 0);
+                Roomba2.Margin = new Thickness(435, 80, 0, 0);
                 Roomba2.Width = 82;
                 roomba2_pressed = false;
 
-                Roomba1.Margin = new Thickness(435, 49, 0, 0);
+                Roomba1.Margin = new Thickness(435, 43, 0, 0);
                 Roomba1.Width = 82;
                 roomba1_pressed = false;
             }
             else
             {
-                Roomba3.Margin = new Thickness(435, 124, 0, 0);
+                Roomba3.Margin = new Thickness(435, 118, 0, 0);
                 Roomba3.Width = 82;
                 roomba1_pressed = false;
                 roomba2_pressed = false;
@@ -399,7 +399,7 @@ namespace WpfApplication1
             clear_block(Rec_431, Rec_432, Rec_433, 3, 2);
             clear_block(Rec_441, Rec_442, Rec_443, 3, 3);
         }
-        private void start_clicke(object sender, RoutedEventArgs e)
+        private void start_clicked(object sender, RoutedEventArgs e)
         {
             started = true;
         }
