@@ -18,19 +18,20 @@ namespace WpfApplication1
         {
             while (done == false)
             {
-                //turn logic goes here
+                //look at current location
+                //look at next location(if there is one)
+                    //if no next location this roomba is done
+                // identify how/if the roomba needs to turn
+                //call code to turn the roomba apropriately 
+                // call code to have roomba move
+                //wait to see if there is a collision
                 if (turn_over == true)
                 {
-                    
+                    //call code to remove color from block
+                    //up date current location
+                    //check if all 3 roombas are done
                 }
             }
-        }
-        /*
-         * this is the code to clear the color from the board visually as the roomba moves
-         */
-        public void clear_behind_roomba(string color, int currX, int currY, int[,] board)
-        {
-            
         }
     }
 }

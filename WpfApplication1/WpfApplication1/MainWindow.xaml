@@ -120,5 +120,7 @@
             <Rectangle Fill="#FF079300" Height="46"/>
         </StackPanel>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="48" Margin="145,15,0,0" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="error_msg_adjacent" HorizontalAlignment="Left" Height="126" Margin="150,94,0,0" TextWrapping="Wrap" Text="You can only select tiles that are adjacent to other tiles of the same color" VerticalAlignment="Top" Width="239" FontSize="16" VerticalContentAlignment="Center" Visibility="Collapsed"/>
+        <Button x:Name="close_error_msg_adjacent" Content="X" HorizontalAlignment="Left" Margin="363,94,0,0" VerticalAlignment="Top" Width="26" Height="24" Click="close_error_msg_adjacent_clicked" Visibility="Collapsed"/>
     </Grid>
 </Window>
