@@ -21,20 +21,27 @@ namespace WpfApplication1
 
     public partial class MainWindow : Window
     {
+        Rectangle R1;
+        Rectangle R2;
+        Rectangle R3;
+        int currRed;
+        int currBlue;
+        int currGreen;
         bool roomba1_pressed;
         bool roomba2_pressed;
         bool roomba3_pressed;
         bool started;
         arrayClass arr = new arrayClass();
-        Rectangle R1;
-        Rectangle R2;
-        Rectangle R3;
+
         public void init()
         {
             bool roomba1_pressed = false;
             bool roomba2_pressed = false;
             bool roomba3_pressed = false;
             bool started = false;
+            currRed=1;
+            currBlue=1;
+            currGreen=1;
             arr.init();
         }
         public MainWindow()
@@ -42,6 +49,12 @@ namespace WpfApplication1
             InitializeComponent();
             init();
         }
+
+        /*
+         * button listeners for each of the roomba tabs, updates the margins so the selected roomba
+         * pops out of alignment and the unselected roombas pop back into alignment and updates the
+         * selected roomba's boolean variable
+         */
         private void button_click(object sender, RoutedEventArgs e)
         {
             if (roomba1_pressed == false)
@@ -123,6 +136,9 @@ namespace WpfApplication1
             }
         }
 
+        /*
+         * listeners for each grid block, sends rectangle names and array co-ordinates to change method
+         */
         private void grid_11_click(object sender, MouseButtonEventArgs e)
         {
             change(Rec_111, Rec_112, Rec_113, 0, 0);
@@ -195,187 +211,375 @@ namespace WpfApplication1
         {
             change(Rec_441, Rec_442, Rec_443, 3, 3);
         }
-
+        /*
+         * checks which roomba is selected, what color the block selected is and if the selected block is adjacent to one of the selected 
+         * roomba's color and updates the block color accordingly
+         */
         public void change( Rectangle Rec1, Rectangle Rec2, Rectangle Rec3, int x, int y)
         {
+            bool adjacent = is_adjacent(x, y, 1);
             if (roomba1_pressed == true)
             {
-                if (arr.board[x, y] == 2)
+                if (adjacent == true)
                 {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 4;
-                }
-                else if (arr.board[x, y] == 3)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 5;
-                }
-                else if (arr.board[x, y] == 6)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 7;
-                }
-                else if (arr.board[x, y] == 7)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[x, y] = 6;
-                }
-                else if (arr.board[x, y] == 4)
-                  {
-                      Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                      Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                      Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[x, y] = 2;
-                }  
-                else if (arr.board[x, y] == 5)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    arr.board[x, y] = 3;
-                }
-                else if (arr.board[x, y] == 1)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    arr.board[x, y] = 0;
+                    if (arr.board[x, y] == 2)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 4;
+                    }
+                    else if (arr.board[x, y] == 3)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 5;
+                    }
+                    else if (arr.board[x, y] == 6)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 7;
+                    }
+                    else if (arr.board[x, y] == 7)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        arr.board[x, y] = 6;
+                    }
+                    else if (arr.board[x, y] == 4)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        arr.board[x, y] = 2;
+                    }
+                    else if (arr.board[x, y] == 5)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        arr.board[x, y] = 3;
+                    }
+                    else if (arr.board[x, y] == 1)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                        arr.board[x, y] = 0;
+                    }
+                    else
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 1;
+                    }
                 }
                 else
                 {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 1;
+                    error_msg_adjacent.Visibility = Visibility.Visible;
+                    close_error_msg_adjacent.Visibility = Visibility.Visible;
                 }
             }
             else if (roomba2_pressed == true)
             {
-                if (arr.board[x, y] == 1)
+                adjacent = is_adjacent(x, y, 2);
+                if (adjacent == true)
                 {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 4;
-                }
-                else if (arr.board[x, y] == 3)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[x, y] = 6;
-                }
-                else if (arr.board[x, y] == 5)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 7;
-                }
-                else if (arr.board[x, y] == 7)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 5;
-                }
-                else if (arr.board[x, y] == 4)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 1;
-                }
-                else if (arr.board[x, y] == 6)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    arr.board[x, y] = 3;
-                }
-                else if (arr.board[x, y] == 2)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    arr.board[x, y] = 0;
+                    if (arr.board[x, y] == 1)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 4;
+                    }
+                    else if (arr.board[x, y] == 3)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        arr.board[x, y] = 6;
+                    }
+                    else if (arr.board[x, y] == 5)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 7;
+                    }
+                    else if (arr.board[x, y] == 7)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 5;
+                    }
+                    else if (arr.board[x, y] == 4)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 1;
+                    }
+                    else if (arr.board[x, y] == 6)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        arr.board[x, y] = 3;
+                    }
+                    else if (arr.board[x, y] == 2)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                        arr.board[x, y] = 0;
+                    }
+                    else
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        arr.board[x, y] = 2;
+                    }
                 }
                 else
                 {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[x, y] = 2;
+                    error_msg_adjacent.Visibility = Visibility.Visible;
+                    close_error_msg_adjacent.Visibility = Visibility.Visible;
                 }
             }
             else if (roomba3_pressed == true)
             {
-                if (arr.board[x, y] == 1)
+                adjacent = is_adjacent(x, y, 3);
+                if (adjacent == true)
                 {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 5;
-                }
-                else if (arr.board[x, y] == 2)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[x, y] = 6;
-                }
-                else if (arr.board[x, y] == 4)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 7;
-                }
-                else if (arr.board[x, y] == 7)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 4;
-                }
-                else if (arr.board[x, y] == 5)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 1;
-                }
-                else if (arr.board[x, y] == 6)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[x, y] = 2;
-                }
-                else if (arr.board[x, y] == 3)
-                {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    arr.board[x, y] = 0;
+                    if (arr.board[x, y] == 1)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 5;
+                    }
+                    else if (arr.board[x, y] == 2)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        arr.board[x, y] = 6;
+                    }
+                    else if (arr.board[x, y] == 4)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 7;
+                    }
+                    else if (arr.board[x, y] == 7)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 4;
+                    }
+                    else if (arr.board[x, y] == 5)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                        arr.board[x, y] = 1;
+                    }
+                    else if (arr.board[x, y] == 6)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                        arr.board[x, y] = 2;
+                    }
+                    else if (arr.board[x, y] == 3)
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                        arr.board[x, y] = 0;
+                    }
+                    else
+                    {
+                        Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        Rec3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                        arr.board[x, y] = 3;
+                    }
                 }
                 else
                 {
-                    Rec1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    Rec3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    arr.board[x, y] = 3;
+                    error_msg_adjacent.Visibility = Visibility.Visible;
+                    close_error_msg_adjacent.Visibility = Visibility.Visible;
                 }
             }
         }
+
+        /*
+         * check the color of the selected block relative to that in variable "val"
+         */
+        private bool check_color_match(int x, int y, int val)
+        {
+            //is the variable within the range of the array?
+            if(x<0||x>3)
+            {
+                return false;
+            }
+            if (y<0||y>3)
+            {
+                return false;
+            }
+            //is the selected block the same color as val?
+            if (arr.board[x,y]==val)
+            {
+                return true;
+            }
+            //is the selected block a color that includes the one in val
+              if (val==1)                                                    //red
+              {
+                if (arr.board[x,y]==4)                                      //red and blue
+                {
+                    return true;
+                }
+                else if (arr.board[x,y]==5)                                 //red and green
+                {
+                    return true;
+                }
+                else if (arr.board[x,y]==7)                                 //red, blue and green
+                {
+                    return true;
+                }
+            }
+            else if (val==2)                                                //blue
+            {
+                if (arr.board[x,y]==4)                                      //red and blue
+                {
+                    return true;
+                }
+                else if (arr.board[x,y]==6)                                 //blue and green
+                {
+                    return true;
+                }
+                else if (arr.board[x,y]==7)                                 //red, blue and green
+                {
+                    return true;
+                }
+            }
+            else if (val==3)                                                //green
+            {
+                if (arr.board[x,y]==5)                                      //red and green
+                {
+                    return true;
+                }
+                else if (arr.board[x,y]==6)                                 //blue and green
+                {
+                    return true;
+                }
+                else if (arr.board[x,y]==7)                                 //red, blue and green
+                {
+                    return true;
+                }
+            }
+              return false;
+        }
+        /*
+         * checks if selected block is adjacent to another block of the same color
+         */
+        private bool is_adjacent(int x, int y, int val)
+        {
+            bool above =check_color_match((x-1),y,val);
+            bool below=check_color_match((x+1),y,val);
+            bool left = check_color_match(x,(y-1),val);
+            bool right = check_color_match (x,y+1,val);
+            if (x==3 && y==0)                                                 //check upper right hand corner
+            {  
+                if (above||right)
+                {
+                    return true;
+                }
+            }
+            else if (x==3 && y==3)                                               //check lower right hand corner
+            {
+                if (below||left)
+                {
+                    return true;
+                }
+            }
+            else if (x==0 &&y==0)                                                //check lower left hand corner
+            {
+                if (roomba1_pressed==true)
+                {
+                    return true;
+                }
+            }
+            else if (x==0 && y==3)                                              //check the lower right hand corner
+            {
+                if (below||left)
+                {
+                    return true;
+                }
+            }
+            else if (x == 0)                                                         //check top row
+            {
+                if (y == 0 && roomba1_pressed==true)
+                {
+                    return true;
+                }
+                else if (y == 1 && roomba2_pressed==true)
+                {
+                    return true;
+                }
+                else if (y == 2 && roomba3_pressed==true)
+                {
+                    return true;
+                }
+                else if (below||left||right)
+                {
+                    return true;
+                }
+            }
+            else if (x==3)                                                                         //check bottom row
+            {
+                if (above|| left||right)
+                {
+                    return true;
+                }
+            }
+            else  if (y==0)                                                                       //check left row
+            {
+                if (below|| above||right)
+                {
+                    return true;
+                }
+            }
+            else if (y==3)
+            {
+                if (below || above||left)                                                         //check right hand row
+                {
+                    return true;
+                }
+            }
+            if (above || below || left || right)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /*
+         * clears the block so it is empty and updates the array value
+         */
         private void clear_block(Rectangle Rec1, Rectangle Rec2, Rectangle Rec3, int x, int y)
         {
             Rec1.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
@@ -383,6 +587,10 @@ namespace WpfApplication1
             Rec3.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
             arr.board[x, y] = 0;
         }
+
+        /*
+         * clears the entier grid
+         */
         private void clear_grid(object sender, RoutedEventArgs e)
         {
             clear_block(Rec_111, Rec_112, Rec_113, 0, 0);
@@ -402,11 +610,38 @@ namespace WpfApplication1
             clear_block(Rec_431, Rec_432, Rec_433, 3, 2);
             clear_block(Rec_441, Rec_442, Rec_443, 3, 3);
         }
+
+        /*
+         * 
+         */StartupEventArgs button has been clicked
         private void start_clicked(object sender, RoutedEventArgs e)
         {
             started = true;
+            //unselects all roombas
+            Roomba2.Margin = new Thickness(435, 80, 0, 0);
+            Roomba2.Width = 82;
+            roomba2_pressed = false;
+
+            Roomba3.Margin = new Thickness(435, 118, 0, 0);
+            Roomba3.Width = 82;
+            roomba3_pressed = false;
+
+            Roomba1.Margin = new Thickness(435, 43, 0, 0);
+            Roomba1.Width = 82;
+            roomba1_pressed = false;
+           
+
         }
-        public void get_rectangles(int x, int y)
+
+        /*
+         * colapses the error message for the adjacency when the x button is clicked
+         */
+        private void close_error_msg_adjacent_clicked(object sender, RoutedEventArgs e)
+        {
+            error_msg_adjacent.Visibility = Visibility.Collapsed;
+            close_error_msg_adjacent.Visibility = Visibility.Collapsed;
+        }
+       /* public void get_rectangles(int x, int y)
         {
             if(x==0)
             {
@@ -520,17 +755,94 @@ namespace WpfApplication1
         /*
          * this is the code to clear the color from the board visually as the roomba moves
          */
-        public void clear_behind_roomba(string color, int currX, int currY, int[,] board)
+       /* public void clear_behind_roomba(string color, int currX, int currY, int[,] board)
         {
             get_rectangles(currX, currY);
-            if(String.ReferenceEquals(color, "red"))
+            if(String.ReferenceEquals(color, "red"))                            //we are dealing with the red roomba
             {
-                if(arr.board[currX,currY]==1)
+                if(board[currX,currY]==1)                                   //if the block is red
                 {
-                    
+                    clear_block(R1, R2, R3, currX, currY);
+                }
+                else if (board[currX,currY]==4)                             //if the block is red and blue
+                {
+                    R1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    R2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    R3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    arr.board[currX, currY] = 2;
+                }
+                else if (arr.board[currX,currY]==5)                          // if the block is red and green
+                {
+                    R1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    R2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    R3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    arr.board[currX, currY] = 3;
+                }
+                else if (board[currX,currY]==7)                         //if the block is red, green and blue
+                {
+                    R1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    R2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    R3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    arr.board[currX, currY] = 6;
                 }
             }
-        }
+            else if (String.ReferenceEquals(color, "blue"))             //we are dealing with the blue roomba
+            {
+                if (board[currX, currY] == 2)                                   //if the block is blue
+                {
+                    clear_block(R1, R2, R3, currX, currY);
+                }
+                else if (board[currX, currY] == 4)                             //if the block is red and blue
+                {
+                    R1.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    R2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    R3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    arr.board[currX, currY] = 1;
+                }
+                else if (board[currX, currY] == 6)                          // if the block is blue and green
+                {
+                    R1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    R2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    R3.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    arr.board[currX, currY] = 3;
+                }
+                else if (board[currX, currY] == 7)                         //if the block is red, green and blue
+                {
+                    R1.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    R2.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    R3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    arr.board[currX, currY] = 6;
+                }
+            }
+            else if (String.ReferenceEquals(color, "green"))                    //we are dealing with the green roomba
+            {
+                if (board[currX, currY] == 3)                                   //if the block is green
+                {
+                    clear_block(R1, R2, R3, currX, currY);
+                }
+                else if (arr.board[currX, currY] == 6)                             //if the block is red and green
+                {
+                    R1.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    R2.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    R3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    arr.board[currX, currY] = 1;
+                }
+                else if (board[currX, currY] == 6)                          // if the block is blue and green
+                {
+                    R1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    R2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    R3.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    arr.board[currX, currY] = 2;
+                }
+                else if (board[currX, currY] == 7)                         //if the block is red, green and blue
+                {
+                    R1.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    R2.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    R3.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    arr.board[currX, currY] = 4;
+                }
+            }
+        }*/
        
     }
 }
