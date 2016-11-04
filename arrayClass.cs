@@ -13,6 +13,9 @@ namespace WpfApplication1
         // 4== red and blue, 5== red and green 6== green and blue
         // 7== all three
        public  int[,] board = new int[4, 4];
+       public int[,] red_path = new int[4, 4];
+       public int[,] blue_path = new int[4, 4];
+       public int[,] green_path = new int[4, 4];
        public void init()
        {
            int i=0;
@@ -22,6 +25,9 @@ namespace WpfApplication1
                while (j < 4)
                {
                    board[i,j] = 0;
+                   red_path[i, j] = 0;
+                   blue_path[i, j] = 0;
+                   green_path[i, j] = 0;
                    j++;
                }
                j = 0;
