@@ -45,10 +45,7 @@
             <Rectangle x:Name="Rec_54" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="131" Canvas.Top="176" MouseEnter="selected_54" Opacity="0.4"/>
             <Rectangle x:Name="Rec_55" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="175" Canvas.Top="176" MouseEnter="selected_55" Opacity="0.4"/>
             <Rectangle x:Name="Rec_57" Fill="#FFF4F4F4" Height="44" Stroke="Black" Width="44" Canvas.Left="263" Canvas.Top="176" MouseEnter="selected_57" Opacity="0.4"/>
-            <Rectangle x:Name="Rec_56" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="219" Canvas.Top="176" MouseEnter="selected_56" Opacity="0.4"/>
-
-
+            <Rectangle x:Name="Rec_56" Fill="#FFF4F4F4" Height="44" Stroke="Black" Width="44" Canvas.Left="219" Canvas.Top="176" MouseEnter="selected_56" Opacity="0.4"/>
         </Canvas>
-
     </Grid>
 </Window>

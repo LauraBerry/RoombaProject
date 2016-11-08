@@ -35,6 +35,9 @@ namespace WpfApplication1
             arr.init();
             
         }
+        /*
+         * checks if the mouse left button is clicked (used to allow for drag listeners)
+         */
         private void mouse_clicked(object sender, MouseButtonEventArgs e)
         {
             mouseClicked = true;
@@ -43,6 +46,9 @@ namespace WpfApplication1
         {
             mouseClicked = false;
         }
+        /*
+         * listens for whish roomba is selected, ensures that only one is selected at a time
+         */
         private void Din_clicked(object sender, RoutedEventArgs e)
         {
             if(roomba1_pressed==false)
@@ -110,7 +116,9 @@ namespace WpfApplication1
             }
         }
 
-       
+       /*
+        * listens for drag over grid blocks, sends grid block and array index to change method
+        */
         private void selected_11(object sender, MouseEventArgs e)
         {
             if (mouseClicked == true)
@@ -357,6 +365,13 @@ namespace WpfApplication1
                 change(Rec_56, 4, 5);
             }
         }
+        //188,226,14 == yello
+        //124,21,226==purple
+        //11,162,94==aqua
+        //58,58,58==black
+        /*
+         * changes the color of the rectangle based on which roomba is selected
+         */
         public void change(Rectangle Rec, int x, int y)
         {
             if (roomba1_pressed == true)
@@ -365,6 +380,37 @@ namespace WpfApplication1
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
                     arr.board[x, y] = 0;
+                }
+                
+                else if (arr.board[x, y] == 2)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(124,21,226));
+                    arr.board[x, y] = 4;
+                }
+                else if (arr.board[x, y] == 3)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
+                    arr.board[x, y] = 5;
+                }
+                else if (arr.board[x, y] == 6)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(58,58,58));
+                    arr.board[x, y] = 7;
+                }
+                else if (arr.board[x, y] == 7)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
+                    arr.board[x, y] = 6;
+                }
+                else if (arr.board[x, y] == 4)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    arr.board[x, y] = 2;
+                }
+                else if (arr.board[x, y] == 5)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    arr.board[x, y] = 3;
                 }
                 else
                 {
@@ -380,6 +426,36 @@ namespace WpfApplication1
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
                     arr.board[x, y] = 0;
                 }
+                else if (arr.board[x, y] == 1)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
+                    arr.board[x, y] = 4;
+                }
+                else if (arr.board[x, y] == 3)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
+                    arr.board[x, y] = 6;
+                }
+                else if (arr.board[x, y] == 5)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(58, 58, 58));
+                    arr.board[x, y] = 7;
+                }
+                else if (arr.board[x, y] == 7)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
+                    arr.board[x, y] = 5;
+                }
+                else if (arr.board[x, y] == 4)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    arr.board[x, y] = 1;
+                }
+                else if (arr.board[x, y] == 6)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    arr.board[x, y] = 3;
+                }
                 else
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
@@ -393,6 +469,36 @@ namespace WpfApplication1
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
                     arr.board[x, y] = 0;
                 }
+                else if (arr.board[x, y] == 1)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
+                    arr.board[x, y] = 5;
+                }
+                else if (arr.board[x, y] == 2)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
+                    arr.board[x, y] = 6;
+                }
+                else if (arr.board[x, y] == 4)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(58, 58, 58));
+                    arr.board[x, y] = 7;
+                }
+                else if (arr.board[x, y] == 7)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
+                    arr.board[x, y] = 4;
+                }
+                else if (arr.board[x, y] == 5)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    arr.board[x, y] = 1;
+                }
+                else if (arr.board[x, y] == 6)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    arr.board[x, y] = 2;
+                }
                 else
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
@@ -400,12 +506,18 @@ namespace WpfApplication1
                 }
             }
         }
+        /*
+         * sets a block back to a blank state
+         */
         public void clear_block(Rectangle rec, int x, int y)
         {
             rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 244));
             arr.board[x, y] = 0;
         }
 
+        /*
+         * clears entier grid
+         */
         private void clear_board(object sender, RoutedEventArgs e)
         {
             clear_block(Rec_11, 0, 0);
