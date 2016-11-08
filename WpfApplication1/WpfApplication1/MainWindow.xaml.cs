@@ -24,6 +24,9 @@ namespace WpfApplication1
         bool roomba2_pressed;
         bool roomba3_pressed;
         bool mouseClicked;
+        int currRed;
+        int currBlue;
+        int currGreen;
         arrayClass arr = new arrayClass();
         public MainWindow()
         {
@@ -31,6 +34,9 @@ namespace WpfApplication1
             roomba2_pressed = false;
             roomba3_pressed = false;
             mouseClicked = false;
+            currBlue = 1;
+            currGreen = 1;
+            currRed = 1;
             InitializeComponent();
             arr.init();
             
@@ -380,17 +386,20 @@ namespace WpfApplication1
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
                     arr.board[x, y] = 0;
+                    currRed = remove_path(arr.red_path, x, y, currRed);
                 }
                 
                 else if (arr.board[x, y] == 2)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(124,21,226));
                     arr.board[x, y] = 4;
+                    currRed = add_path(arr.red_path, x, y, currRed);
                 }
                 else if (arr.board[x, y] == 3)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
                     arr.board[x, y] = 5;
+                    currRed = add_path(arr.red_path, x, y, currRed);
                 }
                 else if (arr.board[x, y] == 6)
                 {
@@ -401,21 +410,25 @@ namespace WpfApplication1
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
                     arr.board[x, y] = 6;
+                    currRed = remove_path(arr.red_path, x, y, currRed);
                 }
                 else if (arr.board[x, y] == 4)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     arr.board[x, y] = 2;
+                    currRed = remove_path(arr.red_path, x, y, currRed);
                 }
                 else if (arr.board[x, y] == 5)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     arr.board[x, y] = 3;
+                    currRed = remove_path(arr.red_path, x, y, currRed);
                 }
                 else
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
                     arr.board[x, y] = 1;
+                    currRed = add_path(arr.red_path, x, y, currRed);
                 }
             }
 
@@ -425,41 +438,49 @@ namespace WpfApplication1
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
                     arr.board[x, y] = 0;
+                    currBlue = remove_path(arr.blue_path, x, y, currBlue);
                 }
                 else if (arr.board[x, y] == 1)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
                     arr.board[x, y] = 4;
+                    currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
                 else if (arr.board[x, y] == 3)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
                     arr.board[x, y] = 6;
+                    currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
                 else if (arr.board[x, y] == 5)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(58, 58, 58));
                     arr.board[x, y] = 7;
+                    currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
                 else if (arr.board[x, y] == 7)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
                     arr.board[x, y] = 5;
+                    currBlue = remove_path(arr.blue_path, x, y, currBlue);
                 }
                 else if (arr.board[x, y] == 4)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
                     arr.board[x, y] = 1;
+                    currBlue = remove_path(arr.blue_path, x, y, currBlue);
                 }
                 else if (arr.board[x, y] == 6)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     arr.board[x, y] = 3;
+                    currBlue = remove_path(arr.blue_path, x, y, currBlue);
                 }
                 else
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     arr.board[x, y] = 2;
+                    currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
             }
             else if (roomba3_pressed == true)
@@ -468,44 +489,65 @@ namespace WpfApplication1
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
                     arr.board[x, y] = 0;
+                    currGreen = remove_path(arr.green_path, x, y, currGreen);
                 }
                 else if (arr.board[x, y] == 1)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
                     arr.board[x, y] = 5;
+                    currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
                 else if (arr.board[x, y] == 2)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
                     arr.board[x, y] = 6;
+                    currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
                 else if (arr.board[x, y] == 4)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(58, 58, 58));
                     arr.board[x, y] = 7;
+                    currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
                 else if (arr.board[x, y] == 7)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
                     arr.board[x, y] = 4;
+                    currGreen = remove_path(arr.green_path, x, y, currGreen);
                 }
                 else if (arr.board[x, y] == 5)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
                     arr.board[x, y] = 1;
+                    currGreen = remove_path(arr.green_path, x, y, currGreen);
                 }
                 else if (arr.board[x, y] == 6)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     arr.board[x, y] = 2;
+                    currGreen = remove_path(arr.green_path, x, y, currGreen);
                 }
                 else
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     arr.board[x, y] = 3;
+                    currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
             }
         }
+        public int remove_path(int[,] a,int x, int y, int val)
+        {
+            a[x, y] = 0;
+            val--;
+            return val;
+        }
+        public int add_path(int[,] a, int x, int y, int val)
+        {
+            a[x, y] = val;
+            val++;
+            return val;
+        }
+
         /*
          * sets a block back to a blank state
          */
