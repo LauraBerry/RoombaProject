@@ -66,7 +66,7 @@ namespace WpfApplication1
             }
         }
 
-        private void Nayru_clicked(object sender, RoutedEventArgs e)
+        private void Farore_clicked(object sender, RoutedEventArgs e)
         {
             if (roomba2_pressed == false)
             {
@@ -88,7 +88,7 @@ namespace WpfApplication1
             }
         }
 
-        private void Farore_clicked(object sender, RoutedEventArgs e)
+        private void Nayru_clicked(object sender, RoutedEventArgs e)
         {
             if (roomba3_pressed == false)
             {
@@ -293,7 +293,6 @@ namespace WpfApplication1
                 change(Rec_45, 3, 4);
             }
         }
-
         private void selected_46(object sender, MouseEventArgs e)
         {
             if(mouseClicked==true)
@@ -301,7 +300,6 @@ namespace WpfApplication1
                 change(Rec_46, 3, 5);
             }
         }
-
         private void selected_47(object sender, MouseEventArgs e)
         {
             if(mouseClicked==true)
@@ -309,7 +307,6 @@ namespace WpfApplication1
                 change(Rec_47, 3, 6);
             }
         }
-
         private void selected_51(object sender, MouseEventArgs e)
         {
             if(mouseClicked==true)
@@ -317,7 +314,6 @@ namespace WpfApplication1
                 change(Rec_51, 4, 0);
             }
         }
-
         private void selected_52(object sender, MouseEventArgs e)
         {
             if(mouseClicked==true)
@@ -325,7 +321,6 @@ namespace WpfApplication1
                 change(Rec_52, 4, 1);
             }
         }
-
         private void selected_53(object sender, MouseEventArgs e)
         {
             if(mouseClicked==true)
@@ -333,7 +328,6 @@ namespace WpfApplication1
                 change(Rec_53, 4, 2);
             }
         }
-
         private void selected_54(object sender, MouseEventArgs e)
         {
             if(mouseClicked==true)
@@ -341,7 +335,6 @@ namespace WpfApplication1
                 change(Rec_54, 4, 3);
             }
         }
-
         private void selected_55(object sender, MouseEventArgs e)
         {
             if(mouseClicked==true)
@@ -349,7 +342,6 @@ namespace WpfApplication1
                 change(Rec_55, 4, 4);
             }
         }
-
         private void selected_57(object sender, MouseEventArgs e)
         {
             if(mouseClicked==true)
@@ -365,12 +357,49 @@ namespace WpfApplication1
                 change(Rec_56, 4, 5);
             }
         }
-
         public void change(Rectangle Rec, int x, int y)
         {
-            Rec.Fill = new SolidColorBrush(Color.FromRgb(162, 13, 13));
-        }
+            if (roomba1_pressed == true)
+            {
+                if (arr.board[x, y] == 1)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                    arr.board[x, y] = 0;
+                }
+                else
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    arr.board[x, y] = 1;
+                }
+            }
 
+            else if (roomba2_pressed == true)
+            {
+                if (arr.board[x, y] == 2)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                    arr.board[x, y] = 0;
+                }
+                else
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    arr.board[x, y] = 2;
+                }
+            }
+            else if (roomba3_pressed == true)
+            {
+                if (arr.board[x, y] == 3)
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                    arr.board[x, y] = 0;
+                }
+                else
+                {
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    arr.board[x, y] = 3;
+                }
+            }
+        }
         public void clear_block(Rectangle rec, int x, int y)
         {
             rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 244));
@@ -417,12 +446,5 @@ namespace WpfApplication1
         }
 
 
-
-
-
-
-  
-
-  
     }
 }

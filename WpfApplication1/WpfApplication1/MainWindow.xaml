@@ -4,9 +4,9 @@
         Title="MainWindow" Height="350" Width="525" MouseDown="mouse_clicked" MouseUp="mouseUnclicked">
     <Grid>
         <Button x:Name="Roomba1" Content="Din" HorizontalAlignment="Left" Margin="411,44,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FFA20D0D" Click="Din_clicked"/>
-        <Button x:Name="Roomba2" Content="Nayru" HorizontalAlignment="Left" Margin="411,78,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF118006" Click="Nayru_clicked"/>
-        <Button x:Name="Roomba3" Content="Farore" HorizontalAlignment="Left" Margin="411,112,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF0A11A4" Click="Farore_clicked"/>
-
+        <Button x:Name="Roomba2" Content="Farore" HorizontalAlignment="Left" Margin="411,78,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF0A11A4" Click="Farore_clicked"/>
+        <Button x:Name="Roomba3" Content="Nayru" HorizontalAlignment="Left" Margin="411,112,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF118006" Click="Nayru_clicked"/>
+        
         <Button Content="Pause" HorizontalAlignment="Left" Margin="386,179,0,0" VerticalAlignment="Top" Width="58" Height="49"/>
         <Button Content="clear" HorizontalAlignment="Left" Margin="449,179,0,0" VerticalAlignment="Top" Width="58" Height="49" Click="clear_board"/>
         <Button Content="Start" HorizontalAlignment="Left" Margin="411,233,0,0" VerticalAlignment="Top" Width="58" Height="49"/>
@@ -49,5 +49,6 @@
 
 
         </Canvas>
+
     </Grid>
 </Window>
