@@ -66,6 +66,7 @@ namespace WpfApplication1
                 roomba2_pressed = false;
                 Roomba3.Margin = new Thickness(411, 112, 0, 0);
                 roomba3_pressed = false;
+                clear_button.Background = new SolidColorBrush(Color.FromRgb(176, 5, 5));
             }
             else
             {
@@ -75,6 +76,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 roomba2_pressed = false;
                 roomba3_pressed = false;
+                clear_button.Background = new SolidColorBrush(Color.FromRgb(221,221,221));
             }
         }
 
@@ -89,6 +91,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 Roomba3.Margin = new Thickness(411, 112, 0, 0);
                 roomba3_pressed = false;
+                clear_button.Background = new SolidColorBrush(Color.FromRgb(13, 41, 168));
             }
             else
             {
@@ -97,6 +100,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 roomba2_pressed = false;
                 roomba3_pressed = false;
+                clear_button.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
             }
         }
 
@@ -111,6 +115,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 Roomba2.Margin = new Thickness(411, 78, 0, 0);
                 roomba2_pressed = false;
+                clear_button.Background = new SolidColorBrush(Color.FromRgb(7, 147, 0));
             }
             else
             {
@@ -119,6 +124,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 roomba2_pressed = false;
                 roomba3_pressed = false;
+                clear_button.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
             }
         }
 
@@ -378,18 +384,94 @@ namespace WpfApplication1
         /*
          * changes the color of the rectangle based on which roomba is selected
          */
+        public void remove_red(int x, int y, Rectangle Rec)
+        {
+            if (arr.board[x, y] == 1)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                arr.board[x, y] = 0;
+                currRed = remove_path(arr.red_path, x, y, currRed);
+            }
+            else if (arr.board[x,y] == 7)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
+                arr.board[x, y] = 6;
+                currRed = remove_path(arr.red_path, x, y, currRed);
+            }
+            else if (arr.board[x, y] == 4)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                arr.board[x, y] = 2;
+                currRed = remove_path(arr.red_path, x, y, currRed);
+            }
+            else if (arr.board[x, y] == 5)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                arr.board[x, y] = 3;
+                currRed = remove_path(arr.red_path, x, y, currRed);
+            }
+        }
+
+        public void remove_blue(int x, int y, Rectangle Rec)
+        {
+            if (arr.board[x, y] == 2)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                arr.board[x, y] = 0;
+                currBlue = remove_path(arr.blue_path, x, y, currBlue);
+            }
+            else if (arr.board[x, y] == 7)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
+                arr.board[x, y] = 5;
+                currBlue = remove_path(arr.blue_path, x, y, currBlue);
+            }
+            else if (arr.board[x, y] == 4)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                arr.board[x, y] = 1;
+                currBlue = remove_path(arr.blue_path, x, y, currBlue);
+            }
+            else if (arr.board[x, y] == 6)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                arr.board[x, y] = 3;
+                currBlue = remove_path(arr.blue_path, x, y, currBlue);
+            }
+        }
+        public void remove_green(int x, int y, Rectangle Rec)
+        {
+            if (arr.board[x, y] == 3)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                arr.board[x, y] = 0;
+                currGreen = remove_path(arr.green_path, x, y, currGreen);
+            }
+            else if (arr.board[x, y] == 7)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
+                arr.board[x, y] = 4;
+                currGreen = remove_path(arr.green_path, x, y, currGreen);
+            }
+            else if (arr.board[x, y] == 5)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                arr.board[x, y] = 1;
+                currGreen = remove_path(arr.green_path, x, y, currGreen);
+            }
+            else if (arr.board[x, y] == 6)
+            {
+                Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                arr.board[x, y] = 2;
+                currGreen = remove_path(arr.green_path, x, y, currGreen);
+            }
+        }
+
         public void change(Rectangle Rec, int x, int y)
         {
             if (roomba1_pressed == true)
             {
-                if (arr.board[x, y] == 1)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    arr.board[x, y] = 0;
-                    currRed = remove_path(arr.red_path, x, y, currRed);
-                }
-                
-                else if (arr.board[x, y] == 2)
+                if (arr.board[x, y] == 2)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(124,21,226));
                     arr.board[x, y] = 4;
@@ -405,42 +487,23 @@ namespace WpfApplication1
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(58,58,58));
                     arr.board[x, y] = 7;
+                    currRed = add_path(arr.red_path, x, y, currRed);
                 }
-                else if (arr.board[x, y] == 7)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
-                    arr.board[x, y] = 6;
-                    currRed = remove_path(arr.red_path, x, y, currRed);
-                }
-                else if (arr.board[x, y] == 4)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[x, y] = 2;
-                    currRed = remove_path(arr.red_path, x, y, currRed);
-                }
-                else if (arr.board[x, y] == 5)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    arr.board[x, y] = 3;
-                    currRed = remove_path(arr.red_path, x, y, currRed);
-                }
-                else
+                else if (arr.board[x,y]==0)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
                     arr.board[x, y] = 1;
                     currRed = add_path(arr.red_path, x, y, currRed);
                 }
+                else
+                {
+                    remove_red(x, y, Rec);
+                }
             }
 
             else if (roomba2_pressed == true)
             {
-                if (arr.board[x, y] == 2)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    arr.board[x, y] = 0;
-                    currBlue = remove_path(arr.blue_path, x, y, currBlue);
-                }
-                else if (arr.board[x, y] == 1)
+                if (arr.board[x, y] == 1)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
                     arr.board[x, y] = 4;
@@ -458,40 +521,20 @@ namespace WpfApplication1
                     arr.board[x, y] = 7;
                     currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
-                else if (arr.board[x, y] == 7)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
-                    arr.board[x, y] = 5;
-                    currBlue = remove_path(arr.blue_path, x, y, currBlue);
-                }
-                else if (arr.board[x, y] == 4)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 1;
-                    currBlue = remove_path(arr.blue_path, x, y, currBlue);
-                }
-                else if (arr.board[x, y] == 6)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
-                    arr.board[x, y] = 3;
-                    currBlue = remove_path(arr.blue_path, x, y, currBlue);
-                }
-                else
+                else if (arr.board[x,y]==0)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     arr.board[x, y] = 2;
                     currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
+                else
+                {
+                    remove_blue(x, y, Rec);
+                }
             }
             else if (roomba3_pressed == true)
             {
-                if (arr.board[x, y] == 3)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
-                    arr.board[x, y] = 0;
-                    currGreen = remove_path(arr.green_path, x, y, currGreen);
-                }
-                else if (arr.board[x, y] == 1)
+                if (arr.board[x, y] == 1)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
                     arr.board[x, y] = 5;
@@ -509,29 +552,15 @@ namespace WpfApplication1
                     arr.board[x, y] = 7;
                     currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
-                else if (arr.board[x, y] == 7)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
-                    arr.board[x, y] = 4;
-                    currGreen = remove_path(arr.green_path, x, y, currGreen);
-                }
-                else if (arr.board[x, y] == 5)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
-                    arr.board[x, y] = 1;
-                    currGreen = remove_path(arr.green_path, x, y, currGreen);
-                }
-                else if (arr.board[x, y] == 6)
-                {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
-                    arr.board[x, y] = 2;
-                    currGreen = remove_path(arr.green_path, x, y, currGreen);
-                }
-                else
+                else if (arr.board[x,y]==0)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     arr.board[x, y] = 3;
                     currGreen = add_path(arr.green_path, x, y, currGreen);
+                }
+                else
+                {
+                    remove_green(x, y, Rec);
                 }
             }
         }
@@ -547,6 +576,8 @@ namespace WpfApplication1
             val++;
             return val;
         }
+        
+        
 
         /*
          * sets a block back to a blank state
@@ -562,41 +593,218 @@ namespace WpfApplication1
          */
         private void clear_board(object sender, RoutedEventArgs e)
         {
-            clear_block(Rec_11, 0, 0);
-            clear_block(Rec_12, 0, 1);
-            clear_block(Rec_13, 0, 2);
-            clear_block(Rec_14, 0, 3);
-            clear_block(Rec_15, 0, 4);
-            clear_block(Rec_16, 0, 5);
-            clear_block(Rec_17, 0, 6);
-            clear_block(Rec_21, 1, 0);
-            clear_block(Rec_22, 1, 1);
-            clear_block(Rec_23, 1, 2);
-            clear_block(Rec_24, 1, 3);
-            clear_block(Rec_25, 1, 4);
-            clear_block(Rec_26, 1, 5);
-            clear_block(Rec_27, 1, 6);
-            clear_block(Rec_31, 2, 0);
-            clear_block(Rec_32, 2, 1);
-            clear_block(Rec_33, 2, 2);
-            clear_block(Rec_34, 2, 3);
-            clear_block(Rec_35, 2, 4);
-            clear_block(Rec_36, 2, 5);
-            clear_block(Rec_37, 2, 6);
-            clear_block(Rec_41, 3, 0);
-            clear_block(Rec_42, 3, 1);
-            clear_block(Rec_43, 3, 2);
-            clear_block(Rec_44, 3, 3);
-            clear_block(Rec_45, 3, 4);
-            clear_block(Rec_46, 3, 5);
-            clear_block(Rec_47, 3, 6);
-            clear_block(Rec_51, 4, 0);
-            clear_block(Rec_52, 4, 1);
-            clear_block(Rec_53, 4, 2);
-            clear_block(Rec_54, 4, 3);
-            clear_block(Rec_55, 4, 4);
-            clear_block(Rec_56, 4, 5);
-            clear_block(Rec_57, 4, 6);
+            if(roomba1_pressed==true)
+            {
+                remove_red(0, 0, Rec_11);
+                remove_red(0, 1, Rec_12);
+                remove_red(0, 2,Rec_13);
+                remove_red(0, 3, Rec_14);
+                remove_red(0, 4, Rec_15);
+                remove_red(0, 5, Rec_16);
+                remove_red(0, 6, Rec_17);
+                remove_red(1, 0, Rec_21);
+                remove_red(1, 1, Rec_22);
+                remove_red(1, 2, Rec_23);
+                remove_red(1, 3, Rec_24);
+                remove_red(1, 4, Rec_25);
+                remove_red(1, 5, Rec_26);
+                remove_red(1, 6, Rec_27);
+                remove_red(2, 0, Rec_31);
+                remove_red(2, 1, Rec_32);
+                remove_red(2, 2, Rec_33);
+                remove_red(2, 3, Rec_34);
+                remove_red(2, 4, Rec_35);
+                remove_red(2, 5,Rec_36);
+                remove_red(2, 6, Rec_37);
+                remove_red(3, 0, Rec_41);
+                remove_red(3, 1,Rec_42);
+                remove_red(3, 2, Rec_43);
+                remove_red(3, 3, Rec_44);
+                remove_red(3, 4, Rec_45);
+                remove_red(3, 5,Rec_46);
+                remove_red(3, 6, Rec_47);
+                remove_red(4, 0, Rec_51);
+                remove_red(4, 1, Rec_52);
+                remove_red(4, 2, Rec_53);
+                remove_red(4, 3, Rec_54);
+                remove_red(4, 4, Rec_55);
+                remove_red(4, 5, Rec_56);
+                remove_red(4, 6, Rec_57);
+            }
+            else if (roomba2_pressed == true)
+            {
+                remove_blue(0, 0, Rec_11);
+                remove_blue(0, 1, Rec_12);
+                remove_blue(0, 2, Rec_13);
+                remove_blue(0, 3, Rec_14);
+                remove_blue(0, 4, Rec_15);
+                remove_blue(0, 5, Rec_16);
+                remove_blue(0, 6, Rec_17);
+                remove_blue(1, 0, Rec_21);
+                remove_blue(1, 1, Rec_22);
+                remove_blue(1, 2, Rec_23);
+                remove_blue(1, 3, Rec_24);
+                remove_blue(1, 4, Rec_25);
+                remove_blue(1, 5, Rec_26);
+                remove_blue(1, 6, Rec_27);
+                remove_blue(2, 0, Rec_31);
+                remove_blue(2, 1, Rec_32);
+                remove_blue(2, 2, Rec_33);
+                remove_blue(2, 3, Rec_34);
+                remove_blue(2, 4, Rec_35);
+                remove_blue(2, 5, Rec_36);
+                remove_blue(2, 6, Rec_37);
+                remove_blue(3, 0, Rec_41);
+                remove_blue(3, 1, Rec_42);
+                remove_blue(3, 2, Rec_43);
+                remove_blue(3, 3, Rec_44);
+                remove_blue(3, 4, Rec_45);
+                remove_blue(3, 5, Rec_46);
+                remove_blue(3, 6, Rec_47);
+                remove_blue(4, 0, Rec_51);
+                remove_blue(4, 1, Rec_52);
+                remove_blue(4, 2, Rec_53);
+                remove_blue(4, 3, Rec_54);
+                remove_blue(4, 4, Rec_55);
+                remove_blue(4, 5, Rec_56);
+                remove_blue(4, 6, Rec_57);
+            }
+            else if (roomba3_pressed == true)
+            {
+                remove_green(0, 0, Rec_11);
+                remove_green(0, 1, Rec_12);
+                remove_green(0, 2, Rec_13);
+                remove_green(0, 3, Rec_14);
+                remove_green(0, 4, Rec_15);
+                remove_green(0, 5, Rec_16);
+                remove_green(0, 6, Rec_17);
+                remove_green(1, 0, Rec_21);
+                remove_green(1, 1, Rec_22);
+                remove_green(1, 2, Rec_23);
+                remove_green(1, 3, Rec_24);
+                remove_green(1, 4, Rec_25);
+                remove_green(1, 5, Rec_26);
+                remove_green(1, 6, Rec_27);
+                remove_green(2, 0, Rec_31);
+                remove_green(2, 1, Rec_32);
+                remove_green(2, 2, Rec_33);
+                remove_green(2, 3, Rec_34);
+                remove_green(2, 4, Rec_35);
+                remove_green(2, 5, Rec_36);
+                remove_green(2, 6, Rec_37);
+                remove_green(3, 0, Rec_41);
+                remove_green(3, 1, Rec_42);
+                remove_green(3, 2, Rec_43);
+                remove_green(3, 3, Rec_44);
+                remove_green(3, 4, Rec_45);
+                remove_green(3, 5, Rec_46);
+                remove_green(3, 6, Rec_47);
+                remove_green(4, 0, Rec_51);
+                remove_green(4, 1, Rec_52);
+                remove_green(4, 2, Rec_53);
+                remove_green(4, 3, Rec_54);
+                remove_green(4, 4, Rec_55);
+                remove_green(4, 5, Rec_56);
+                remove_green(4, 6, Rec_57);
+            }
+            else
+            {
+                clear_block(Rec_11, 0, 0);
+                clear_block(Rec_12, 0, 1);
+                clear_block(Rec_13, 0, 2);
+                clear_block(Rec_14, 0, 3);
+                clear_block(Rec_15, 0, 4);
+                clear_block(Rec_16, 0, 5);
+                clear_block(Rec_17, 0, 6);
+                clear_block(Rec_21, 1, 0);
+                clear_block(Rec_22, 1, 1);
+                clear_block(Rec_23, 1, 2);
+                clear_block(Rec_24, 1, 3);
+                clear_block(Rec_25, 1, 4);
+                clear_block(Rec_26, 1, 5);
+                clear_block(Rec_27, 1, 6);
+                clear_block(Rec_31, 2, 0);
+                clear_block(Rec_32, 2, 1);
+                clear_block(Rec_33, 2, 2);
+                clear_block(Rec_34, 2, 3);
+                clear_block(Rec_35, 2, 4);
+                clear_block(Rec_36, 2, 5);
+                clear_block(Rec_37, 2, 6);
+                clear_block(Rec_41, 3, 0);
+                clear_block(Rec_42, 3, 1);
+                clear_block(Rec_43, 3, 2);
+                clear_block(Rec_44, 3, 3);
+                clear_block(Rec_45, 3, 4);
+                clear_block(Rec_46, 3, 5);
+                clear_block(Rec_47, 3, 6);
+                clear_block(Rec_51, 4, 0);
+                clear_block(Rec_52, 4, 1);
+                clear_block(Rec_53, 4, 2);
+                clear_block(Rec_54, 4, 3);
+                clear_block(Rec_55, 4, 4);
+                clear_block(Rec_56, 4, 5);
+                clear_block(Rec_57, 4, 6);
+            }
+        }
+        
+        /*
+         * this well eventuall call the logic class and run the program but for not it prints out the path arrays to the console
+         */
+        private void start_clicked(object sender, RoutedEventArgs e)
+        {
+            roomba1_pressed = false;
+            roomba2_pressed = false;
+            roomba3_pressed = false;
+            Roomba1.Margin = new Thickness(411, 44, 0, 0);
+            Roomba2.Margin = new Thickness(411, 78, 0, 0);
+            Roomba3.Margin = new Thickness(411, 112, 0, 0);
+            clear_button.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
+
+            for (int i=0;i<3;i++)
+            {
+                if(i==0)
+                {
+                    Console.Write("currRed: ");
+                    Console.WriteLine(currRed);
+                    Console.WriteLine("Red Roomba: ");
+                    for (int j=0; j<5;j++)
+                    {
+                        for (int k=0;k<7;k++)
+                        {
+                            Console.Write(arr.red_path[j, k]);
+                        }
+                        Console.WriteLine("");
+                    }
+                }
+                else if (i == 1)
+                {
+                    Console.Write("currblue: ");
+                    Console.WriteLine(currBlue);
+                    Console.WriteLine("Blue Roomba: ");
+                    for (int j = 0; j < 5; j++)
+                    {
+                        for (int k = 0; k < 7; k++)
+                        {
+                            Console.Write(arr.blue_path[j, k]);
+                        }
+                        Console.WriteLine("");
+                    }
+                }
+                else if (i == 2)
+                {
+                    Console.Write("currGreen: ");
+                    Console.WriteLine(currGreen);
+                    Console.WriteLine("Green Roomba: ");
+                    for (int j = 0; j < 5; j++)
+                    {
+                        for (int k = 0; k < 7; k++)
+                        {
+                            Console.Write(arr.green_path[j, k]);
+                        }
+                        Console.WriteLine("");
+                    }
+                }
+            }
         }
 
 
