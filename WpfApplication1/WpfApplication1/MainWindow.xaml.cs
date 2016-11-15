@@ -12,6 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Media.Imaging;
+using AForge.Controls;
+using AForge.Imaging;
+using AForge.Math;
+using AForge.Video;
 
 namespace WpfApplication1
 {
@@ -28,8 +33,13 @@ namespace WpfApplication1
         int currBlue;
         int currGreen;
         arrayClass arr = new arrayClass();
+        AForge.Video.DirectShow.FilterInfoCollection videoDevices;
+        AForge.Video.DirectShow.VideoCaptureDevice vidsource1;
+        AForge.Video.DirectShow.VideoCaptureDevice videosource2;
+        
         public MainWindow()
         {
+
             roomba1_pressed = false;
             roomba2_pressed = false;
             roomba3_pressed = false;
@@ -37,10 +47,44 @@ namespace WpfApplication1
             currBlue = 1;
             currGreen = 1;
             currRed = 1;
-            InitializeComponent();
             arr.init();
-            
+            InitializeComponent();
+            videoDevices= new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
+            // create video source
+         vidsource1= new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString);
+         videosource2 = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString );
+        // setup control and start playing
+        /*AForge.Controls.VideoSourcePlayer.NewFrameHandler handler;
+        handler=vidsource1;
+            AForge.Controls.
+
+            videoSourcePlayer.VideoSource = videoSource;
+        videoSourcePlayer.Start( );*/
+        // usage of AsyncVideoSource is the same as usage of any
+        // other video source class, so code change is very little
+        // enumerate video devices
+        AForge.Video.DirectShow.FilterInfoCollection videoDevices2= new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
+        // create video source
+        AForge.Video.DirectShow.VideoCaptureDevice videoSource = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices2[0].MonikerString);
+        // set NewFrame event handler
+         videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
+        // start the video source
+        videoSource.Start( );
+        // ...
+        // signal to stop when you no longer need capturing
+        videoSource.SignalToStop( );
         }
+        // ...
+
+        private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
+        {
+            // get new frame
+           
+           BitmapImage bitmap = new BitmapImage(eventArgs.Frame);
+           // Bitmap bitmap= eventArgs.Frame;
+           // process the frame
+        }
+
         /*
          * checks if the mouse left button is clicked (used to allow for drag listeners)
          */
@@ -57,11 +101,11 @@ namespace WpfApplication1
          */
         private void Din_clicked(object sender, RoutedEventArgs e)
         {
-            if(roomba1_pressed==false)
+            if (roomba1_pressed == false)
             {
                 roomba1_pressed = true;
                 Roomba1.Width = 106;
-                Roomba1.Margin = new Thickness(401,44,0,0);
+                Roomba1.Margin = new Thickness(401, 44, 0, 0);
                 Roomba2.Margin = new Thickness(411, 78, 0, 0);
                 roomba2_pressed = false;
                 Roomba3.Margin = new Thickness(411, 112, 0, 0);
@@ -70,13 +114,13 @@ namespace WpfApplication1
             }
             else
             {
-                
+
                 Roomba1.Width = 96;
                 Roomba1.Margin = new Thickness(411, 44, 0, 0);
                 roomba1_pressed = false;
                 roomba2_pressed = false;
                 roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(Color.FromRgb(221,221,221));
+                clear_button.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
             }
         }
 
@@ -128,9 +172,9 @@ namespace WpfApplication1
             }
         }
 
-       /*
-        * listens for drag over grid blocks, sends grid block and array index to change method
-        */
+        /*
+         * listens for drag over grid blocks, sends grid block and array index to change method
+         */
         private void selected_11(object sender, MouseEventArgs e)
         {
             if (mouseClicked == true)
@@ -140,231 +184,231 @@ namespace WpfApplication1
         }
         private void selected_12(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_12, 0, 1);
             }
         }
         private void selected_13(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_13, 0, 2);
             }
         }
         private void selected_14(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_14, 0, 3);
             }
         }
         private void selected_15(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_15, 0, 4);
             }
         }
         private void selected_16(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_16, 0, 5);
             }
         }
         private void selected_17(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_17, 0, 6);
             }
         }
         private void selected_21(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_21, 1, 0);
             }
         }
         private void selected_22(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_22, 1, 1);
             }
         }
         private void selected_23(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_23, 1, 2);
             }
         }
         private void selected_24(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_24, 1, 3);
             }
         }
         private void selected_25(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_25, 1, 4);
             }
         }
         private void selected_26(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_26, 1, 5);
             }
         }
         private void selected_27(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_27, 1, 6);
             }
         }
         private void selected_31(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_31, 2, 0);
             }
         }
         private void selected_32(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_32, 2, 1);
             }
         }
         private void selected_33(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_33, 2, 2);
             }
         }
         private void selected_34(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_34, 2, 3);
             }
         }
         private void selected_35(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_35, 2, 4);
             }
         }
         private void selected_36(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_36, 2, 5);
             }
         }
         private void selected_37(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_37, 2, 6);
             }
         }
         private void selected_41(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_41, 3, 0);
             }
         }
         private void selected_42(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_42, 3, 1);
             }
         }
         private void selected_43(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_43, 3, 2);
             }
         }
         private void selected_44(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_44, 3, 3);
             }
         }
         private void selected_45(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_45, 3, 4);
             }
         }
         private void selected_46(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_46, 3, 5);
             }
         }
         private void selected_47(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_47, 3, 6);
             }
         }
         private void selected_51(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_51, 4, 0);
             }
         }
         private void selected_52(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_52, 4, 1);
             }
         }
         private void selected_53(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_53, 4, 2);
             }
         }
         private void selected_54(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_54, 4, 3);
             }
         }
         private void selected_55(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_55, 4, 4);
             }
         }
         private void selected_57(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_57, 4, 6);
             }
@@ -372,7 +416,7 @@ namespace WpfApplication1
 
         private void selected_56(object sender, MouseEventArgs e)
         {
-            if(mouseClicked==true)
+            if (mouseClicked == true)
             {
                 change(Rec_56, 4, 5);
             }
@@ -392,7 +436,7 @@ namespace WpfApplication1
                 arr.board[x, y] = 0;
                 currRed = remove_path(arr.red_path, x, y, currRed);
             }
-            else if (arr.board[x,y] == 7)
+            else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
                 arr.board[x, y] = 6;
@@ -473,7 +517,7 @@ namespace WpfApplication1
             {
                 if (arr.board[x, y] == 2)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(124,21,226));
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
                     arr.board[x, y] = 4;
                     currRed = add_path(arr.red_path, x, y, currRed);
                 }
@@ -485,11 +529,11 @@ namespace WpfApplication1
                 }
                 else if (arr.board[x, y] == 6)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(58,58,58));
+                    Rec.Fill = new SolidColorBrush(Color.FromRgb(58, 58, 58));
                     arr.board[x, y] = 7;
                     currRed = add_path(arr.red_path, x, y, currRed);
                 }
-                else if (arr.board[x,y]==0)
+                else if (arr.board[x, y] == 0)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
                     arr.board[x, y] = 1;
@@ -521,7 +565,7 @@ namespace WpfApplication1
                     arr.board[x, y] = 7;
                     currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
-                else if (arr.board[x,y]==0)
+                else if (arr.board[x, y] == 0)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
                     arr.board[x, y] = 2;
@@ -552,7 +596,7 @@ namespace WpfApplication1
                     arr.board[x, y] = 7;
                     currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
-                else if (arr.board[x,y]==0)
+                else if (arr.board[x, y] == 0)
                 {
                     Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
                     arr.board[x, y] = 3;
@@ -564,7 +608,7 @@ namespace WpfApplication1
                 }
             }
         }
-        public int remove_path(int[,] a,int x, int y, int val)
+        public int remove_path(int[,] a, int x, int y, int val)
         {
             a[x, y] = 0;
             val--;
@@ -576,8 +620,8 @@ namespace WpfApplication1
             val++;
             return val;
         }
-        
-        
+
+
 
         /*
          * sets a block back to a blank state
@@ -593,11 +637,11 @@ namespace WpfApplication1
          */
         private void clear_board(object sender, RoutedEventArgs e)
         {
-            if(roomba1_pressed==true)
+            if (roomba1_pressed == true)
             {
                 remove_red(0, 0, Rec_11);
                 remove_red(0, 1, Rec_12);
-                remove_red(0, 2,Rec_13);
+                remove_red(0, 2, Rec_13);
                 remove_red(0, 3, Rec_14);
                 remove_red(0, 4, Rec_15);
                 remove_red(0, 5, Rec_16);
@@ -614,14 +658,14 @@ namespace WpfApplication1
                 remove_red(2, 2, Rec_33);
                 remove_red(2, 3, Rec_34);
                 remove_red(2, 4, Rec_35);
-                remove_red(2, 5,Rec_36);
+                remove_red(2, 5, Rec_36);
                 remove_red(2, 6, Rec_37);
                 remove_red(3, 0, Rec_41);
-                remove_red(3, 1,Rec_42);
+                remove_red(3, 1, Rec_42);
                 remove_red(3, 2, Rec_43);
                 remove_red(3, 3, Rec_44);
                 remove_red(3, 4, Rec_45);
-                remove_red(3, 5,Rec_46);
+                remove_red(3, 5, Rec_46);
                 remove_red(3, 6, Rec_47);
                 remove_red(4, 0, Rec_51);
                 remove_red(4, 1, Rec_52);
@@ -746,7 +790,7 @@ namespace WpfApplication1
                 clear_block(Rec_57, 4, 6);
             }
         }
-        
+
         /*
          * this well eventuall call the logic class and run the program but for not it prints out the path arrays to the console
          */
@@ -760,16 +804,16 @@ namespace WpfApplication1
             Roomba3.Margin = new Thickness(411, 112, 0, 0);
             clear_button.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
 
-            for (int i=0;i<3;i++)
+            for (int i = 0; i < 3; i++)
             {
-                if(i==0)
+                if (i == 0)
                 {
                     Console.Write("currRed: ");
                     Console.WriteLine(currRed);
                     Console.WriteLine("Red Roomba: ");
-                    for (int j=0; j<5;j++)
+                    for (int j = 0; j < 5; j++)
                     {
-                        for (int k=0;k<7;k++)
+                        for (int k = 0; k < 7; k++)
                         {
                             Console.Write(arr.red_path[j, k]);
                         }
@@ -806,7 +850,5 @@ namespace WpfApplication1
                 }
             }
         }
-
-
     }
 }
