@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,7 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Media.Imaging;
 using AForge.Controls;
 using AForge.Imaging;
 using AForge.Math;
@@ -79,8 +79,9 @@ namespace WpfApplication1
         private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
         {
             // get new frame
-           
-           BitmapImage bitmap = new BitmapImage(eventArgs.Frame);
+            //System.Drawing.Bitmap bitmap = eventArgs.Frame;
+            System.Drawing.Bitmap bitmap = eventArgs.Frame;
+
            // Bitmap bitmap= eventArgs.Frame;
            // process the frame
         }
@@ -110,7 +111,7 @@ namespace WpfApplication1
                 roomba2_pressed = false;
                 Roomba3.Margin = new Thickness(411, 112, 0, 0);
                 roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
             }
             else
             {
@@ -120,7 +121,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 roomba2_pressed = false;
                 roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
+                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
             }
         }
 
@@ -135,7 +136,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 Roomba3.Margin = new Thickness(411, 112, 0, 0);
                 roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
             }
             else
             {
@@ -144,7 +145,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 roomba2_pressed = false;
                 roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
+                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
             }
         }
 
@@ -159,7 +160,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 Roomba2.Margin = new Thickness(411, 78, 0, 0);
                 roomba2_pressed = false;
-                clear_button.Background = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
             }
             else
             {
@@ -168,7 +169,7 @@ namespace WpfApplication1
                 roomba1_pressed = false;
                 roomba2_pressed = false;
                 roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
+                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
             }
         }
 
@@ -426,116 +427,116 @@ namespace WpfApplication1
         //11,162,94==aqua
         //58,58,58==black
         /*
-         * changes the color of the rectangle based on which roomba is selected
+         * changes the color of the System.Windows.Shapes.Rectangle based on which roomba is selected
          */
-        public void remove_red(int x, int y, Rectangle Rec)
+        public void remove_red(int x, int y, System.Windows.Shapes.Rectangle Rec)
         {
             if (arr.board[x, y] == 1)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
                 currRed = remove_path(arr.red_path, x, y, currRed);
             }
             else if (arr.board[x, y] == 7)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(11, 162, 94));
                 arr.board[x, y] = 6;
                 currRed = remove_path(arr.red_path, x, y, currRed);
             }
             else if (arr.board[x, y] == 4)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                 arr.board[x, y] = 2;
                 currRed = remove_path(arr.red_path, x, y, currRed);
             }
             else if (arr.board[x, y] == 5)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                 arr.board[x, y] = 3;
                 currRed = remove_path(arr.red_path, x, y, currRed);
             }
         }
 
-        public void remove_blue(int x, int y, Rectangle Rec)
+        public void remove_blue(int x, int y, System.Windows.Shapes.Rectangle Rec)
         {
             if (arr.board[x, y] == 2)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
                 currBlue = remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 7)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(188, 226, 14));
                 arr.board[x, y] = 5;
                 currBlue = remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 4)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                 arr.board[x, y] = 1;
                 currBlue = remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 6)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                 arr.board[x, y] = 3;
                 currBlue = remove_path(arr.blue_path, x, y, currBlue);
             }
         }
-        public void remove_green(int x, int y, Rectangle Rec)
+        public void remove_green(int x, int y, System.Windows.Shapes.Rectangle Rec)
         {
             if (arr.board[x, y] == 3)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 245));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
                 currGreen = remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 7)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 21, 226));
                 arr.board[x, y] = 4;
                 currGreen = remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 5)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                 arr.board[x, y] = 1;
                 currGreen = remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 6)
             {
-                Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                 arr.board[x, y] = 2;
                 currGreen = remove_path(arr.green_path, x, y, currGreen);
             }
         }
 
-        public void change(Rectangle Rec, int x, int y)
+        public void change(System.Windows.Shapes.Rectangle Rec, int x, int y)
         {
             if (roomba1_pressed == true)
             {
                 if (arr.board[x, y] == 2)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 21, 226));
                     arr.board[x, y] = 4;
                     currRed = add_path(arr.red_path, x, y, currRed);
                 }
                 else if (arr.board[x, y] == 3)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(188, 226, 14));
                     arr.board[x, y] = 5;
                     currRed = add_path(arr.red_path, x, y, currRed);
                 }
                 else if (arr.board[x, y] == 6)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(58, 58, 58));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(58, 58, 58));
                     arr.board[x, y] = 7;
                     currRed = add_path(arr.red_path, x, y, currRed);
                 }
                 else if (arr.board[x, y] == 0)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(176, 5, 5));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                     arr.board[x, y] = 1;
                     currRed = add_path(arr.red_path, x, y, currRed);
                 }
@@ -549,25 +550,25 @@ namespace WpfApplication1
             {
                 if (arr.board[x, y] == 1)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(124, 21, 226));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 21, 226));
                     arr.board[x, y] = 4;
                     currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
                 else if (arr.board[x, y] == 3)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(11, 162, 94));
                     arr.board[x, y] = 6;
                     currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
                 else if (arr.board[x, y] == 5)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(58, 58, 58));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(58, 58, 58));
                     arr.board[x, y] = 7;
                     currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
                 else if (arr.board[x, y] == 0)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(13, 41, 168));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                     arr.board[x, y] = 2;
                     currBlue = add_path(arr.blue_path, x, y, currBlue);
                 }
@@ -580,25 +581,25 @@ namespace WpfApplication1
             {
                 if (arr.board[x, y] == 1)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(188, 226, 14));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(188, 226, 14));
                     arr.board[x, y] = 5;
                     currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
                 else if (arr.board[x, y] == 2)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(11, 162, 94));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(11, 162, 94));
                     arr.board[x, y] = 6;
                     currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
                 else if (arr.board[x, y] == 4)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(58, 58, 58));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(58, 58, 58));
                     arr.board[x, y] = 7;
                     currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
                 else if (arr.board[x, y] == 0)
                 {
-                    Rec.Fill = new SolidColorBrush(Color.FromRgb(7, 147, 0));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                     arr.board[x, y] = 3;
                     currGreen = add_path(arr.green_path, x, y, currGreen);
                 }
@@ -626,9 +627,9 @@ namespace WpfApplication1
         /*
          * sets a block back to a blank state
          */
-        public void clear_block(Rectangle rec, int x, int y)
+        public void clear_block(System.Windows.Shapes.Rectangle rec, int x, int y)
         {
-            rec.Fill = new SolidColorBrush(Color.FromRgb(244, 244, 244));
+            rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 244));
             arr.board[x, y] = 0;
         }
 
@@ -802,7 +803,7 @@ namespace WpfApplication1
             Roomba1.Margin = new Thickness(411, 44, 0, 0);
             Roomba2.Margin = new Thickness(411, 78, 0, 0);
             Roomba3.Margin = new Thickness(411, 112, 0, 0);
-            clear_button.Background = new SolidColorBrush(Color.FromRgb(221, 221, 221));
+            clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
 
             for (int i = 0; i < 3; i++)
             {
