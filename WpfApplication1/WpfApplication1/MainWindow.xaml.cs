@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*Laura Berry(10111166)
+ * Chris Miller(<ID NUMBER>)
+ * 
+ * citation:
+ *  code taken in part from:
+ *  -http://www.aforgenet.com/articles/step_to_stereo_vision/
+ *  -http://www.aforgenet.com/
+ *  -http://www.aforgenet.com/framework/docs/html/d7196dc6-8176-4344-a505-e7ade35c1741.htm
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,10 +46,17 @@ namespace WpfApplication1
         AForge.Video.DirectShow.FilterInfoCollection videoDevices;
         AForge.Video.DirectShow.VideoCaptureDevice vidsource1;
         AForge.Video.DirectShow.VideoCaptureDevice videosource2;
-        
+        int[] coords;
+        int[] coords2;
+        bool firstOrSecond = false;
         public MainWindow()
         {
-
+            coords = new int[2];
+            coords[0] = 0;
+            coords[1] = 0;
+            coords2 = new int[2];
+            coords2[0] = 0;
+            coords2[1] = 0;
             roomba1_pressed = false;
             roomba2_pressed = false;
             roomba3_pressed = false;
@@ -49,41 +66,95 @@ namespace WpfApplication1
             currRed = 1;
             arr.init();
             InitializeComponent();
+            //find video device
             videoDevices= new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
             // create video source
-         vidsource1= new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString);
-         videosource2 = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString );
-        // setup control and start playing
-        /*AForge.Controls.VideoSourcePlayer.NewFrameHandler handler;
-        handler=vidsource1;
-            AForge.Controls.
+             vidsource1= new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString);
+             videosource2 = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString );
+            // enumerate video devices
+            AForge.Video.DirectShow.FilterInfoCollection videoDevices2= new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
+            // create video source
+            AForge.Video.DirectShow.VideoCaptureDevice videoSource = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices2[0].MonikerString);
+            // start the video source
+            videoSource.Start();
+            int counter=0;
+            while (true)
+            {
+                // set NewFrame event handler
+                videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
+                // wait until we have two acquired images
+                /*camera1Acquired.WaitOne();
+                camera2Acquired.WaitOne();*/
+                if(counter>=2)
+                {
+                    int[] vector;
+                    vector = new int[2];
+                    vector[0] = coords2[0] - coords[0];
+                    vector[1] = coords2[1] - coords[1];
+                    break;
+                }
+                counter++;
+            }
 
-            videoSourcePlayer.VideoSource = videoSource;
-        videoSourcePlayer.Start( );*/
-        // usage of AsyncVideoSource is the same as usage of any
-        // other video source class, so code change is very little
-        // enumerate video devices
-        AForge.Video.DirectShow.FilterInfoCollection videoDevices2= new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
-        // create video source
-        AForge.Video.DirectShow.VideoCaptureDevice videoSource = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices2[0].MonikerString);
-        // set NewFrame event handler
-         videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
-        // start the video source
-        videoSource.Start( );
-        // ...
-        // signal to stop when you no longer need capturing
-        videoSource.SignalToStop( );
+            // signal to stop when you no longer need capturing
+            //videoSource.SignalToStop( );
         }
-        // ...
+        
 
         private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
         {
+            
             // get new frame
-            //System.Drawing.Bitmap bitmap = eventArgs.Frame;
             System.Drawing.Bitmap bitmap = eventArgs.Frame;
+            // create filter
+            AForge.Imaging.Filters.ColorFiltering colorFilter = new AForge.Imaging.Filters.ColorFiltering();
+            // configure the filter
+            colorFilter.Red   = new AForge.IntRange( 0, 100 );
+            colorFilter.Green = new AForge.IntRange( 0, 200 );
+            colorFilter.Blue = new AForge.IntRange(150, 255);
 
-           // Bitmap bitmap= eventArgs.Frame;
-           // process the frame
+            System.Drawing.Bitmap filteredImage = colorFilter.Apply(bitmap);
+
+            /// create blob counter and configure it
+            BlobCounter blobCounter = new BlobCounter();
+            blobCounter.MinWidth = 25;                    // set minimum size of
+            blobCounter.MinHeight = 25;                   // objects we look for
+            blobCounter.FilterBlobs = true;               // filter blobs by size
+            blobCounter.ObjectsOrder = ObjectsOrder.Size; // order found object by size
+            // grayscaling
+            AForge.Imaging.Filters.Grayscale grayFilter = new AForge.Imaging.Filters.Grayscale(0.2125, 0.7154, 0.0721); ;
+
+            Bitmap grayImage = grayFilter.Apply(filteredImage);
+            // locate blobs 
+            blobCounter.ProcessImage(grayImage);
+            System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
+            // draw rectangle around the biggest blob
+            if (rects.Length > 0)
+            {
+                System.Drawing.Rectangle objectRect = rects[0];
+                Graphics g = Graphics.FromImage(bitmap);
+
+                using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
+                {
+                    g.DrawRectangle(pen, objectRect);
+                    int x1 = (objectRect.Left + objectRect.Right) / 2;
+                    int  y1 = (objectRect.Top + objectRect.Bottom) / 2;
+                    if (firstOrSecond == false)
+                    {
+                        coords[0] = x1;
+                        coords[1] = y1;
+                        firstOrSecond = true;
+                    }
+                    else
+                    {
+                        coords2[0] = x1;
+                        coords2[1] = y1;
+                        firstOrSecond = false;
+                    }
+                }
+
+                g.Dispose();
+            }
         }
 
         /*
@@ -804,7 +875,22 @@ namespace WpfApplication1
             Roomba2.Margin = new Thickness(411, 78, 0, 0);
             Roomba3.Margin = new Thickness(411, 112, 0, 0);
             clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
-
+            Console.Write("first coordinates: ");
+            Console.Write(coords[0]);
+            Console.Write(", ");
+            Console.WriteLine(coords[1]);
+            Console.Write("second coordinates: ");
+            Console.Write(coords2[0]);
+            Console.Write(", ");
+            Console.WriteLine(coords2[1]);
+            int[] vector;
+            vector = new int[2];
+            vector[0] = coords2[0] - coords[0];
+            vector[1] = coords2[1] - coords[1];
+            Console.Write("vector: ");
+            Console.Write(vector[0]);
+            Console.Write(", ");
+            Console.WriteLine(vector[0]);
             for (int i = 0; i < 3; i++)
             {
                 if (i == 0)
