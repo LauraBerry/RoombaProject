@@ -106,6 +106,23 @@ namespace WpfApplication1
             
             // get new frame
             System.Drawing.Bitmap bitmap = eventArgs.Frame;
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            ((System.Drawing.Bitmap)eventArgs.Frame).Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+
+            ms.Seek(0, System.IO.SeekOrigin.Begin);
+            image.StreamSource = ms;
+            try
+            {
+                camera_input.Source = image;
+            }
+            catch(Exception except)
+            {
+                Console.WriteLine(except);
+            }
+            
+            image.EndInit();
             // create filter
             AForge.Imaging.Filters.ColorFiltering colorFilter = new AForge.Imaging.Filters.ColorFiltering();
             // configure the filter
@@ -868,6 +885,7 @@ namespace WpfApplication1
          */
         private void start_clicked(object sender, RoutedEventArgs e)
         {
+            bool printboards = false;
             roomba1_pressed = false;
             roomba2_pressed = false;
             roomba3_pressed = false;
@@ -891,48 +909,51 @@ namespace WpfApplication1
             Console.Write(vector[0]);
             Console.Write(", ");
             Console.WriteLine(vector[0]);
-            for (int i = 0; i < 3; i++)
+            if(printboards==true)
             {
-                if (i == 0)
+                for (int i = 0; i < 3; i++)
                 {
-                    Console.Write("currRed: ");
-                    Console.WriteLine(currRed);
-                    Console.WriteLine("Red Roomba: ");
-                    for (int j = 0; j < 5; j++)
+                    if (i == 0)
                     {
-                        for (int k = 0; k < 7; k++)
+                        Console.Write("currRed: ");
+                        Console.WriteLine(currRed);
+                        Console.WriteLine("Red Roomba: ");
+                        for (int j = 0; j < 5; j++)
                         {
-                            Console.Write(arr.red_path[j, k]);
+                            for (int k = 0; k < 7; k++)
+                            {
+                                Console.Write(arr.red_path[j, k]);
+                            }
+                            Console.WriteLine("");
                         }
-                        Console.WriteLine("");
                     }
-                }
-                else if (i == 1)
-                {
-                    Console.Write("currblue: ");
-                    Console.WriteLine(currBlue);
-                    Console.WriteLine("Blue Roomba: ");
-                    for (int j = 0; j < 5; j++)
+                    else if (i == 1)
                     {
-                        for (int k = 0; k < 7; k++)
+                        Console.Write("currblue: ");
+                        Console.WriteLine(currBlue);
+                        Console.WriteLine("Blue Roomba: ");
+                        for (int j = 0; j < 5; j++)
                         {
-                            Console.Write(arr.blue_path[j, k]);
+                            for (int k = 0; k < 7; k++)
+                            {
+                                Console.Write(arr.blue_path[j, k]);
+                            }
+                            Console.WriteLine("");
                         }
-                        Console.WriteLine("");
                     }
-                }
-                else if (i == 2)
-                {
-                    Console.Write("currGreen: ");
-                    Console.WriteLine(currGreen);
-                    Console.WriteLine("Green Roomba: ");
-                    for (int j = 0; j < 5; j++)
+                    else if (i == 2)
                     {
-                        for (int k = 0; k < 7; k++)
+                        Console.Write("currGreen: ");
+                        Console.WriteLine(currGreen);
+                        Console.WriteLine("Green Roomba: ");
+                        for (int j = 0; j < 5; j++)
                         {
-                            Console.Write(arr.green_path[j, k]);
+                            for (int k = 0; k < 7; k++)
+                            {
+                                Console.Write(arr.green_path[j, k]);
+                            }
+                            Console.WriteLine("");
                         }
-                        Console.WriteLine("");
                     }
                 }
             }
