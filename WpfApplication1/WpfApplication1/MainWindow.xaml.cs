@@ -99,11 +99,11 @@ namespace WpfApplication1
                 mssg.Seek(0, System.IO.SeekOrigin.Begin);
                 BitmapImage bitmap1 = new BitmapImage();
                 bitmap1.BeginInit();
-                bitmap1.StreamSource = mssg;
+                bitmap1.StreamSource = mssg;                                                    //creates a bitmap of the frame from the camera
                 bitmap1.EndInit();
 
                 bitmap1.Freeze();
-                Dispatcher.BeginInvoke(new System.Threading.ThreadStart(delegate{camera_input.Source = bitmap1;}));
+                Dispatcher.BeginInvoke(new System.Threading.ThreadStart(delegate{camera_input.Source = bitmap1;})); //sets image source to be the bitmap image
             }
             catch (Exception ex)
             {
@@ -121,10 +121,10 @@ namespace WpfApplication1
 
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
-            blobCounter.MinWidth = 5;                    // set minimum size of
-            blobCounter.MinHeight = 5;                   // objects we look for
-            blobCounter.FilterBlobs = true;               // filter blobs by size
-            blobCounter.ObjectsOrder = ObjectsOrder.Size; // order found object by size
+            blobCounter.MinWidth = 5;                                                // set minimum size of
+            blobCounter.MinHeight = 5;                                               // objects we look for
+            blobCounter.FilterBlobs = true;                                         // filter blobs by size
+            blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
             // grayscaling
             AForge.Imaging.Filters.Grayscale grayFilter = new AForge.Imaging.Filters.Grayscale(0.2125, 0.7154, 0.0721); ;
 
@@ -132,7 +132,7 @@ namespace WpfApplication1
             // locate blobs 
             blobCounter.ProcessImage(grayImage);
             System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
-            // draw rectangle around the biggest blob
+            // draw rectangle around the biggest blob           //todo maybe alter this if it is not seeing the roomba properly
             if (rects.Length > 0)
             {
                 System.Drawing.Rectangle objectRect = rects[0];
@@ -142,15 +142,20 @@ namespace WpfApplication1
                 {
                     int[] location = new int[2];
                     g.DrawRectangle(pen, objectRect);
-                    int x1 = (objectRect.Left + objectRect.Right) / 2;
-                    int  y1 = (objectRect.Top + objectRect.Bottom) / 2;
-                    clear_location_board();
-                    if (firstOrSecond == 0)
+                    int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
+                    int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
+                    /*
+                     * alternates which coordinates the x and y will be stored in to allow for vector calculations
+                     */
+                    if (firstOrSecond == 0) 
                     {
                         coords[0] = x1;
                         coords[1] = y1;
                         location = actual_location(coords);
-                        arr.location_on_board[location[0], location[1]]=1;
+                        bool on_path = check_if_on_path(location, "red");
+                        Console.Write("on the path? ");
+                        Console.WriteLine(on_path);
+
                         firstOrSecond = 1;
                     }
                     else
@@ -158,28 +163,59 @@ namespace WpfApplication1
                         coords2[0] = x1;
                         coords2[1] = y1;
                         location = actual_location(coords2);
-                        arr.location_on_board[location[0], location[1]] = 1;
                         firstOrSecond = 0;
                     }
-                    Console.Write("Location: ");
-                    Console.Write(location[0]);
-                    Console.Write(", ");
-                    Console.WriteLine(location[1]);
                 }
-
                 g.Dispose();
             }
         }
 
-        public void clear_location_board()
+        /*
+         * checks to see if the roomba is on the path it is supposed to be
+         * returns true if so and false if not.
+         * 
+         * TODO: this may need to be changed so that it takes in a int and 
+         * checks if it is the same as an int so that we can check that the
+         * roombas are following the path correctly (ie. not backwards)
+         * 
+         */
+        public bool check_if_on_path(int[] a, string b)
         {
-            for (int i=0; i<5;i++)
+            if (String.ReferenceEquals("red", b))
             {
-                for (int j=0; j<7; j++)
+                if(arr.red_path[a[0],a[1]]!=0)
                 {
-                    arr.location_on_board[i, j] = 0;
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
+            else if (String.ReferenceEquals("blue", b))
+            {
+                if (arr.blue_path[a[0], a[1]] != 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (String.ReferenceEquals("green", b))
+            {
+                if (arr.green_path[a[0], a[1]] != 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
         }
 
         /*
