@@ -6,6 +6,7 @@
  *  -http://www.aforgenet.com/articles/step_to_stereo_vision/
  *  -http://www.aforgenet.com/
  *  -http://www.aforgenet.com/framework/docs/html/d7196dc6-8176-4344-a505-e7ade35c1741.htm
+ *  -http://stackoverflow.com/questions/2006055/implementing-a-webcam-on-a-wpf-app-using-aforge-net
  */
 
 using System;
@@ -30,42 +31,29 @@ using AForge.Video;
 
 namespace WpfApplication1
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        bool roomba1_pressed;
-        bool roomba2_pressed;
-        bool roomba3_pressed;
-        bool mouseClicked;
-        int currRed;
-        int currBlue;
-        int currGreen;
+        bool roomba1_pressed,  roomba2_pressed, roomba3_pressed, mouseClicked;
+        int currRed, currBlue,currGreen;
         arrayClass arr = new arrayClass();
         AForge.Video.DirectShow.FilterInfoCollection videoDevices;
-        AForge.Video.DirectShow.VideoCaptureDevice vidsource1;
-        AForge.Video.DirectShow.VideoCaptureDevice videosource2;
-        int[] coords;
-        int[] coords2;
-        bool firstOrSecond = false;
+        AForge.Video.DirectShow.VideoCaptureDevice vidsource1, videosource2;
+        int[] coords, coords2;
+        int firstOrSecond = 0;
         public MainWindow()
         {
             coords = new int[2];
-            coords[0] = 0;
-            coords[1] = 0;
+            coords[0] = coords[1] = 0;
             coords2 = new int[2];
-            coords2[0] = 0;
-            coords2[1] = 0;
-            roomba1_pressed = false;
-            roomba2_pressed = false;
-            roomba3_pressed = false;
-            mouseClicked = false;
-            currBlue = 1;
-            currGreen = 1;
-            currRed = 1;
+            coords2[0] = coords2[1] = 0;
+            roomba1_pressed = roomba2_pressed = roomba3_pressed= mouseClicked = false;
+            currBlue = currGreen = currRed = 1;
             arr.init();
             InitializeComponent();
+
+            /*
+             * start of video feed code
+             */
             //find video device
             videoDevices= new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
             // create video source
@@ -103,26 +91,25 @@ namespace WpfApplication1
 
         private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
         {
-            
-            // get new frame
-            System.Drawing.Bitmap bitmap = eventArgs.Frame;
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            ((System.Drawing.Bitmap)eventArgs.Frame).Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-            BitmapImage image = new BitmapImage();
-            image.BeginInit();
-
-            ms.Seek(0, System.IO.SeekOrigin.Begin);
-            image.StreamSource = ms;
             try
             {
-                camera_input.Source = image;
+                System.Drawing.Image image = (Bitmap)eventArgs.Frame.Clone();                   //Width==640 , Height==480
+                System.IO.MemoryStream mssg = new System.IO.MemoryStream();
+                image.Save(mssg, System.Drawing.Imaging.ImageFormat.Bmp);
+                mssg.Seek(0, System.IO.SeekOrigin.Begin);
+                BitmapImage bitmap1 = new BitmapImage();
+                bitmap1.BeginInit();
+                bitmap1.StreamSource = mssg;
+                bitmap1.EndInit();
+
+                bitmap1.Freeze();
+                Dispatcher.BeginInvoke(new System.Threading.ThreadStart(delegate{camera_input.Source = bitmap1;}));
             }
-            catch(Exception except)
+            catch (Exception ex)
             {
-                Console.WriteLine(except);
+                Console.Write(ex);
             }
-            
-            image.EndInit();
+            System.Drawing.Bitmap bitmap = eventArgs.Frame;
             // create filter
             AForge.Imaging.Filters.ColorFiltering colorFilter = new AForge.Imaging.Filters.ColorFiltering();
             // configure the filter
@@ -134,8 +121,8 @@ namespace WpfApplication1
 
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
-            blobCounter.MinWidth = 25;                    // set minimum size of
-            blobCounter.MinHeight = 25;                   // objects we look for
+            blobCounter.MinWidth = 5;                    // set minimum size of
+            blobCounter.MinHeight = 5;                   // objects we look for
             blobCounter.FilterBlobs = true;               // filter blobs by size
             blobCounter.ObjectsOrder = ObjectsOrder.Size; // order found object by size
             // grayscaling
@@ -153,25 +140,121 @@ namespace WpfApplication1
 
                 using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
                 {
+                    int[] location = new int[2];
                     g.DrawRectangle(pen, objectRect);
                     int x1 = (objectRect.Left + objectRect.Right) / 2;
                     int  y1 = (objectRect.Top + objectRect.Bottom) / 2;
-                    if (firstOrSecond == false)
+                    clear_location_board();
+                    if (firstOrSecond == 0)
                     {
                         coords[0] = x1;
                         coords[1] = y1;
-                        firstOrSecond = true;
+                        location = actual_location(coords);
+                        arr.location_on_board[location[0], location[1]]=1;
+                        firstOrSecond = 1;
                     }
                     else
                     {
                         coords2[0] = x1;
                         coords2[1] = y1;
-                        firstOrSecond = false;
+                        location = actual_location(coords2);
+                        arr.location_on_board[location[0], location[1]] = 1;
+                        firstOrSecond = 0;
                     }
+                    Console.Write("Location: ");
+                    Console.Write(location[0]);
+                    Console.Write(", ");
+                    Console.WriteLine(location[1]);
                 }
 
                 g.Dispose();
             }
+        }
+
+        public void clear_location_board()
+        {
+            for (int i=0; i<5;i++)
+            {
+                for (int j=0; j<7; j++)
+                {
+                    arr.location_on_board[i, j] = 0;
+                }
+            }
+        }
+
+        /*
+         * caluclates the coordinates of the roomba on a 5X7 grid 
+         * from the 640X480 grid on the image and returns it as a tuple.
+         */
+        public int[] actual_location(int[] a)
+        {
+            int[] location_coords = new int[2];
+            if (a[0] <= 91)
+            {
+                location_coords[0] = 0;
+            }
+            else if (a[0] <= 182)
+            {
+                location_coords[0] = 1;
+            }
+            else if (a[0] <= 273)
+            {
+                location_coords[0] = 2;
+            }
+            else if (a[0] <= 364)
+            {
+                location_coords[0] = 3;
+            }
+            else if (a[0] <= 455)
+            {
+                location_coords[0] = 4;
+            }
+            else if (a[0] <= 546)
+            {
+                location_coords[0] = 5;
+            }
+            else if (a[0] <= 640)
+            {
+                location_coords[0] = 6;
+            }
+            if (a[1] <= 96)
+            {
+                location_coords[1] = 0;
+            }
+            else if (a[1] <= 192)
+            {
+                location_coords[1] = 1;
+            }
+            else if (a[1] <= 288)
+            {
+                location_coords[1] = 2;
+            }
+            else if (a[1] <= 385)
+            {
+                location_coords[1] = 3;
+            }
+            else if (a[1] <= 480)
+            {
+                location_coords[1] = 4;
+            }
+            if (location_coords[0]>6)
+            {
+                location_coords[0] = 6;
+            }
+            else if (location_coords[0] < 0)
+            {
+                location_coords[0] = 0;
+            }
+            if (location_coords[1] > 4)
+            {
+                location_coords[1] = 4;
+            }
+            else if (location_coords[1] < 0)
+            {
+                location_coords[1] = 0;
+            }
+
+            return location_coords;
         }
 
         /*
@@ -186,7 +269,7 @@ namespace WpfApplication1
             mouseClicked = false;
         }
         /*
-         * listens for whish roomba is selected, ensures that only one is selected at a time
+         * listens for which roomba is selected, ensures that only one is selected at a time
          */
         private void Din_clicked(object sender, RoutedEventArgs e)
         {
@@ -212,7 +295,6 @@ namespace WpfApplication1
                 clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
             }
         }
-
         private void Farore_clicked(object sender, RoutedEventArgs e)
         {
             if (roomba2_pressed == false)
@@ -236,7 +318,6 @@ namespace WpfApplication1
                 clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
             }
         }
-
         private void Nayru_clicked(object sender, RoutedEventArgs e)
         {
             if (roomba3_pressed == false)
@@ -502,7 +583,6 @@ namespace WpfApplication1
                 change(Rec_57, 4, 6);
             }
         }
-
         private void selected_56(object sender, MouseEventArgs e)
         {
             if (mouseClicked == true)
@@ -510,10 +590,7 @@ namespace WpfApplication1
                 change(Rec_56, 4, 5);
             }
         }
-        //188,226,14 == yello
-        //124,21,226==purple
-        //11,162,94==aqua
-        //58,58,58==black
+
         /*
          * changes the color of the System.Windows.Shapes.Rectangle based on which roomba is selected
          */

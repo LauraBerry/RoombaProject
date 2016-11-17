@@ -4,7 +4,7 @@
         Title="MainWindow" Height="350" Width="525" MouseDown="mouse_clicked" MouseUp="mouseUnclicked">
 
     <Grid>
-        
+
         <Button x:Name="Roomba1" Content="Din" HorizontalAlignment="Left" Margin="411,44,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FFA20D0D" Click="Din_clicked"/>
         <Button x:Name="Roomba2" Content="Farore" HorizontalAlignment="Left" Margin="411,78,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF0A11A4" Click="Farore_clicked"/>
         <Button x:Name="Roomba3" Content="Nayru" HorizontalAlignment="Left" Margin="411,112,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF118006" Click="Nayru_clicked"/>
@@ -15,7 +15,7 @@
         <Button Content="Start" HorizontalAlignment="Left" Margin="411,233,0,0" VerticalAlignment="Top" Width="58" Height="49" Click="start_clicked"/>
 
         <Canvas HorizontalAlignment="Left" Height="217" Margin="32,41,0,0" VerticalAlignment="Top" Width="308" Opacity="0.4">
-            <MediaElement x:Name="camera_input" HorizontalAlignment="Left" Height="217" VerticalAlignment="Top" Width="308"/>
+            <Image x:Name="camera_input" HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="308" Stretch="Fill"/>
             <Rectangle x:Name="Rec_11" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" MouseEnter="selected_11" Opacity="0.4"/>
             <Rectangle x:Name="Rec_12" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="44" MouseEnter="selected_12" Opacity="0.4"/>
             <Rectangle x:Name="Rec_13" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="87" MouseEnter="selected_13" Opacity="0.4"  />
@@ -52,5 +52,6 @@
             <Rectangle x:Name="Rec_57" Fill="#FFF4F4F4" Height="44" Stroke="Black" Width="44" Canvas.Left="263" Canvas.Top="176" MouseEnter="selected_57" Opacity="0.4"/>
             <Rectangle x:Name="Rec_56" Fill="#FFF4F4F4" Height="44" Stroke="Black" Width="44" Canvas.Left="219" Canvas.Top="176" MouseEnter="selected_56" Opacity="0.4"/>
         </Canvas>
+
     </Grid>
 </Window>
