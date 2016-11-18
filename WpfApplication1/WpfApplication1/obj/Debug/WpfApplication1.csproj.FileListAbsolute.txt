@@ -11,3 +11,10 @@ D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfAp
 D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.csproj.GenerateResource.Cache
 D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.exe
 D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.pdb
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.VisualGestureBuilder.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.Wpf.Controls.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.xml
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.VisualGestureBuilder.xml
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.Wpf.Controls.xml
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1_Content.g.cs

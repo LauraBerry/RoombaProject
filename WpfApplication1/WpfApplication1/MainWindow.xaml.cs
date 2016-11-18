@@ -7,6 +7,10 @@
  *  -http://www.aforgenet.com/
  *  -http://www.aforgenet.com/framework/docs/html/d7196dc6-8176-4344-a505-e7ade35c1741.htm
  *  -http://stackoverflow.com/questions/2006055/implementing-a-webcam-on-a-wpf-app-using-aforge-net
+ *  change interface so that it only highlights 1 square as it is selected. make it so that this stores the center point of the grid bock 
+ *  as a 64/480 coordinate
+ *  impliment color tracking colors: green (A=255, R=100, G=155, B=15), Blue (A=255, R=76, G=143, B=204)  and Red (A=255, R=121, G=177, B=255)
+ *  start linklist implimentation
  */
 
 using System;
@@ -70,6 +74,14 @@ namespace WpfApplication1
             {
                 // set NewFrame event handler
                 videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
+                if (firstOrSecond == 0)
+                {
+                    firstOrSecond = 1;
+                }
+                else
+                {
+                    firstOrSecond = 0;
+                }
                 // wait until we have two acquired images
                 /*camera1Acquired.WaitOne();
                 camera2Acquired.WaitOne();*/
@@ -78,7 +90,7 @@ namespace WpfApplication1
                     int[] vector;
                     vector = new int[2];
                     vector[0] = coords2[0] - coords[0];
-                    vector[1] = coords2[1] - coords[1];
+                    vector[1] = coords2[1] - coords[1];         //Nico: for some reason if this result is negative it shows up in vector as 0
                     break;
                 }
                 counter++;
@@ -121,8 +133,8 @@ namespace WpfApplication1
 
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
-            blobCounter.MinWidth = 5;                                                // set minimum size of
-            blobCounter.MinHeight = 5;                                               // objects we look for
+            blobCounter.MinHeight = 5;                                              //nico it will see my phone but not the roomba? what is the unit here?
+            blobCounter.MinWidth = 5;
             blobCounter.FilterBlobs = true;                                         // filter blobs by size
             blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
             // grayscaling
@@ -135,38 +147,44 @@ namespace WpfApplication1
             // draw rectangle around the biggest blob           //todo maybe alter this if it is not seeing the roomba properly
             if (rects.Length > 0)
             {
-                System.Drawing.Rectangle objectRect = rects[0];
-                Graphics g = Graphics.FromImage(bitmap);
-
-                using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
+                for (int i=0;i<rects.Length;i++)
                 {
-                    int[] location = new int[2];
-                    g.DrawRectangle(pen, objectRect);
-                    int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
-                    int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
-                    /*
-                     * alternates which coordinates the x and y will be stored in to allow for vector calculations
-                     */
-                    if (firstOrSecond == 0) 
-                    {
-                        coords[0] = x1;
-                        coords[1] = y1;
-                        location = actual_location(coords);
-                        bool on_path = check_if_on_path(location, "red");
-                        Console.Write("on the path? ");
-                        Console.WriteLine(on_path);
+                    System.Drawing.Rectangle objectRect = rects[i];
+                    Graphics g = Graphics.FromImage(bitmap);
 
-                        firstOrSecond = 1;
-                    }
-                    else
+                    using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
                     {
-                        coords2[0] = x1;
-                        coords2[1] = y1;
-                        location = actual_location(coords2);
-                        firstOrSecond = 0;
+                        int[] location = new int[2];
+                        g.DrawRectangle(pen, objectRect);
+                        int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
+                        int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
+                        System.Drawing.Color a = bitmap.GetPixel(x1, y1);
+                        Console.Write("color of pixel");
+                        Console.WriteLine(a);
+                        /*
+                         * alternates which coordinates the x and y will be stored in to allow for vector calculations
+                         */
+                        if (firstOrSecond == 0) 
+                        {
+                            coords[0] = x1;
+                            coords[1] = y1;
+                            location = actual_location(coords);
+                            /*bool on_path = check_if_on_path(location, "red");
+                            Console.Write("on the path? ");
+                            Console.WriteLine(on_path);*/
+                        }
+                        else
+                        {
+                            coords2[0] = x1;
+                            coords2[1] = y1;
+                            location = actual_location(coords2);
+                            /*bool on_path = check_if_on_path(location, "red");
+                            Console.Write("on the path? ");
+                            Console.WriteLine(on_path);*/
+                        }
                     }
+                    g.Dispose();
                 }
-                g.Dispose();
             }
         }
 
@@ -181,41 +199,49 @@ namespace WpfApplication1
          */
         public bool check_if_on_path(int[] a, string b)
         {
-            if (String.ReferenceEquals("red", b))
-            {
-                if(arr.red_path[a[0],a[1]]!=0)
+            try
                 {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (String.ReferenceEquals("blue", b))
-            {
-                if (arr.blue_path[a[0], a[1]] != 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (String.ReferenceEquals("green", b))
-            {
-                if (arr.green_path[a[0], a[1]] != 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+                    if (String.ReferenceEquals("red", b))
+                    {
+                        if (arr.red_path[a[0], a[1]] != 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else if (String.ReferenceEquals("blue", b))
+                    {
+                        if (arr.blue_path[a[0], a[1]] != 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else if (String.ReferenceEquals("green", b))
+                    {
+                        if (arr.green_path[a[0], a[1]] != 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
 
-            return false;
+                    return false;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return false;
+                }
         }
 
         /*
@@ -273,17 +299,17 @@ namespace WpfApplication1
             {
                 location_coords[1] = 4;
             }
-            if (location_coords[0]>6)
+            if (location_coords[0]>4)
             {
-                location_coords[0] = 6;
+                location_coords[0] = 4;
             }
             else if (location_coords[0] < 0)
             {
                 location_coords[0] = 0;
             }
-            if (location_coords[1] > 4)
+            if (location_coords[1] > 6)
             {
-                location_coords[1] = 4;
+                location_coords[1] = 6;
             }
             else if (location_coords[1] < 0)
             {
@@ -381,250 +407,145 @@ namespace WpfApplication1
         /*
          * listens for drag over grid blocks, sends grid block and array index to change method
          */
-        private void selected_11(object sender, MouseEventArgs e)
+        private void selected_11(object sender, MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_11, 0, 0);
-            }
+            change(Rec_11, 0, 0);
         }
-        private void selected_12(object sender, MouseEventArgs e)
+        private void selected_12(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_12, 0, 1);
-            }
+            change(Rec_12, 0, 1);   
         }
-        private void selected_13(object sender, MouseEventArgs e)
-        {
-            if (mouseClicked == true)
-            {
-                change(Rec_13, 0, 2);
-            }
+        private void selected_13(object sender,  MouseButtonEventArgs e)
+        {            
+            change(Rec_13, 0, 2);   
         }
-        private void selected_14(object sender, MouseEventArgs e)
-        {
-            if (mouseClicked == true)
-            {
-                change(Rec_14, 0, 3);
-            }
+        private void selected_14(object sender,  MouseButtonEventArgs e)
+        {   
+            change(Rec_14, 0, 3);   
         }
-        private void selected_15(object sender, MouseEventArgs e)
-        {
-            if (mouseClicked == true)
-            {
-                change(Rec_15, 0, 4);
-            }
+        private void selected_15(object sender,  MouseButtonEventArgs e)
+        {  
+            change(Rec_15, 0, 4);   
         }
-        private void selected_16(object sender, MouseEventArgs e)
+        private void selected_16(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_16, 0, 5);
-            }
+            change(Rec_16, 0, 5);   
         }
-        private void selected_17(object sender, MouseEventArgs e)
+        private void selected_17(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_17, 0, 6);
-            }
+            change(Rec_17, 0, 6);   
         }
-        private void selected_21(object sender, MouseEventArgs e)
+        private void selected_21(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_21, 1, 0);
-            }
+            change(Rec_21, 1, 0);            
         }
-        private void selected_22(object sender, MouseEventArgs e)
+        private void selected_22(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_22, 1, 1);
-            }
+            change(Rec_22, 1, 1);   
         }
-        private void selected_23(object sender, MouseEventArgs e)
+        private void selected_23(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_23, 1, 2);
-            }
+            change(Rec_23, 1, 2);   
         }
-        private void selected_24(object sender, MouseEventArgs e)
+        private void selected_24(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_24, 1, 3);
-            }
+            change(Rec_24, 1, 3);   
         }
-        private void selected_25(object sender, MouseEventArgs e)
+        private void selected_25(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_25, 1, 4);
-            }
+            change(Rec_25, 1, 4);   
         }
-        private void selected_26(object sender, MouseEventArgs e)
+        private void selected_26(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_26, 1, 5);
-            }
+            change(Rec_26, 1, 5);   
         }
-        private void selected_27(object sender, MouseEventArgs e)
+        private void selected_27(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_27, 1, 6);
-            }
+            change(Rec_27, 1, 6);   
         }
-        private void selected_31(object sender, MouseEventArgs e)
+        private void selected_31(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_31, 2, 0);
-            }
+            change(Rec_31, 2, 0);
         }
-        private void selected_32(object sender, MouseEventArgs e)
-        {
-            if (mouseClicked == true)
-            {
-                change(Rec_32, 2, 1);
-            }
+        private void selected_32(object sender,  MouseButtonEventArgs e)
+        {   
+            change(Rec_32, 2, 1);
         }
-        private void selected_33(object sender, MouseEventArgs e)
-        {
-            if (mouseClicked == true)
-            {
-                change(Rec_33, 2, 2);
-            }
+        private void selected_33(object sender,  MouseButtonEventArgs e)
+        {            
+            change(Rec_33, 2, 2);   
         }
-        private void selected_34(object sender, MouseEventArgs e)
+        private void selected_34(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_34, 2, 3);
-            }
+            change(Rec_34, 2, 3);            
         }
-        private void selected_35(object sender, MouseEventArgs e)
+        private void selected_35(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_35, 2, 4);
-            }
+            change(Rec_35, 2, 4);            
         }
-        private void selected_36(object sender, MouseEventArgs e)
+        private void selected_36(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_36, 2, 5);
-            }
+            change(Rec_36, 2, 5);   
         }
-        private void selected_37(object sender, MouseEventArgs e)
+        private void selected_37(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_37, 2, 6);
-            }
+            change(Rec_37, 2, 6);   
         }
-        private void selected_41(object sender, MouseEventArgs e)
+        private void selected_41(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_41, 3, 0);
-            }
+            change(Rec_41, 3, 0);   
         }
-        private void selected_42(object sender, MouseEventArgs e)
+        private void selected_42(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_42, 3, 1);
-            }
+            change(Rec_42, 3, 1);   
         }
-        private void selected_43(object sender, MouseEventArgs e)
+        private void selected_43(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_43, 3, 2);
-            }
+            change(Rec_43, 3, 2);   
         }
-        private void selected_44(object sender, MouseEventArgs e)
+        private void selected_44(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_44, 3, 3);
-            }
+            change(Rec_44, 3, 3);   
         }
-        private void selected_45(object sender, MouseEventArgs e)
+        private void selected_45(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_45, 3, 4);
-            }
+            change(Rec_45, 3, 4);   
         }
-        private void selected_46(object sender, MouseEventArgs e)
+        private void selected_46(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_46, 3, 5);
-            }
+            change(Rec_46, 3, 5);   
         }
-        private void selected_47(object sender, MouseEventArgs e)
+        private void selected_47(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_47, 3, 6);
-            }
+            change(Rec_47, 3, 6);   
         }
-        private void selected_51(object sender, MouseEventArgs e)
+        private void selected_51(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_51, 4, 0);
-            }
+            change(Rec_51, 4, 0);   
         }
-        private void selected_52(object sender, MouseEventArgs e)
+        private void selected_52(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_52, 4, 1);
-            }
+            change(Rec_52, 4, 1);   
         }
-        private void selected_53(object sender, MouseEventArgs e)
+        private void selected_53(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_53, 4, 2);
-            }
+            change(Rec_53, 4, 2);   
         }
-        private void selected_54(object sender, MouseEventArgs e)
+        private void selected_54(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_54, 4, 3);
-            }
+            change(Rec_54, 4, 3);   
         }
-        private void selected_55(object sender, MouseEventArgs e)
+        private void selected_55(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_55, 4, 4);
-            }
+            change(Rec_55, 4, 4);   
         }
-        private void selected_57(object sender, MouseEventArgs e)
+        private void selected_57(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_57, 4, 6);
-            }
+            change(Rec_57, 4, 6);   
         }
-        private void selected_56(object sender, MouseEventArgs e)
+        private void selected_56(object sender,  MouseButtonEventArgs e)
         {
-            if (mouseClicked == true)
-            {
-                change(Rec_56, 4, 5);
-            }
+            change(Rec_56, 4, 5);   
         }
 
         /*
@@ -1071,5 +992,7 @@ namespace WpfApplication1
                 }
             }
         }
+
+
     }
 }
