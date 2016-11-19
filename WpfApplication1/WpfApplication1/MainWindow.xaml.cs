@@ -7,8 +7,6 @@
  *  -http://www.aforgenet.com/
  *  -http://www.aforgenet.com/framework/docs/html/d7196dc6-8176-4344-a505-e7ade35c1741.htm
  *  -http://stackoverflow.com/questions/2006055/implementing-a-webcam-on-a-wpf-app-using-aforge-net
- *  change interface so that it only highlights 1 square as it is selected. make it so that this stores the center point of the grid bock 
- *  as a 64/480 coordinate
  *  impliment color tracking colors: green (A=255, R=100, G=155, B=15), Blue (A=255, R=76, G=143, B=204)  and Red (A=255, R=121, G=177, B=255)
  *  start linklist implimentation
  */
@@ -409,143 +407,143 @@ namespace WpfApplication1
          */
         private void selected_11(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_11, 0, 0);
+            change(Rec_11, 0, 0, 48,45);
         }
         private void selected_12(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_12, 0, 1);   
+            change(Rec_12, 0, 1, 48, 137);   
         }
         private void selected_13(object sender,  MouseButtonEventArgs e)
         {            
-            change(Rec_13, 0, 2);   
+            change(Rec_13, 0, 2,48, 228);   
         }
         private void selected_14(object sender,  MouseButtonEventArgs e)
         {   
-            change(Rec_14, 0, 3);   
+            change(Rec_14, 0, 3,48, 320);   
         }
         private void selected_15(object sender,  MouseButtonEventArgs e)
         {  
-            change(Rec_15, 0, 4);   
+            change(Rec_15, 0, 4,48,411);   
         }
         private void selected_16(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_16, 0, 5);   
+            change(Rec_16, 0, 5,48, 502);   
         }
         private void selected_17(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_17, 0, 6);   
+            change(Rec_17, 0, 6,48, 594);   
         }
         private void selected_21(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_21, 1, 0);            
+            change(Rec_21, 1, 0, 144,45);            
         }
         private void selected_22(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_22, 1, 1);   
+            change(Rec_22, 1, 1, 144, 137);   
         }
         private void selected_23(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_23, 1, 2);   
+            change(Rec_23, 1, 2, 144, 228);   
         }
         private void selected_24(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_24, 1, 3);   
+            change(Rec_24, 1, 3, 144, 320);   
         }
         private void selected_25(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_25, 1, 4);   
+            change(Rec_25, 1, 4,144,411);   
         }
         private void selected_26(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_26, 1, 5);   
+            change(Rec_26, 1, 5, 144, 502);   
         }
         private void selected_27(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_27, 1, 6);   
+            change(Rec_27, 1, 6,144,594);   
         }
         private void selected_31(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_31, 2, 0);
+            change(Rec_31, 2, 0, 240,45);
         }
         private void selected_32(object sender,  MouseButtonEventArgs e)
-        {   
-            change(Rec_32, 2, 1);
+        {
+            change(Rec_32, 2, 1, 240, 144);
         }
         private void selected_33(object sender,  MouseButtonEventArgs e)
-        {            
-            change(Rec_33, 2, 2);   
+        {
+            change(Rec_33, 2, 2, 240, 228);   
         }
         private void selected_34(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_34, 2, 3);            
+            change(Rec_34, 2, 3, 240, 320);            
         }
         private void selected_35(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_35, 2, 4);            
+            change(Rec_35, 2, 4, 240, 411);            
         }
         private void selected_36(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_36, 2, 5);   
+            change(Rec_36, 2, 5, 240, 502);   
         }
         private void selected_37(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_37, 2, 6);   
+            change(Rec_37, 2, 6, 240, 594);   
         }
         private void selected_41(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_41, 3, 0);   
+            change(Rec_41, 3, 0,336,45);   
         }
         private void selected_42(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_42, 3, 1);   
+            change(Rec_42, 3, 1,336,137);   
         }
         private void selected_43(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_43, 3, 2);   
+            change(Rec_43, 3, 2,336, 228);   
         }
         private void selected_44(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_44, 3, 3);   
+            change(Rec_44, 3, 3, 336, 320);   
         }
         private void selected_45(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_45, 3, 4);   
+            change(Rec_45, 3, 4, 336, 411);   
         }
         private void selected_46(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_46, 3, 5);   
+            change(Rec_46, 3, 5, 336, 502);   
         }
         private void selected_47(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_47, 3, 6);   
+            change(Rec_47, 3, 6, 336, 594);   
         }
         private void selected_51(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_51, 4, 0);   
+            change(Rec_51, 4, 0, 432, 45);   
         }
         private void selected_52(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_52, 4, 1);   
+            change(Rec_52, 4, 1,432,137);   
         }
         private void selected_53(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_53, 4, 2);   
+            change(Rec_53, 4, 2, 432, 228);   
         }
         private void selected_54(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_54, 4, 3);   
+            change(Rec_54, 4, 3, 432, 320);   
         }
         private void selected_55(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_55, 4, 4);   
+            change(Rec_55, 4, 4, 432, 411);   
         }
         private void selected_57(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_57, 4, 6);   
+            change(Rec_57, 4, 6, 432, 502);   
         }
         private void selected_56(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_56, 4, 5);   
+            change(Rec_56, 4, 5, 432, 594);   
         }
 
         /*
@@ -634,7 +632,7 @@ namespace WpfApplication1
             }
         }
 
-        public void change(System.Windows.Shapes.Rectangle Rec, int x, int y)
+        public void change(System.Windows.Shapes.Rectangle Rec, int x, int y, int midX, int midY)
         {
             if (roomba1_pressed == true)
             {
