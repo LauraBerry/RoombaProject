@@ -1,0 +1,57 @@
+﻿<Window x:Class="WpfApplication1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525" MouseDown="mouse_clicked" MouseUp="mouseUnclicked">
+
+    <Grid>
+
+        <Button x:Name="Roomba1" Content="Din" HorizontalAlignment="Left" Margin="411,44,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FFA20D0D" Click="Din_clicked"/>
+        <Button x:Name="Roomba2" Content="Farore" HorizontalAlignment="Left" Margin="411,78,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF0A11A4" Click="Farore_clicked"/>
+        <Button x:Name="Roomba3" Content="Nayru" HorizontalAlignment="Left" Margin="411,112,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF118006" Click="Nayru_clicked"/>
+
+        <Button Content="Pause" HorizontalAlignment="Left" Margin="386,179,0,0" VerticalAlignment="Top" Width="58" Height="49"/>
+        <Button x:Name="clear_button" Content="clear" HorizontalAlignment="Left" Margin="449,179,0,0" VerticalAlignment="Top" Width="58" Height="49" Click="clear_board"/>
+
+        <Button Content="Start" HorizontalAlignment="Left" Margin="411,233,0,0" VerticalAlignment="Top" Width="58" Height="49" Click="start_clicked"/>
+
+        <Canvas HorizontalAlignment="Left" Height="217" Margin="32,41,0,0" VerticalAlignment="Top" Width="308" Opacity="0.4">
+            <Image x:Name="camera_input" HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="308" Stretch="Fill"/>
+            <Rectangle x:Name="Rec_11" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44"  Opacity="0.4" MouseLeftButtonDown="selected_11"/>
+            <Rectangle x:Name="Rec_12" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="44" MouseLeftButtonDown="selected_12" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_13" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="87" MouseLeftButtonDown="selected_13" Opacity="0.4"  />
+            <Rectangle x:Name="Rec_14" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="131" MouseLeftButtonDown="selected_14" Opacity="0.4" />
+            <Rectangle x:Name="Rec_15" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="175" MouseLeftButtonDown="selected_15" Opacity="0.4" />
+            <Rectangle x:Name="Rec_16" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="219" MouseLeftButtonDown="selected_16" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_17" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="263" MouseLeftButtonDown="selected_17" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_21" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Top="44" MouseLeftButtonDown="selected_21" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_22" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="44" Canvas.Top="44" MouseLeftButtonDown="selected_22" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_23" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="87" Canvas.Top="44" MouseLeftButtonDown="selected_23" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_24" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="131" Canvas.Top="44" MouseLeftButtonDown="selected_24" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_25" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="175" Canvas.Top="44" MouseLeftButtonDown="selected_25" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_26" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="219" Canvas.Top="44" MouseLeftButtonDown="selected_26" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_27" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="263" Canvas.Top="44" MouseLeftButtonDown="selected_27" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_31" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Top="88" MouseLeftButtonDown="selected_31" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_32" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="44" Canvas.Top="88" MouseLeftButtonDown="selected_32" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_33" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="87" Canvas.Top="88" MouseLeftButtonDown="selected_33" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_34" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="131" Canvas.Top="88" MouseLeftButtonDown="selected_34" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_35" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="175" Canvas.Top="88" MouseLeftButtonDown="selected_35" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_36" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="219" Canvas.Top="88" MouseLeftButtonDown="selected_36" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_37" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="263" Canvas.Top="88" MouseLeftButtonDown="selected_37" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_41" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Top="132" MouseLeftButtonDown="selected_41" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_42" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="44" Canvas.Top="132" MouseLeftButtonDown="selected_42" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_43" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="87" Canvas.Top="132" MouseLeftButtonDown="selected_43" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_44" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="131" Canvas.Top="132" MouseLeftButtonDown="selected_44" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_45" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="175" Canvas.Top="132" MouseLeftButtonDown="selected_45" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_46" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="219" Canvas.Top="132" MouseLeftButtonDown="selected_46" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_47" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="263" Canvas.Top="132" MouseLeftButtonDown="selected_47" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_51" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Top="176" MouseLeftButtonDown="selected_51" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_52" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="44" Canvas.Top="176" MouseLeftButtonDown="selected_52" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_53" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="87" Canvas.Top="176" MouseLeftButtonDown="selected_53" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_54" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="131" Canvas.Top="176" MouseLeftButtonDown="selected_54" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_55" Fill="#FFF4F4F5" Height="44" Stroke="Black" Width="44" Canvas.Left="175" Canvas.Top="176" MouseLeftButtonDown="selected_55" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_57" Fill="#FFF4F4F4" Height="44" Stroke="Black" Width="44" Canvas.Left="263" Canvas.Top="176" MouseLeftButtonDown="selected_57" Opacity="0.4"/>
+            <Rectangle x:Name="Rec_56" Fill="#FFF4F4F4" Height="44" Stroke="Black" Width="44" Canvas.Left="219" Canvas.Top="176" MouseLeftButtonDown="selected_56" Opacity="0.4"/>
+        </Canvas>
+
+    </Grid>
+</Window>
