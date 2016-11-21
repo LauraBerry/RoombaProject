@@ -7,6 +7,8 @@
  *  -http://www.aforgenet.com/
  *  -http://www.aforgenet.com/framework/docs/html/d7196dc6-8176-4344-a505-e7ade35c1741.htm
  *  -http://stackoverflow.com/questions/2006055/implementing-a-webcam-on-a-wpf-app-using-aforge-net
+ *  change interface so that it only highlights 1 square as it is selected. make it so that this stores the center point of the grid bock 
+ *  as a 64/480 coordinate
  *  impliment color tracking colors: green (A=255, R=100, G=155, B=15), Blue (A=255, R=76, G=143, B=204)  and Red (A=255, R=121, G=177, B=255)
  *  start linklist implimentation
  */
@@ -35,7 +37,7 @@ namespace WpfApplication1
 {
     public partial class MainWindow : Window
     {
-        bool roomba1_pressed,  roomba2_pressed, roomba3_pressed, mouseClicked;
+        bool roomba1_pressed,  roomba2_pressed, roomba3_pressed;
         int currRed, currBlue,currGreen;
         arrayClass arr = new arrayClass();
         AForge.Video.DirectShow.FilterInfoCollection videoDevices;
@@ -48,7 +50,7 @@ namespace WpfApplication1
             coords[0] = coords[1] = 0;
             coords2 = new int[2];
             coords2[0] = coords2[1] = 0;
-            roomba1_pressed = roomba2_pressed = roomba3_pressed= mouseClicked = false;
+            roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
             currBlue = currGreen = currRed = 1;
             arr.init();
             InitializeComponent();
@@ -157,8 +159,9 @@ namespace WpfApplication1
                         int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
                         int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
                         System.Drawing.Color a = bitmap.GetPixel(x1, y1);
-                        Console.Write("color of pixel");
-                        Console.WriteLine(a);
+                        System.Drawing.Color green_color = System.Drawing.Color.FromArgb(255, 100, 155, 15);
+                        System.Drawing.Color blue_color = System.Drawing.Color.FromArgb(255, 76, 143, 204);
+                        System.Drawing.Color red_color = System.Drawing.Color.FromArgb(255, 121, 177, 255);
                         /*
                          * alternates which coordinates the x and y will be stored in to allow for vector calculations
                          */
@@ -317,17 +320,7 @@ namespace WpfApplication1
             return location_coords;
         }
 
-        /*
-         * checks if the mouse left button is clicked (used to allow for drag listeners)
-         */
-        private void mouse_clicked(object sender, MouseButtonEventArgs e)
-        {
-            mouseClicked = true;
-        }
-        private void mouseUnclicked(object sender, MouseButtonEventArgs e)
-        {
-            mouseClicked = false;
-        }
+
         /*
          * listens for which roomba is selected, ensures that only one is selected at a time
          */
@@ -543,7 +536,7 @@ namespace WpfApplication1
         }
         private void selected_56(object sender,  MouseButtonEventArgs e)
         {
-            change(Rec_56, 4, 5, 432, 594);   
+            change(Rec_56, 4, 5,432,137);   
         }
 
         /*
