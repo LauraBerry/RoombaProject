@@ -174,80 +174,19 @@ namespace WpfApplication1
                             coords[0] = x1;
                             coords[1] = y1;
                             location = actual_location(coords);
-                            /*bool on_path = check_if_on_path(location, "red");
-                            Console.Write("on the path? ");
-                            Console.WriteLine(on_path);*/
                         }
                         else
                         {
                             coords2[0] = x1;
                             coords2[1] = y1;
                             location = actual_location(coords2);
-                            /*bool on_path = check_if_on_path(location, "red");
-                            Console.Write("on the path? ");
-                            Console.WriteLine(on_path);*/
                         }
                     }
                     g.Dispose();
                 }
             }
         }
-
-        /*
-         * checks to see if the roomba is on the path it is supposed to be
-         * returns true if so and false if not.
-         * 
-         * TODO: this may need to be changed so that it takes in a int and 
-         * checks if it is the same as an int so that we can check that the
-         * roombas are following the path correctly (ie. not backwards)
-         * 
-         */
-        public bool check_if_on_path(int[] a, string b)
-        {
-            try
-            {
-                if (String.ReferenceEquals("red", b))
-                {
-                    if (arr.red_path[a[0], a[1]] != 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else if (String.ReferenceEquals("blue", b))
-                {
-                    if (arr.blue_path[a[0], a[1]] != 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else if (String.ReferenceEquals("green", b))
-                {
-                    if (arr.green_path[a[0], a[1]] != 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-
-                return false;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-        }
+        
 
         /*
          * caluclates the coordinates of the roomba on a 5X7 grid 
@@ -603,7 +542,7 @@ namespace WpfApplication1
             }
             else if (roomba3_pressed == true)
             {
-                if (red_list_started == false)
+                if (green_list_started == false)
                 {
                     greenHead = new pathNode();
                     greenHead.x_coord=x;
