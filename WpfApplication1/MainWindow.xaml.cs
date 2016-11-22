@@ -282,7 +282,6 @@ namespace WpfApplication1
             }
             else
             {
-
                 Roomba1.Width = 96;
                 Roomba1.Margin = new Thickness(411, 44, 0, 0);
                 roomba1_pressed = false;
@@ -647,26 +646,26 @@ namespace WpfApplication1
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
-                currRed = remove_path(arr.red_path, x, y, currRed);  
-
+                remove_path(arr.red_path, x, y, currRed);  
+                
             }
             else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(11, 162, 94));
                 arr.board[x, y] = 6;
-                currRed = remove_path(arr.red_path, x, y, currRed);
+                remove_path(arr.red_path, x, y, currRed);
             }
             else if (arr.board[x, y] == 4)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                 arr.board[x, y] = 2;
-                currRed = remove_path(arr.red_path, x, y, currRed);
+                remove_path(arr.red_path, x, y, currRed);
             }
             else if (arr.board[x, y] == 5)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                 arr.board[x, y] = 3;
-                currRed = remove_path(arr.red_path, x, y, currRed);
+                remove_path(arr.red_path, x, y, currRed);
             }
         }
 
@@ -677,25 +676,25 @@ namespace WpfApplication1
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
-                currBlue = remove_path(arr.blue_path, x, y, currBlue);
+                remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(188, 226, 14));
                 arr.board[x, y] = 5;
-                currBlue = remove_path(arr.blue_path, x, y, currBlue);
+                remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 4)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                 arr.board[x, y] = 1;
-                currBlue = remove_path(arr.blue_path, x, y, currBlue);
+                remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 6)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                 arr.board[x, y] = 3;
-                currBlue = remove_path(arr.blue_path, x, y, currBlue);
+                remove_path(arr.blue_path, x, y, currBlue);
             }
         }
         public void remove_green(int x, int y,int midX, int midY, System.Windows.Shapes.Rectangle Rec)
@@ -705,31 +704,30 @@ namespace WpfApplication1
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
-                currGreen = remove_path(arr.green_path, x, y, currGreen);
+                remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 21, 226));
                 arr.board[x, y] = 4;
-                currGreen = remove_path(arr.green_path, x, y, currGreen);
+                remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 5)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                 arr.board[x, y] = 1;
-                currGreen = remove_path(arr.green_path, x, y, currGreen);
+                remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 6)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                 arr.board[x, y] = 2;
-                currGreen = remove_path(arr.green_path, x, y, currGreen);
+                remove_path(arr.green_path, x, y, currGreen);
             }
         }
 
         public void change(System.Windows.Shapes.Rectangle Rec, int x, int y, int midX, int midY)
-        {
-            
+        {          
             if (roomba1_pressed == true)
             {
                 if (arr.board[x, y] == 2)
@@ -761,7 +759,6 @@ namespace WpfApplication1
                     remove_red(x, y, midX, midY, Rec);
                 }
             }
-
             else if (roomba2_pressed == true)
             {
                 if (arr.board[x, y] == 1)
@@ -825,20 +822,10 @@ namespace WpfApplication1
                 }
             }
         }
-        public int remove_path(int[,] a, int x, int y, int val)
+        public void remove_path(int[,] a, int x, int y, int val)
         {
             a[x, y] = 0;
-            val--;
-            return val;
         }
-        public int add_path(int[,] a, int x, int y, int val)
-        {
-            a[x, y] = val;
-            val++;
-            return val;
-        }
-
-
 
         /*
          * sets a block back to a blank state
@@ -1038,54 +1025,6 @@ namespace WpfApplication1
             Console.Write(", ");
             Console.WriteLine(vector[0]);
             if (printboards == true)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    if (i == 0)
-                    {
-                        Console.Write("currRed: ");
-                        Console.WriteLine(currRed);
-                        Console.WriteLine("Red Roomba: ");
-                        for (int j = 0; j < 5; j++)
-                        {
-                            for (int k = 0; k < 7; k++)
-                            {
-                                Console.Write(arr.red_path[j, k]);
-                            }
-                            Console.WriteLine("");
-                        }
-                    }
-                    else if (i == 1)
-                    {
-                        Console.Write("currblue: ");
-                        Console.WriteLine(currBlue);
-                        Console.WriteLine("Blue Roomba: ");
-                        for (int j = 0; j < 5; j++)
-                        {
-                            for (int k = 0; k < 7; k++)
-                            {
-                                Console.Write(arr.blue_path[j, k]);
-                            }
-                            Console.WriteLine("");
-                        }
-                    }
-                    else if (i == 2)
-                    {
-                        Console.Write("currGreen: ");
-                        Console.WriteLine(currGreen);
-                        Console.WriteLine("Green Roomba: ");
-                        for (int j = 0; j < 5; j++)
-                        {
-                            for (int k = 0; k < 7; k++)
-                            {
-                                Console.Write(arr.green_path[j, k]);
-                            }
-                            Console.WriteLine("");
-                        }
-                    }
-                }
-            }
-            else
             {
                 try
                 {
