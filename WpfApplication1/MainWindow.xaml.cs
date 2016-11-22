@@ -37,15 +37,22 @@ namespace WpfApplication1
 {
     public partial class MainWindow : Window
     {
-        bool roomba1_pressed,  roomba2_pressed, roomba3_pressed;
-        int currRed, currBlue,currGreen;
+        bool roomba1_pressed, roomba2_pressed, roomba3_pressed;
+        int currRed, currBlue, currGreen;
         arrayClass arr = new arrayClass();
         AForge.Video.DirectShow.FilterInfoCollection videoDevices;
         AForge.Video.DirectShow.VideoCaptureDevice vidsource1, videosource2;
         int[] coords, coords2;
         int firstOrSecond = 0;
+        pathNode currNode_red, currNode_blue, currNode_green;
+        bool red_list_started, blue_list_started, green_list_started;
+
         public MainWindow()
         {
+            currNode_red = new pathNode();
+            currNode_blue = new pathNode();
+            currNode_green = new pathNode();
+            red_list_started = blue_list_started = green_list_started = false;
             coords = new int[2];
             coords[0] = coords[1] = 0;
             coords2 = new int[2];
@@ -59,17 +66,17 @@ namespace WpfApplication1
              * start of video feed code
              */
             //find video device
-            videoDevices= new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
+            videoDevices = new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
             // create video source
-             vidsource1= new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString);
-             videosource2 = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString );
+            vidsource1 = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString);
+            videosource2 = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices[0].MonikerString);
             // enumerate video devices
-            AForge.Video.DirectShow.FilterInfoCollection videoDevices2= new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
+            AForge.Video.DirectShow.FilterInfoCollection videoDevices2 = new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
             // create video source
             AForge.Video.DirectShow.VideoCaptureDevice videoSource = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices2[0].MonikerString);
             // start the video source
             videoSource.Start();
-            int counter=0;
+            int counter = 0;
             while (true)
             {
                 // set NewFrame event handler
@@ -85,7 +92,7 @@ namespace WpfApplication1
                 // wait until we have two acquired images
                 /*camera1Acquired.WaitOne();
                 camera2Acquired.WaitOne();*/
-                if(counter>=2)
+                if (counter >= 2)
                 {
                     int[] vector;
                     vector = new int[2];
@@ -99,9 +106,9 @@ namespace WpfApplication1
             // signal to stop when you no longer need capturing
             //videoSource.SignalToStop( );
         }
-        
 
-        private void video_NewFrame( object sender, NewFrameEventArgs eventArgs )
+
+        private void video_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
             try
             {
@@ -115,7 +122,7 @@ namespace WpfApplication1
                 bitmap1.EndInit();
 
                 bitmap1.Freeze();
-                Dispatcher.BeginInvoke(new System.Threading.ThreadStart(delegate{camera_input.Source = bitmap1;})); //sets image source to be the bitmap image
+                Dispatcher.BeginInvoke(new System.Threading.ThreadStart(delegate { camera_input.Source = bitmap1; })); //sets image source to be the bitmap image
             }
             catch (Exception ex)
             {
@@ -125,8 +132,8 @@ namespace WpfApplication1
             // create filter
             AForge.Imaging.Filters.ColorFiltering colorFilter = new AForge.Imaging.Filters.ColorFiltering();
             // configure the filter
-            colorFilter.Red   = new AForge.IntRange( 0, 100 );
-            colorFilter.Green = new AForge.IntRange( 0, 200 );
+            colorFilter.Red = new AForge.IntRange(0, 100);
+            colorFilter.Green = new AForge.IntRange(0, 200);
             colorFilter.Blue = new AForge.IntRange(150, 255);
 
             System.Drawing.Bitmap filteredImage = colorFilter.Apply(bitmap);
@@ -147,7 +154,7 @@ namespace WpfApplication1
             // draw rectangle around the biggest blob           //todo maybe alter this if it is not seeing the roomba properly
             if (rects.Length > 0)
             {
-                for (int i=0;i<rects.Length;i++)
+                for (int i = 0; i < rects.Length; i++)
                 {
                     System.Drawing.Rectangle objectRect = rects[i];
                     Graphics g = Graphics.FromImage(bitmap);
@@ -165,7 +172,7 @@ namespace WpfApplication1
                         /*
                          * alternates which coordinates the x and y will be stored in to allow for vector calculations
                          */
-                        if (firstOrSecond == 0) 
+                        if (firstOrSecond == 0)
                         {
                             coords[0] = x1;
                             coords[1] = y1;
@@ -201,48 +208,48 @@ namespace WpfApplication1
         public bool check_if_on_path(int[] a, string b)
         {
             try
+            {
+                if (String.ReferenceEquals("red", b))
                 {
-                    if (String.ReferenceEquals("red", b))
+                    if (arr.red_path[a[0], a[1]] != 0)
                     {
-                        if (arr.red_path[a[0], a[1]] != 0)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
-                    else if (String.ReferenceEquals("blue", b))
+                    else
                     {
-                        if (arr.blue_path[a[0], a[1]] != 0)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return false;
                     }
-                    else if (String.ReferenceEquals("green", b))
+                }
+                else if (String.ReferenceEquals("blue", b))
+                {
+                    if (arr.blue_path[a[0], a[1]] != 0)
                     {
-                        if (arr.green_path[a[0], a[1]] != 0)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else if (String.ReferenceEquals("green", b))
+                {
+                    if (arr.green_path[a[0], a[1]] != 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
 
-                    return false;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    return false;
-                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
         /*
@@ -300,7 +307,7 @@ namespace WpfApplication1
             {
                 location_coords[1] = 4;
             }
-            if (location_coords[0]>4)
+            if (location_coords[0] > 4)
             {
                 location_coords[0] = 4;
             }
@@ -320,17 +327,7 @@ namespace WpfApplication1
             return location_coords;
         }
 
-        /*
-         * checks if the mouse left button is clicked (used to allow for drag listeners)
-         */
-        private void mouse_clicked(object sender, MouseButtonEventArgs e)
-        {
-            mouseClicked = true;
-        }
-        private void mouseUnclicked(object sender, MouseButtonEventArgs e)
-        {
-            mouseClicked = false;
-        }
+
         /*
          * listens for which roomba is selected, ensures that only one is selected at a time
          */
@@ -410,145 +407,217 @@ namespace WpfApplication1
          */
         private void selected_11(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_11, 0, 0, 48,45);
+            change(Rec_11, 0, 0, 48, 45);
         }
-        private void selected_12(object sender,  MouseButtonEventArgs e)
+        private void selected_12(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_12, 0, 1, 48, 137);   
+            change(Rec_12, 0, 1, 48, 137);
         }
-        private void selected_13(object sender,  MouseButtonEventArgs e)
-        {            
-            change(Rec_13, 0, 2,48, 228);   
-        }
-        private void selected_14(object sender,  MouseButtonEventArgs e)
-        {   
-            change(Rec_14, 0, 3,48, 320);   
-        }
-        private void selected_15(object sender,  MouseButtonEventArgs e)
-        {  
-            change(Rec_15, 0, 4,48,411);   
-        }
-        private void selected_16(object sender,  MouseButtonEventArgs e)
+        private void selected_13(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_16, 0, 5,48, 502);   
+            change(Rec_13, 0, 2, 48, 228);
         }
-        private void selected_17(object sender,  MouseButtonEventArgs e)
+        private void selected_14(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_17, 0, 6,48, 594);   
+            change(Rec_14, 0, 3, 48, 320);
         }
-        private void selected_21(object sender,  MouseButtonEventArgs e)
+        private void selected_15(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_21, 1, 0, 144,45);            
+            change(Rec_15, 0, 4, 48, 411);
         }
-        private void selected_22(object sender,  MouseButtonEventArgs e)
+        private void selected_16(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_22, 1, 1, 144, 137);   
+            change(Rec_16, 0, 5, 48, 502);
         }
-        private void selected_23(object sender,  MouseButtonEventArgs e)
+        private void selected_17(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_23, 1, 2, 144, 228);   
+            change(Rec_17, 0, 6, 48, 594);
         }
-        private void selected_24(object sender,  MouseButtonEventArgs e)
+        private void selected_21(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_24, 1, 3, 144, 320);   
+            change(Rec_21, 1, 0, 144, 45);
         }
-        private void selected_25(object sender,  MouseButtonEventArgs e)
+        private void selected_22(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_25, 1, 4,144,411);   
+            change(Rec_22, 1, 1, 144, 137);
         }
-        private void selected_26(object sender,  MouseButtonEventArgs e)
+        private void selected_23(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_26, 1, 5, 144, 502);   
+            change(Rec_23, 1, 2, 144, 228);
         }
-        private void selected_27(object sender,  MouseButtonEventArgs e)
+        private void selected_24(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_27, 1, 6,144,594);   
+            change(Rec_24, 1, 3, 144, 320);
         }
-        private void selected_31(object sender,  MouseButtonEventArgs e)
+        private void selected_25(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_31, 2, 0, 240,45);
+            change(Rec_25, 1, 4, 144, 411);
         }
-        private void selected_32(object sender,  MouseButtonEventArgs e)
+        private void selected_26(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_26, 1, 5, 144, 502);
+        }
+        private void selected_27(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_27, 1, 6, 144, 594);
+        }
+        private void selected_31(object sender, MouseButtonEventArgs e)
+        {
+            change(Rec_31, 2, 0, 240, 45);
+        }
+        private void selected_32(object sender, MouseButtonEventArgs e)
         {
             change(Rec_32, 2, 1, 240, 144);
         }
-        private void selected_33(object sender,  MouseButtonEventArgs e)
+        private void selected_33(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_33, 2, 2, 240, 228);   
+            change(Rec_33, 2, 2, 240, 228);
         }
-        private void selected_34(object sender,  MouseButtonEventArgs e)
+        private void selected_34(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_34, 2, 3, 240, 320);            
+            change(Rec_34, 2, 3, 240, 320);
         }
-        private void selected_35(object sender,  MouseButtonEventArgs e)
+        private void selected_35(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_35, 2, 4, 240, 411);            
+            change(Rec_35, 2, 4, 240, 411);
         }
-        private void selected_36(object sender,  MouseButtonEventArgs e)
+        private void selected_36(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_36, 2, 5, 240, 502);   
+            change(Rec_36, 2, 5, 240, 502);
         }
-        private void selected_37(object sender,  MouseButtonEventArgs e)
+        private void selected_37(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_37, 2, 6, 240, 594);   
+            change(Rec_37, 2, 6, 240, 594);
         }
-        private void selected_41(object sender,  MouseButtonEventArgs e)
+        private void selected_41(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_41, 3, 0,336,45);   
+            change(Rec_41, 3, 0, 336, 45);
         }
-        private void selected_42(object sender,  MouseButtonEventArgs e)
+        private void selected_42(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_42, 3, 1,336,137);   
+            change(Rec_42, 3, 1, 336, 137);
         }
-        private void selected_43(object sender,  MouseButtonEventArgs e)
+        private void selected_43(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_43, 3, 2,336, 228);   
+            change(Rec_43, 3, 2, 336, 228);
         }
-        private void selected_44(object sender,  MouseButtonEventArgs e)
+        private void selected_44(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_44, 3, 3, 336, 320);   
+            change(Rec_44, 3, 3, 336, 320);
         }
-        private void selected_45(object sender,  MouseButtonEventArgs e)
+        private void selected_45(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_45, 3, 4, 336, 411);   
+            change(Rec_45, 3, 4, 336, 411);
         }
-        private void selected_46(object sender,  MouseButtonEventArgs e)
+        private void selected_46(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_46, 3, 5, 336, 502);   
+            change(Rec_46, 3, 5, 336, 502);
         }
-        private void selected_47(object sender,  MouseButtonEventArgs e)
+        private void selected_47(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_47, 3, 6, 336, 594);   
+            change(Rec_47, 3, 6, 336, 594);
         }
-        private void selected_51(object sender,  MouseButtonEventArgs e)
+        private void selected_51(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_51, 4, 0, 432, 45);   
+            change(Rec_51, 4, 0, 432, 45);
         }
-        private void selected_52(object sender,  MouseButtonEventArgs e)
+        private void selected_52(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_52, 4, 1,432,137);   
+            change(Rec_52, 4, 1, 432, 137);
         }
-        private void selected_53(object sender,  MouseButtonEventArgs e)
+        private void selected_53(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_53, 4, 2, 432, 228);   
+            change(Rec_53, 4, 2, 432, 228);
         }
-        private void selected_54(object sender,  MouseButtonEventArgs e)
+        private void selected_54(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_54, 4, 3, 432, 320);   
+            change(Rec_54, 4, 3, 432, 320);
         }
-        private void selected_55(object sender,  MouseButtonEventArgs e)
+        private void selected_55(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_55, 4, 4, 432, 411);   
+            change(Rec_55, 4, 4, 432, 411);
         }
-        private void selected_57(object sender,  MouseButtonEventArgs e)
+        private void selected_57(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_57, 4, 6, 432, 502);   
+            change(Rec_57, 4, 6, 432, 502);
         }
-        private void selected_56(object sender,  MouseButtonEventArgs e)
+        private void selected_56(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_56, 4, 5,432,137);   
+            change(Rec_56, 4, 5, 432, 137);
         }
 
+        public void add_to_linkedList(int x, int y)
+        {
+            if (roomba1_pressed == true)
+            {
+                if (red_list_started == false)
+                {
+                    currNode_red.Head = currNode_red;
+                    currNode_red.Tail = currNode_red;
+                    red_list_started = true;
+                }
+                else
+                {
+                    pathNode newNode = new pathNode();
+                    currNode_red.Next = newNode;
+                    currNode_red.Tail = newNode;
+                    newNode.Prev = currNode_red;
+                    newNode.Head = currNode_red.Head;
+                    currNode_red = newNode;
+                }
+                currNode_red.x_coord = x;
+                currNode_red.y_coord = y;
+                currNode_red.sequence = currRed;
+                //currRed++;
+                currNode_red.color = "red";
+            }
+            else if (roomba2_pressed == true)
+            {
+                if (blue_list_started==false)
+                {
+                    currNode_blue.Head = currNode_blue;
+                    currNode_blue.Tail = currNode_blue;
+                    blue_list_started = true;
+                }
+                else
+                {
+                    pathNode newNode = new pathNode();
+                    currNode_blue.Next = newNode;
+                    currNode_blue.Tail = newNode;
+                    newNode.Prev = currNode_blue;
+                    newNode.Head = currNode_blue.Head;
+                    currNode_blue = newNode;
+                }
+                currNode_blue.x_coord = y;
+                currNode_blue.y_coord = x;
+                currNode_blue.sequence = currBlue;
+                //currBlue++;
+                currNode_blue.color = "blue";
+            }
+            else if (roomba3_pressed == true)
+            {
+                if (green_list_started==false)
+                {
+                    currNode_green.Head = currNode_green;
+                    currNode_green.Tail = currNode_green;
+                    green_list_started = true;
+                }
+                else
+                {
+                    pathNode newNode = new pathNode();
+                    currNode_green.Next = newNode;
+                    currNode_green.Tail = newNode;
+                    newNode.Prev = currNode_green;
+                    newNode.Head = currNode_green.Head;
+                    currNode_green = newNode;
+                }
+                currNode_green.x_coord = y;
+                currNode_green.y_coord = x;
+                currNode_green.sequence = currGreen;
+                //currGreen++;
+                currNode_green.color = "green";
+            }
+        }
         /*
          * changes the color of the System.Windows.Shapes.Rectangle based on which roomba is selected
          */
@@ -637,6 +706,7 @@ namespace WpfApplication1
 
         public void change(System.Windows.Shapes.Rectangle Rec, int x, int y, int midX, int midY)
         {
+            add_to_linkedList(midX, midY);
             if (roomba1_pressed == true)
             {
                 if (arr.board[x, y] == 2)
@@ -944,7 +1014,7 @@ namespace WpfApplication1
             Console.Write(vector[0]);
             Console.Write(", ");
             Console.WriteLine(vector[0]);
-            if(printboards==true)
+            if (printboards == true)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -992,8 +1062,74 @@ namespace WpfApplication1
                     }
                 }
             }
+            else
+            {
+                try
+                {
+                    pathNode current = new pathNode();
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (i == 0)
+                        {
+                            current = currNode_red.Head;
+                            Console.Write("currRed: ");
+                            Console.WriteLine(currRed);
+                            Console.WriteLine("Red Roomba: ");
+                            while (current != currNode_red.Tail)
+                            {
+                                Console.Write("(");
+                                Console.Write(current.x_coord);
+                                Console.Write(", ");
+                                Console.Write(current.y_coord);
+                                Console.Write(") ");
+                                current = currNode_red.Next;
+                            }
+                            Console.WriteLine("");
+
+                        }
+                        else if (i == 1)
+                        {
+                            current = currNode_blue.Head;
+                            Console.Write("currblue: ");
+                            Console.WriteLine(currBlue);
+                            Console.WriteLine("blue Roomba: ");
+                            while (current != currNode_blue.Tail)
+                            {
+                                Console.Write("(");
+                                Console.Write(current.x_coord);
+                                Console.Write(", ");
+                                Console.Write(current.y_coord);
+                                Console.Write(") ");
+                                current = currNode_blue.Next;
+                            }
+                            Console.WriteLine("");
+                        }
+                        else if (i == 2)
+                        {
+                            current = currNode_green.Head;
+                            Console.Write("currgreen: ");
+                            Console.WriteLine(currGreen);
+                            Console.WriteLine("green Roomba: ");
+                            while (current != currNode_green.Tail)
+                            {
+                                Console.Write("(");
+                                Console.Write(current.x_coord);
+                                Console.Write(", ");
+                                Console.Write(current.y_coord);
+                                Console.Write(") ");
+                                current = currNode_green.Next;
+                            }
+                            Console.WriteLine("");
+                        }
+                    }
+                }
+                catch (Exception exc)
+                {
+                    Console.WriteLine(exc);
+                }
+            }
+
+
         }
-
-
     }
 }
