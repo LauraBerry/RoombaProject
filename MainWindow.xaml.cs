@@ -46,6 +46,7 @@ namespace WpfApplication1
         int firstOrSecond = 0;
         bool red_list_started, blue_list_started, green_list_started;
         pathNode redHead, blueHead, greenHead;
+        logic aname;
 
         public MainWindow()
         {
@@ -170,9 +171,6 @@ namespace WpfApplication1
                         int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
                         int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
                         System.Drawing.Color a = bitmap.GetPixel(x1, y1);
-                        System.Drawing.Color green_color = System.Drawing.Color.FromArgb(255, 100, 155, 15);
-                        System.Drawing.Color blue_color = System.Drawing.Color.FromArgb(255, 76, 143, 204);
-                        System.Drawing.Color red_color = System.Drawing.Color.FromArgb(255, 121, 177, 255);
                         /*
                          * alternates which coordinates the x and y will be stored in to allow for vector calculations
                          */
@@ -193,7 +191,81 @@ namespace WpfApplication1
                 }
             }
         }
-        
+
+
+        public void write_to_struct(System.Drawing.Color a, int x1, int y1)
+        {
+            System.Drawing.Color green_color = System.Drawing.Color.FromArgb(255, 100, 155, 15);
+            System.Drawing.Color blue_color = System.Drawing.Color.FromArgb(255, 76, 143, 204);
+            System.Drawing.Color red_color = System.Drawing.Color.FromArgb(255, 121, 177, 255);
+            if (a == green_color)
+            {
+                if (aname.green1.xCoord == null)
+                {
+                    aname.green1.xCoord = x1;
+                    aname.green1.yCoord = y1;
+                    aname.green1.color = a;
+                }
+                else if (aname.green2.xCoord == null)
+                {
+                    aname.green2.xCoord = x1;
+                    aname.green2.yCoord = y1;
+                    aname.green2.color = a;
+                }
+                else if (aname.green1.xCoord == null)
+                {
+                    aname.green3.xCoord = x1;
+                    aname.green3.yCoord = y1;
+                    aname.green3.color = a;
+                }      
+            }
+            else if (a== blue_color)
+            {
+                if (aname.blue1.xCoord == null)
+                {
+                    aname.blue1.xCoord = x1;
+                    aname.blue1.yCoord = y1;
+                    aname.blue1.color = a;
+                }
+                else if (aname.blue2.xCoord == null)
+                {
+                    aname.blue2.xCoord = x1;
+                    aname.blue2.yCoord = y1;
+                    aname.blue2.color = a;
+                }
+                else if (aname.blue1.xCoord == null)
+                {
+                    aname.blue3.xCoord = x1;
+                    aname.blue3.yCoord = y1;
+                    aname.blue3.color = a;
+                }
+            }
+            else if (a==red_color)
+            {
+                if (aname.red1.xCoord == null)
+                {
+                    aname.red1.xCoord = x1;
+                    aname.red1.yCoord = y1;
+                    aname.red1.color = a;
+                }
+                else if (aname.red2.xCoord == null)
+                {
+                    aname.red2.xCoord = x1;
+                    aname.red2.yCoord = y1;
+                    aname.red2.color = a;
+                }
+                else if (aname.red1.xCoord == null)
+                {
+                    aname.red3.xCoord = x1;
+                    aname.red3.yCoord = y1;
+                    aname.red3.color = a;
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
 
         /*
          * caluclates the coordinates of the roomba on a 5X7 grid 
