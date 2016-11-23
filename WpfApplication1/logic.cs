@@ -8,79 +8,39 @@ namespace WpfApplication1
 {
     class logic
     {
-        public bool done=false;
-        public int redLocation = 1;
-        public int blueLocation = 1;
-        public int greenLocation = 1;
+        public bool done = false;
+        public object_seen blue1;
+        public object_seen blue2;
+        public object_seen blue3;
+        public object_seen red1;
+        public object_seen red2;
+        public object_seen red3;
+        public object_seen green1;
+        public object_seen green2;
+        public object_seen green3;
         arrayClass arr = new arrayClass();
 
-        /*
-         * checks roomba location on array (so where it should be according to what the user drew in)
-         * and compairs it to where the kinect camera sees it to be and adjusts roomba path to match
-         * if it cannot find a next block that the roomba wants to go to it returns false otherwise 
-         * it returns true.
-         */
-        public bool checkpath(String color)
+        public struct object_seen
         {
-            int should_be_currX = 0;
-            int should_be_currY = 0;
-            int currX = 0;
-            int CurrY = 0;
-            //find current location
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    if (color.Equals("red"))
-                    {
-                        if (arr.red_path[i, j] == redLocation)
-                        {
-                            should_be_currX = i;
-                            should_be_currY = j;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            //find actual location (code for kinect should go here-ish)
-            int a = should_be_currX;
-            bool on_path = false;
-            while (!on_path)
-            {
-                if (currX != a || CurrY != should_be_currY)
-                {
-                    //something to correct the roomba's path to fix it
-
-                }
-                else
-                {
-                    on_path = true;
-                }
-            }
-            return true;
-
+            public int xCoord;
+            public int yCoord;
+            public int height;
+            public int width;
+            public System.Drawing.Color color;
         }
-
-        /*
-         * will eventually loop infinitly until all 3 roombas are at their destinations as plotted out by the user
-         * this may need to be re-worked to ensure that all 3 roombas run at the same time (for now we will focus on
-         * getting one roomba running and tracking)
-         */
-        public void running(String color)
+        public void init()
         {
-            bool on_right_path = false;
-            while (done == false)
-            {
-                on_right_path = checkpath(color);
-                if (on_right_path==false)
-                {
-                    done = true;
-                }
-                redLocation++;
-            }
+            blue1 = new object_seen();
+            blue2 = new object_seen();
+            blue3 = new object_seen();
+
+            red1 = new object_seen();
+            red2 = new object_seen();
+            red3 = new object_seen();
+
+            green1 = new object_seen();
+            green2 = new object_seen();
+            green3 = new object_seen();
         }
     }
 }
