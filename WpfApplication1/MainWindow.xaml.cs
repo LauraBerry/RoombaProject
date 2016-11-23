@@ -46,7 +46,7 @@ namespace WpfApplication1
         int firstOrSecond = 0;
         bool red_list_started, blue_list_started, green_list_started;
         pathNode redHead, blueHead, greenHead;
-        logic aname;
+        logic aname= new logic();
 
         public MainWindow()
         {
@@ -58,6 +58,7 @@ namespace WpfApplication1
             roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
             currBlue = currGreen = currRed = 1;
             arr.init();
+            aname.init();
             InitializeComponent();
 
             /*
@@ -171,6 +172,7 @@ namespace WpfApplication1
                         int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
                         int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
                         System.Drawing.Color a = bitmap.GetPixel(x1, y1);
+
                         /*
                          * alternates which coordinates the x and y will be stored in to allow for vector calculations
                          */
@@ -588,7 +590,6 @@ namespace WpfApplication1
                     redHead = new pathNode();
                     redHead.x_coord=x;
                     redHead.y_coord=y;
-                    redHead.sequence=currRed;
                     currRed++;
                     red_list_started = true;
                 }
@@ -597,7 +598,6 @@ namespace WpfApplication1
                     pathNode newNode = new pathNode();
                     newNode.x_coord=x; 
                     newNode.y_coord=y;
-                    newNode.sequence=currRed;
                     currRed++;
                     pathNode finder = redHead;
                     while(finder.Next!=null)
@@ -616,7 +616,6 @@ namespace WpfApplication1
                     blueHead = new pathNode();
                     blueHead.x_coord=x;
                     blueHead.y_coord=y;
-                    blueHead.sequence=currBlue;
                     currBlue++;
                     blue_list_started = true;
                 }
@@ -625,7 +624,6 @@ namespace WpfApplication1
                     pathNode newNode = new pathNode();
                     newNode.x_coord=x; 
                     newNode.y_coord=y;
-                    newNode.sequence=currBlue;
                     currBlue++;
                     pathNode finder = blueHead;
                     while(finder.Next!=null)
@@ -643,7 +641,6 @@ namespace WpfApplication1
                     greenHead = new pathNode();
                     greenHead.x_coord=x;
                     greenHead.y_coord=y;
-                    greenHead.sequence=currGreen;
                     currGreen++;
                     green_list_started = true;
                 }
@@ -652,7 +649,6 @@ namespace WpfApplication1
                     pathNode newNode = new pathNode();
                     newNode.x_coord=x; 
                     newNode.y_coord=y;
-                    newNode.sequence=currGreen;
                     currGreen++;
                     pathNode finder = greenHead;
                     while(finder.Next!=null)
@@ -728,11 +724,6 @@ namespace WpfApplication1
                     findnode = findnode.Next;
                 }
 
-            } while (findnode.Next != null);
-
-            do
-            {
-                findnode.sequence--;
             } while (findnode.Next != null);
         }
 

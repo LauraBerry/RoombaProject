@@ -42,5 +42,55 @@ namespace WpfApplication1
             green2 = new object_seen();
             green3 = new object_seen();
         }
+        //add thing to compair sizes
+        public object_seen findBiggest(object_seen a, object_seen b, object_seen c)
+        {
+            if (a.height>b.height)
+            {
+                if(b.height>c.height)
+                {
+                    return a;
+                }
+                else if(c.height>a.height)
+                {
+                    return c;
+                }
+            }
+            else if (a.height>c.height)
+            {
+                return b;
+            }
+            else if (b.height>a.height)
+            {
+                if(c.height>b.height)
+                {
+                    return c;
+                }
+                else if (b.height>c.height)
+                {
+                    return b;
+                }
+            }
+            else if (b.height>c.height)
+            {
+                return a;
+            }
+            else if (c.height>a.height)
+            {
+                if (c.height > b.height)
+                {
+                    return c;
+                }
+                else if (b.height > c.height)
+                {
+                    return b;
+                }
+            }
+            else if (c.height>b.height)
+            {
+                return a;
+            }
+                return a;
+        }
     }
 }

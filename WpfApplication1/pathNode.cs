@@ -12,6 +12,5 @@ namespace WpfApplication1
         public pathNode Head=null;
         public int x_coord;
         public int y_coord;
-        public int sequence=0;
     }
 }
