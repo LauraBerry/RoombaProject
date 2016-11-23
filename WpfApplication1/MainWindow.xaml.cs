@@ -35,7 +35,7 @@ using AForge.Video;
 
 namespace WpfApplication1
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         bool roomba1_pressed, roomba2_pressed, roomba3_pressed;
         int currRed, currBlue, currGreen;
@@ -149,6 +149,9 @@ namespace WpfApplication1
             blobCounter.ProcessImage(grayImage);
             System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
             // draw rectangle around the biggest blob           //todo maybe alter this if it is not seeing the roomba properly
+
+            //Console.WriteLine(rects[0].Size.Height);
+            //Console.WriteLine(rects[0].Size.Width);
             if (rects.Length > 0)
             {
                 for (int i = 0; i < rects.Length; i++)
@@ -548,7 +551,7 @@ namespace WpfApplication1
                     greenHead.y_coord=y;
                     greenHead.sequence=currGreen;
                     currGreen++;
-                    red_list_started = true;
+                    green_list_started = true;
                 }
                 else
                 {
@@ -607,8 +610,11 @@ namespace WpfApplication1
             else
             {
                 redHead = null;
+                red_list_started = false;
                 greenHead = null;
+                green_list_started = false;
                 blueHead = null;
+                blue_list_started = false;
                 return;
             }
             do
@@ -639,9 +645,12 @@ namespace WpfApplication1
         /*
          * changes the color of the System.Windows.Shapes.Rectangle based on which roomba is selected
          */
-        public void remove_red(int x, int y, int midX,int midY,System.Windows.Shapes.Rectangle Rec)
+        public void remove_red(int x, int y, int midX,int midY,System.Windows.Shapes.Rectangle Rec, bool b)
         {
-            remove_from_linkedList(midX, midY);
+            if (b == true)
+            {
+                remove_from_linkedList(midX, midY);
+            }
             if (arr.board[x, y] == 1)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
@@ -669,9 +678,12 @@ namespace WpfApplication1
             }
         }
 
-        public void remove_blue(int x, int y, int midX, int midY, System.Windows.Shapes.Rectangle Rec)
+        public void remove_blue(int x, int y, int midX, int midY, System.Windows.Shapes.Rectangle Rec, bool b)
         {
-            remove_from_linkedList(midX, midY);
+            if (b == true)
+            {
+                remove_from_linkedList(midX, midY);
+            }
             if (arr.board[x, y] == 2)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
@@ -697,9 +709,12 @@ namespace WpfApplication1
                 remove_path(arr.blue_path, x, y, currBlue);
             }
         }
-        public void remove_green(int x, int y,int midX, int midY, System.Windows.Shapes.Rectangle Rec)
+        public void remove_green(int x, int y,int midX, int midY, System.Windows.Shapes.Rectangle Rec, Boolean b)
         {
-            remove_from_linkedList(midX, midY);
+            if (b == true)
+            {
+                remove_from_linkedList(midX, midY);
+            }
             if (arr.board[x, y] == 3)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
@@ -756,7 +771,7 @@ namespace WpfApplication1
                 }
                 else
                 {
-                    remove_red(x, y, midX, midY, Rec);
+                    remove_red(x, y, midX, midY, Rec, true);
                 }
             }
             else if (roomba2_pressed == true)
@@ -787,7 +802,7 @@ namespace WpfApplication1
                 }
                 else
                 {
-                    remove_blue(x, y,midX, midY, Rec);
+                    remove_blue(x, y,midX, midY, Rec, true);
                 }
             }
             else if (roomba3_pressed == true)
@@ -818,7 +833,7 @@ namespace WpfApplication1
                 }
                 else
                 {
-                    remove_green(x, y, midX, midY, Rec);
+                    remove_green(x, y, midX, midY, Rec, true);
                 }
             }
         }
@@ -826,6 +841,7 @@ namespace WpfApplication1
         {
             a[x, y] = 0;
         }
+
 
         /*
          * sets a block back to a blank state
@@ -844,117 +860,123 @@ namespace WpfApplication1
         {
             if (roomba1_pressed == true)
             {
-                remove_red( 0, 0, 48, 45,Rec_11);     
-                remove_red(0, 1, 48, 137,Rec_12);
-                remove_red(0, 2, 48, 228,Rec_13);
-                remove_red( 0, 3, 48, 320,Rec_14);
-                remove_red( 0, 4, 48, 411,Rec_15);
-                remove_red( 0, 5, 48, 502,Rec_16);
-                remove_red(0, 6, 48, 594,Rec_17);
-                remove_red( 1, 0, 144, 45,Rec_21);
-                remove_red( 1, 1, 144, 137,Rec_22);
-                remove_red( 1, 2, 144, 228,Rec_23);
-                remove_red( 1, 3, 144, 320,Rec_24);
-                remove_red( 1, 4, 144, 411,Rec_25);
-                remove_red( 1, 5, 144, 502,Rec_26);
-                remove_red( 1, 6, 144, 594,Rec_27);
-                remove_red( 2, 0, 240, 45,Rec_31);
-                remove_red( 2, 1, 240, 144,Rec_32);
-                remove_red( 2, 2, 240, 228,Rec_33);
-                remove_red( 2, 3, 240, 320,Rec_34);
-                remove_red( 2, 4, 240, 411,Rec_35);
-                remove_red( 2, 5, 240, 502,Rec_36);
-                remove_red( 2, 6, 240, 594,Rec_37);
-                remove_red( 3, 0, 336, 45,Rec_41);
-                remove_red( 3, 1, 336, 137,Rec_42);
-                remove_red( 3, 2, 336, 228,Rec_43);
-                remove_red( 3, 3, 336, 320,Rec_44);
-                remove_red( 3, 4, 336, 411,Rec_45);
-                remove_red( 3, 5, 336, 502,Rec_46);
-                remove_red( 3, 6, 336, 594,Rec_47);
-                remove_red( 4, 0, 432, 45,Rec_51);
-                remove_red( 4, 1, 432, 137,Rec_52);
-                remove_red( 4, 2, 432, 228,Rec_53);
-                remove_red( 4, 3, 432, 320,Rec_54);
-                remove_red( 4, 4, 432, 411,Rec_55);
-                remove_red( 4, 6, 432, 502,Rec_57);
-                remove_red( 4, 5, 432, 137,Rec_56);
+                redHead = null;
+                red_list_started = false;
+                remove_red( 0, 0, 48, 45,Rec_11, false);     
+                remove_red(0, 1, 48, 137,Rec_12, false);
+                remove_red(0, 2, 48, 228,Rec_13, false);
+                remove_red( 0, 3, 48, 320,Rec_14, false);
+                remove_red( 0, 4, 48, 411,Rec_15, false);
+                remove_red( 0, 5, 48, 502,Rec_16, false);
+                remove_red(0, 6, 48, 594,Rec_17, false);
+                remove_red( 1, 0, 144, 45,Rec_21, false);
+                remove_red( 1, 1, 144, 137,Rec_22, false);
+                remove_red( 1, 2, 144, 228,Rec_23, false);
+                remove_red( 1, 3, 144, 320,Rec_24, false);
+                remove_red( 1, 4, 144, 411,Rec_25, false);
+                remove_red( 1, 5, 144, 502,Rec_26, false);
+                remove_red( 1, 6, 144, 594,Rec_27, false);
+                remove_red( 2, 0, 240, 45,Rec_31, false);
+                remove_red( 2, 1, 240, 144,Rec_32, false);
+                remove_red( 2, 2, 240, 228,Rec_33, false);
+                remove_red( 2, 3, 240, 320,Rec_34, false);
+                remove_red( 2, 4, 240, 411,Rec_35, false);
+                remove_red( 2, 5, 240, 502,Rec_36, false);
+                remove_red( 2, 6, 240, 594,Rec_37, false);
+                remove_red( 3, 0, 336, 45,Rec_41, false);
+                remove_red( 3, 1, 336, 137,Rec_42, false);
+                remove_red( 3, 2, 336, 228,Rec_43, false);
+                remove_red( 3, 3, 336, 320,Rec_44, false);
+                remove_red( 3, 4, 336, 411,Rec_45, false);
+                remove_red( 3, 5, 336, 502,Rec_46, false);
+                remove_red( 3, 6, 336, 594,Rec_47, false);
+                remove_red( 4, 0, 432, 45,Rec_51, false);
+                remove_red( 4, 1, 432, 137,Rec_52, false);
+                remove_red( 4, 2, 432, 228,Rec_53, false);
+                remove_red( 4, 3, 432, 320,Rec_54, false);
+                remove_red( 4, 4, 432, 411,Rec_55, false);
+                remove_red( 4, 6, 432, 502,Rec_57, false);
+                remove_red( 4, 5, 432, 137,Rec_56, false);
         }
             else if (roomba2_pressed == true)
             {
-                remove_blue( 0, 0, 48, 45,Rec_11);     
-                remove_blue(0, 1, 48, 137,Rec_12);
-                remove_blue(0, 2, 48, 228,Rec_13);
-                remove_blue( 0, 3, 48, 320,Rec_14);
-                remove_blue( 0, 4, 48, 411,Rec_15);
-                remove_blue( 0, 5, 48, 502,Rec_16);
-                remove_blue(0, 6, 48, 594,Rec_17);
-                remove_blue( 1, 0, 144, 45,Rec_21);
-                remove_blue( 1, 1, 144, 137,Rec_22);
-                remove_blue( 1, 2, 144, 228,Rec_23);
-                remove_blue( 1, 3, 144, 320,Rec_24);
-                remove_blue( 1, 4, 144, 411,Rec_25);
-                remove_blue( 1, 5, 144, 502,Rec_26);
-                remove_blue( 1, 6, 144, 594,Rec_27);
-                remove_blue( 2, 0, 240, 45,Rec_31);
-                remove_blue( 2, 1, 240, 144,Rec_32);
-                remove_blue( 2, 2, 240, 228,Rec_33);
-                remove_blue( 2, 3, 240, 320,Rec_34);
-                remove_blue( 2, 4, 240, 411,Rec_35);
-                remove_blue( 2, 5, 240, 502,Rec_36);
-                remove_blue( 2, 6, 240, 594,Rec_37);
-                remove_blue( 3, 0, 336, 45,Rec_41);
-                remove_blue( 3, 1, 336, 137,Rec_42);
-                remove_blue( 3, 2, 336, 228,Rec_43);
-                remove_blue( 3, 3, 336, 320,Rec_44);
-                remove_blue( 3, 4, 336, 411,Rec_45);
-                remove_blue( 3, 5, 336, 502,Rec_46);
-                remove_blue( 3, 6, 336, 594,Rec_47);
-                remove_blue( 4, 0, 432, 45,Rec_51);
-                remove_blue( 4, 1, 432, 137,Rec_52);
-                remove_blue( 4, 2, 432, 228,Rec_53);
-                remove_blue( 4, 3, 432, 320,Rec_54);
-                remove_blue( 4, 4, 432, 411,Rec_55);
-                remove_blue( 4, 6, 432, 502,Rec_57);
-                remove_blue( 4, 5, 432, 137,Rec_56);
+                blueHead = null;
+                blue_list_started = false;
+                remove_blue( 0, 0, 48, 45,Rec_11, false);     
+                remove_blue(0, 1, 48, 137,Rec_12, false);
+                remove_blue(0, 2, 48, 228,Rec_13, false);
+                remove_blue( 0, 3, 48, 320,Rec_14, false);
+                remove_blue( 0, 4, 48, 411,Rec_15, false);
+                remove_blue( 0, 5, 48, 502,Rec_16, false);
+                remove_blue(0, 6, 48, 594,Rec_17, false);
+                remove_blue( 1, 0, 144, 45,Rec_21, false);
+                remove_blue( 1, 1, 144, 137,Rec_22, false);
+                remove_blue( 1, 2, 144, 228,Rec_23, false);
+                remove_blue( 1, 3, 144, 320,Rec_24, false);
+                remove_blue( 1, 4, 144, 411,Rec_25, false);
+                remove_blue( 1, 5, 144, 502,Rec_26, false);
+                remove_blue( 1, 6, 144, 594,Rec_27, false);
+                remove_blue( 2, 0, 240, 45,Rec_31, false);
+                remove_blue( 2, 1, 240, 144,Rec_32, false);
+                remove_blue( 2, 2, 240, 228,Rec_33, false);
+                remove_blue( 2, 3, 240, 320,Rec_34, false);
+                remove_blue( 2, 4, 240, 411,Rec_35, false);
+                remove_blue( 2, 5, 240, 502,Rec_36, false);
+                remove_blue( 2, 6, 240, 594,Rec_37, false);
+                remove_blue( 3, 0, 336, 45,Rec_41, false);
+                remove_blue( 3, 1, 336, 137,Rec_42, false);
+                remove_blue( 3, 2, 336, 228,Rec_43, false);
+                remove_blue( 3, 3, 336, 320,Rec_44, false);
+                remove_blue( 3, 4, 336, 411,Rec_45, false);
+                remove_blue( 3, 5, 336, 502,Rec_46, false);
+                remove_blue( 3, 6, 336, 594,Rec_47, false);
+                remove_blue( 4, 0, 432, 45,Rec_51, false);
+                remove_blue( 4, 1, 432, 137,Rec_52, false);
+                remove_blue( 4, 2, 432, 228,Rec_53, false);
+                remove_blue( 4, 3, 432, 320,Rec_54, false);
+                remove_blue( 4, 4, 432, 411,Rec_55, false);
+                remove_blue( 4, 6, 432, 502,Rec_57, false);
+                remove_blue( 4, 5, 432, 137,Rec_56, false);
             }
             else if (roomba3_pressed == true)
             {
-                remove_green( 0, 0, 48, 45,Rec_11);     
-                remove_green(0, 1, 48, 137,Rec_12);
-                remove_green(0, 2, 48, 228,Rec_13);
-                remove_green( 0, 3, 48, 320,Rec_14);
-                remove_green( 0, 4, 48, 411,Rec_15);
-                remove_green( 0, 5, 48, 502,Rec_16);
-                remove_green(0, 6, 48, 594,Rec_17);
-                remove_green( 1, 0, 144, 45,Rec_21);
-                remove_green( 1, 1, 144, 137,Rec_22);
-                remove_green( 1, 2, 144, 228,Rec_23);
-                remove_green( 1, 3, 144, 320,Rec_24);
-                remove_green( 1, 4, 144, 411,Rec_25);
-                remove_green( 1, 5, 144, 502,Rec_26);
-                remove_green( 1, 6, 144, 594,Rec_27);
-                remove_green( 2, 0, 240, 45,Rec_31);
-                remove_green( 2, 1, 240, 144,Rec_32);
-                remove_green( 2, 2, 240, 228,Rec_33);
-                remove_green( 2, 3, 240, 320,Rec_34);
-                remove_green( 2, 4, 240, 411,Rec_35);
-                remove_green( 2, 5, 240, 502,Rec_36);
-                remove_green( 2, 6, 240, 594,Rec_37);
-                remove_green( 3, 0, 336, 45,Rec_41);
-                remove_green( 3, 1, 336, 137,Rec_42);
-                remove_green( 3, 2, 336, 228,Rec_43);
-                remove_green( 3, 3, 336, 320,Rec_44);
-                remove_green( 3, 4, 336, 411,Rec_45);
-                remove_green( 3, 5, 336, 502,Rec_46);
-                remove_green( 3, 6, 336, 594,Rec_47);
-                remove_green( 4, 0, 432, 45,Rec_51);
-                remove_green( 4, 1, 432, 137,Rec_52);
-                remove_green( 4, 2, 432, 228,Rec_53);
-                remove_green( 4, 3, 432, 320,Rec_54);
-                remove_green( 4, 4, 432, 411,Rec_55);
-                remove_green( 4, 6, 432, 502,Rec_57);
-                remove_green( 4, 5, 432, 137,Rec_56);
+                greenHead = null;
+                green_list_started = false;
+                remove_green( 0, 0, 48, 45,Rec_11, false);     
+                remove_green(0, 1, 48, 137,Rec_12, false);
+                remove_green(0, 2, 48, 228,Rec_13, false);
+                remove_green( 0, 3, 48, 320,Rec_14, false);
+                remove_green( 0, 4, 48, 411,Rec_15, false);
+                remove_green( 0, 5, 48, 502,Rec_16, false);
+                remove_green(0, 6, 48, 594,Rec_17, false);
+                remove_green( 1, 0, 144, 45,Rec_21, false);
+                remove_green( 1, 1, 144, 137,Rec_22, false);
+                remove_green( 1, 2, 144, 228,Rec_23, false);
+                remove_green( 1, 3, 144, 320,Rec_24, false);
+                remove_green( 1, 4, 144, 411,Rec_25, false);
+                remove_green( 1, 5, 144, 502,Rec_26, false);
+                remove_green( 1, 6, 144, 594,Rec_27, false);
+                remove_green( 2, 0, 240, 45,Rec_31, false);
+                remove_green( 2, 1, 240, 144,Rec_32, false);
+                remove_green( 2, 2, 240, 228,Rec_33, false);
+                remove_green( 2, 3, 240, 320,Rec_34, false);
+                remove_green( 2, 4, 240, 411,Rec_35, false);
+                remove_green( 2, 5, 240, 502,Rec_36, false);
+                remove_green( 2, 6, 240, 594,Rec_37, false);
+                remove_green( 3, 0, 336, 45,Rec_41, false);
+                remove_green( 3, 1, 336, 137,Rec_42, false);
+                remove_green( 3, 2, 336, 228,Rec_43, false);
+                remove_green( 3, 3, 336, 320,Rec_44, false);
+                remove_green( 3, 4, 336, 411,Rec_45, false);
+                remove_green( 3, 5, 336, 502,Rec_46, false);
+                remove_green( 3, 6, 336, 594,Rec_47, false);
+                remove_green( 4, 0, 432, 45,Rec_51, false);
+                remove_green( 4, 1, 432, 137,Rec_52, false);
+                remove_green( 4, 2, 432, 228,Rec_53, false);
+                remove_green( 4, 3, 432, 320,Rec_54, false);
+                remove_green( 4, 4, 432, 411,Rec_55, false);
+                remove_green( 4, 6, 432, 502,Rec_57, false);
+                remove_green( 4, 5, 432, 137,Rec_56, false);
             }
             else
             {
