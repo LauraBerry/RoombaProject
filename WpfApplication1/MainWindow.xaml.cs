@@ -162,6 +162,8 @@ namespace WpfApplication1
                 Console.WriteLine(rects[0].Size.Width);
                 for (int i = 0; i < rects.Length; i++)
                 {
+                    
+
                     System.Drawing.Rectangle objectRect = rects[i];
                     Graphics g = Graphics.FromImage(bitmap);
 
@@ -172,7 +174,7 @@ namespace WpfApplication1
                         int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
                         int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
                         System.Drawing.Color a = bitmap.GetPixel(x1, y1);
-
+                        write_to_struct(a, x1, y1, rects[i]);                                       //assigns rectangles to struct based on color
                         /*
                          * alternates which coordinates the x and y will be stored in to allow for vector calculations
                          */
@@ -194,7 +196,10 @@ namespace WpfApplication1
             }
         }
 
-
+/*
+ * takes in a rectangle around a seen object. it checks if the seen object is one of the 3 colors and if so assigns it to 
+ * a open struct. it stores the center point as well as the height and width of each object within the struct 
+ */
         public void write_to_struct(System.Drawing.Color a, int x1, int y1, System.Drawing.Rectangle rec)
         {
             System.Drawing.Color green_color = System.Drawing.Color.FromArgb(255, 100, 155, 15);
@@ -202,83 +207,92 @@ namespace WpfApplication1
             System.Drawing.Color red_color = System.Drawing.Color.FromArgb(255, 121, 177, 255);
             if (a == green_color)
             {
-                if (aname.green1.xCoord == null)
+                if (aname.green1.taken == false)
                 {
                     aname.green1.xCoord = x1;
                     aname.green1.yCoord = y1;
                     aname.green1.height=rec.Size.Height;
                     aname.green1.width = rec.Size.Width;
                     aname.green1.color = a;
+                    aname.green1.taken = true;
                 }
-                else if (aname.green2.xCoord == null)
+                else if (aname.green2.taken == false)
                 {
                     aname.green2.xCoord = x1;
                     aname.green2.yCoord = y1; 
                     aname.green2.height = rec.Size.Height;
                     aname.green2.width = rec.Size.Width;
                     aname.green2.color = a;
+                    aname.green2.taken = true;
                 }
-                else if (aname.green1.xCoord == null)
+                else if (aname.green3.taken == false)
                 {
                     aname.green3.xCoord = x1;
                     aname.green3.yCoord = y1;
                     aname.green3.height = rec.Size.Height;
                     aname.green3.width = rec.Size.Width;
                     aname.green3.color = a;
+                    aname.green3.taken = true;
                 }      
             }
             else if (a== blue_color)
             {
-                if (aname.blue1.xCoord == null)
+                if (aname.blue1.taken==false)
                 {
                     aname.blue1.xCoord = x1;
                     aname.blue1.yCoord = y1;
                     aname.blue1.height = rec.Size.Height;
                     aname.blue1.width = rec.Size.Width;
                     aname.blue1.color = a;
+                    aname.blue1.taken = true;
                 }
-                else if (aname.blue2.xCoord == null)
+                else if (aname.blue2.taken == false)
                 {
                     aname.blue2.xCoord = x1;
                     aname.blue2.yCoord = y1;
                     aname.blue2.height = rec.Size.Height;
                     aname.blue2.width = rec.Size.Width;
                     aname.blue2.color = a;
+                    aname.blue2.taken = true;
                 }
-                else if (aname.blue1.xCoord == null)
+                else if (aname.blue3.taken == false)
                 {
                     aname.blue3.xCoord = x1;
                     aname.blue3.yCoord = y1;
                     aname.blue3.height = rec.Size.Height;
                     aname.blue3.width = rec.Size.Width;
                     aname.blue3.color = a;
+                    aname.blue3.taken = true;
                 }
             }
             else if (a==red_color)
             {
-                if (aname.red1.xCoord == null)
+                if (aname.red1.taken == false)
                 {
                     aname.red1.xCoord = x1;
                     aname.red1.yCoord = y1;
                     aname.red1.height = rec.Size.Height;
                     aname.red1.width = rec.Size.Width;
                     aname.red1.color = a;
+                    aname.red1.taken = true;
                 }
-                else if (aname.red2.xCoord == null)
+                else if (aname.red2.taken == false)
                 {
                     aname.red2.xCoord = x1;
                     aname.red2.yCoord = y1;
                     aname.red2.height = rec.Size.Height;
                     aname.red2.width = rec.Size.Width;
                     aname.red2.color = a;
+                    aname.red2.taken = true;
                 }
-                else if (aname.red1.xCoord == null)
+                else if (aname.red3.taken == false)
                 {
                     aname.red3.xCoord = x1;
                     aname.red3.yCoord = y1;
                     aname.red3.height = rec.Size.Height;
                     aname.red3.width = rec.Size.Width;
                     aname.red3.color = a;
+                    aname.red3.taken = true;
                 }
                 else
                 {
