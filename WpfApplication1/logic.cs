@@ -27,70 +27,70 @@ namespace WpfApplication1
             public int height;
             public int width;
             public System.Drawing.Color color;
+            public bool taken;
         }
         public void init()
         {
             blue1 = new object_seen();
             blue2 = new object_seen();
             blue3 = new object_seen();
+            blue1.taken = false;
+            blue2.taken = false;
+            blue3.taken = false;
 
             red1 = new object_seen();
             red2 = new object_seen();
             red3 = new object_seen();
+            red1.taken = false;
+            red2.taken = false;
+            red3.taken = false;
 
             green1 = new object_seen();
             green2 = new object_seen();
             green3 = new object_seen();
+            green1.taken = false;
+            green2.taken = false;
+            green3.taken = false;
         }
         //add thing to compair sizes
-        public object_seen findBiggest(object_seen a, object_seen b, object_seen c)
+        public object_seen[] findBiggest(object_seen a, object_seen b, object_seen c)
         {
+            object_seen[] inOrder;
+            inOrder= new object_seen[3];
             if (a.height>b.height)
             {
                 if(b.height>c.height)
                 {
-                    return a;
+                    inOrder[0] = a;
+                    inOrder[1] = b;
+                    inOrder[2] = c;
                 }
                 else if(c.height>a.height)
                 {
-                    return c;
+                    inOrder[0] = c;
+                    inOrder[1] = a;
+                    inOrder[2] = b;
                 }
             }
             else if (a.height>c.height)
             {
-                return b;
-            }
-            else if (b.height>a.height)
-            {
-                if(c.height>b.height)
-                {
-                    return c;
-                }
-                else if (b.height>c.height)
-                {
-                    return b;
-                }
+                inOrder[0] = b;
+                inOrder[1] = a;
+                inOrder[2] = c;
             }
             else if (b.height>c.height)
             {
-                return a;
+                inOrder[0] = b;
+                inOrder[1] = c;
+                inOrder[2] = a;
             }
-            else if (c.height>a.height)
+            else
             {
-                if (c.height > b.height)
-                {
-                    return c;
-                }
-                else if (b.height > c.height)
-                {
-                    return b;
-                }
+                inOrder[0] = c;
+                inOrder[1] = b;
+                inOrder[2] = a;
             }
-            else if (c.height>b.height)
-            {
-                return a;
-            }
-                return a;
+            return inOrder;
         }
     }
 }
