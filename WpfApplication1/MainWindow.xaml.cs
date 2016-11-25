@@ -96,11 +96,13 @@ namespace WpfApplication1
                     int[] vector;
                     vector = new int[2];
                     vector[0] = coords2[0] - coords[0];
-                    vector[1] = coords2[1] - coords[1];         //Nico: for some reason if this result is negative it shows up in vector as 0
+                    vector[1] = coords2[1] - coords[1];
                     break;
                 }
                 counter++;
             }
+            //timer
+            //call getBarring
 
             // signal to stop when you no longer need capturing
             //videoSource.SignalToStop( );
@@ -155,11 +157,11 @@ namespace WpfApplication1
 
             if (rects.Length > 0)
             {
-                Console.Write("rectangle Height: ");
+               /* Console.Write("rectangle Height: ");
                 Console.Write(rects[0].Size.Height);
                 Console.Write(" ");
                 Console.Write("rectangle Width: ");
-                Console.WriteLine(rects[0].Size.Width);
+                Console.WriteLine(rects[0].Size.Width);*/
                 for (int i = 0; i < rects.Length; i++)
                 {
                     
@@ -202,70 +204,8 @@ namespace WpfApplication1
  */
         public void write_to_struct(System.Drawing.Color a, int x1, int y1, System.Drawing.Rectangle rec)
         {
-            System.Drawing.Color green_color = System.Drawing.Color.FromArgb(255, 100, 155, 15);
-            System.Drawing.Color blue_color = System.Drawing.Color.FromArgb(255, 76, 143, 204);
-            System.Drawing.Color red_color = System.Drawing.Color.FromArgb(255, 121, 177, 255);
-            if (a == green_color)
-            {
-                if (aname.green1.taken == false)
-                {
-                    aname.green1.xCoord = x1;
-                    aname.green1.yCoord = y1;
-                    aname.green1.height=rec.Size.Height;
-                    aname.green1.width = rec.Size.Width;
-                    aname.green1.color = a;
-                    aname.green1.taken = true;
-                }
-                else if (aname.green2.taken == false)
-                {
-                    aname.green2.xCoord = x1;
-                    aname.green2.yCoord = y1; 
-                    aname.green2.height = rec.Size.Height;
-                    aname.green2.width = rec.Size.Width;
-                    aname.green2.color = a;
-                    aname.green2.taken = true;
-                }
-                else if (aname.green3.taken == false)
-                {
-                    aname.green3.xCoord = x1;
-                    aname.green3.yCoord = y1;
-                    aname.green3.height = rec.Size.Height;
-                    aname.green3.width = rec.Size.Width;
-                    aname.green3.color = a;
-                    aname.green3.taken = true;
-                }      
-            }
-            else if (a== blue_color)
-            {
-                if (aname.blue1.taken==false)
-                {
-                    aname.blue1.xCoord = x1;
-                    aname.blue1.yCoord = y1;
-                    aname.blue1.height = rec.Size.Height;
-                    aname.blue1.width = rec.Size.Width;
-                    aname.blue1.color = a;
-                    aname.blue1.taken = true;
-                }
-                else if (aname.blue2.taken == false)
-                {
-                    aname.blue2.xCoord = x1;
-                    aname.blue2.yCoord = y1;
-                    aname.blue2.height = rec.Size.Height;
-                    aname.blue2.width = rec.Size.Width;
-                    aname.blue2.color = a;
-                    aname.blue2.taken = true;
-                }
-                else if (aname.blue3.taken == false)
-                {
-                    aname.blue3.xCoord = x1;
-                    aname.blue3.yCoord = y1;
-                    aname.blue3.height = rec.Size.Height;
-                    aname.blue3.width = rec.Size.Width;
-                    aname.blue3.color = a;
-                    aname.blue3.taken = true;
-                }
-            }
-            else if (a==red_color)
+            float color = a.GetHue();
+            if(color<30) //red
             {
                 if (aname.red1.taken == false)
                 {
@@ -293,6 +233,66 @@ namespace WpfApplication1
                     aname.red3.width = rec.Size.Width;
                     aname.red3.color = a;
                     aname.red3.taken = true;
+                }
+            }
+            else if (color<150)//green
+            {
+                if (aname.green1.taken == false)
+                {
+                    aname.green1.xCoord = x1;
+                    aname.green1.yCoord = y1;
+                    aname.green1.height = rec.Size.Height;
+                    aname.green1.width = rec.Size.Width;
+                    aname.green1.color = a;
+                    aname.green1.taken = true;
+                }
+                else if (aname.green2.taken == false)
+                {
+                    aname.green2.xCoord = x1;
+                    aname.green2.yCoord = y1;
+                    aname.green2.height = rec.Size.Height;
+                    aname.green2.width = rec.Size.Width;
+                    aname.green2.color = a;
+                    aname.green2.taken = true;
+                }
+                else if (aname.green3.taken == false)
+                {
+                    aname.green3.xCoord = x1;
+                    aname.green3.yCoord = y1;
+                    aname.green3.height = rec.Size.Height;
+                    aname.green3.width = rec.Size.Width;
+                    aname.green3.color = a;
+                    aname.green3.taken = true;
+                }
+            }
+            else if (color<270)//blue
+            {
+                if (aname.blue1.taken == false)
+                {
+                    aname.blue1.xCoord = x1;
+                    aname.blue1.yCoord = y1;
+                    aname.blue1.height = rec.Size.Height;
+                    aname.blue1.width = rec.Size.Width;
+                    aname.blue1.color = a;
+                    aname.blue1.taken = true;
+                }
+                else if (aname.blue2.taken == false)
+                {
+                    aname.blue2.xCoord = x1;
+                    aname.blue2.yCoord = y1;
+                    aname.blue2.height = rec.Size.Height;
+                    aname.blue2.width = rec.Size.Width;
+                    aname.blue2.color = a;
+                    aname.blue2.taken = true;
+                }
+                else if (aname.blue3.taken == false)
+                {
+                    aname.blue3.xCoord = x1;
+                    aname.blue3.yCoord = y1;
+                    aname.blue3.height = rec.Size.Height;
+                    aname.blue3.width = rec.Size.Width;
+                    aname.blue3.color = a;
+                    aname.blue3.taken = true;
                 }
                 else
                 {
@@ -1121,7 +1121,7 @@ namespace WpfApplication1
          */
         private void start_clicked(object sender, RoutedEventArgs e)
         {
-            bool printboards = false;
+            bool printboards = true;
             roomba1_pressed = false;
             roomba2_pressed = false;
             roomba3_pressed = false;
@@ -1129,27 +1129,40 @@ namespace WpfApplication1
             Roomba2.Margin = new Thickness(411, 78, 0, 0);
             Roomba3.Margin = new Thickness(411, 112, 0, 0);
             clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
-            Console.Write("first coordinates: ");
+            /*Console.Write("first coordinates: ");
             Console.Write(coords[0]);
             Console.Write(", ");
             Console.WriteLine(coords[1]);
             Console.Write("second coordinates: ");
             Console.Write(coords2[0]);
             Console.Write(", ");
-            Console.WriteLine(coords2[1]);
+            Console.WriteLine(coords2[1]);*/
             int[] vector;
             vector = new int[2];
             vector[0] = coords2[0] - coords[0];
             vector[1] = coords2[1] - coords[1];
-            Console.Write("vector: ");
+           /* Console.Write("vector: ");
             Console.Write(vector[0]);
             Console.Write(", ");
-            Console.WriteLine(vector[0]);
+            Console.WriteLine(vector[0]);*/
             if (printboards == true)
             {
                 try
                 {
-                    pathNode current = new pathNode();
+                    if(aname.blue1.taken==true)
+                    {
+                        Console.WriteLine("blue Object");
+                        Console.Write("x coordinate: ");
+                        Console.Write(aname.blue1.xCoord);
+                        Console.Write(", y coordinate: ");
+                        Console.Write(aname.blue1.yCoord);
+                        Console.Write(", height: ");
+                        Console.Write(aname.blue1.height);
+                        Console.Write(", width: ");
+                        Console.WriteLine(aname.red1.width);
+
+                    }
+                   /* pathNode current = new pathNode();
                     for (int i = 0; i < 3; i++)
                     {
                         if (i == 0)
@@ -1208,7 +1221,7 @@ namespace WpfApplication1
                             }
                             Console.WriteLine(")");
                         }
-                    }
+                    }*/
                 }
                 catch (Exception exc)
                 {
