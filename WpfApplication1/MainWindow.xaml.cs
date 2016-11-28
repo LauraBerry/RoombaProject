@@ -43,7 +43,6 @@ namespace WpfApplication1
         AForge.Video.DirectShow.FilterInfoCollection videoDevices;
         AForge.Video.DirectShow.VideoCaptureDevice vidsource1, videosource2;
         int[] coords, coords2;
-        int firstOrSecond = 0;
         bool red_list_started, blue_list_started, green_list_started;
         pathNode redHead, blueHead, greenHead;
         logic aname= new logic();
@@ -80,23 +79,11 @@ namespace WpfApplication1
             {
                 // set NewFrame event handler
                 videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
-                if (firstOrSecond == 0)
-                {
-                    firstOrSecond = 1;
-                }
-                else
-                {
-                    firstOrSecond = 0;
-                }
                 // wait until we have two acquired images
                 /*camera1Acquired.WaitOne();
                 camera2Acquired.WaitOne();*/
                 if (counter >= 2)
                 {
-                    int[] vector;
-                    vector = new int[2];
-                    vector[0] = coords2[0] - coords[0];
-                    vector[1] = coords2[1] - coords[1];
                     break;
                 }
                 counter++;
@@ -157,15 +144,8 @@ namespace WpfApplication1
 
             if (rects.Length > 0)
             {
-               /* Console.Write("rectangle Height: ");
-                Console.Write(rects[0].Size.Height);
-                Console.Write(" ");
-                Console.Write("rectangle Width: ");
-                Console.WriteLine(rects[0].Size.Width);*/
                 for (int i = 0; i < rects.Length; i++)
                 {
-                    
-
                     System.Drawing.Rectangle objectRect = rects[i];
                     Graphics g = Graphics.FromImage(bitmap);
 
@@ -177,21 +157,7 @@ namespace WpfApplication1
                         int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
                         System.Drawing.Color a = bitmap.GetPixel(x1, y1);
                         write_to_struct(a, x1, y1, rects[i]);                                       //assigns rectangles to struct based on color
-                        /*
-                         * alternates which coordinates the x and y will be stored in to allow for vector calculations
-                         */
-                        if (firstOrSecond == 0)
-                        {
-                            coords[0] = x1;
-                            coords[1] = y1;
-                            location = actual_location(coords);
-                        }
-                        else
-                        {
-                            coords2[0] = x1;
-                            coords2[1] = y1;
-                            location = actual_location(coords2);
-                        }
+                        aname.get_barring(aname.blue1, aname.blue2, aname.blue3, blueHead.x_coord, blueHead.y_coord);   //get the barring and decide if and where to turn
                     }
                     g.Dispose();
                 }
@@ -375,7 +341,6 @@ namespace WpfApplication1
 
             return location_coords;
         }
-
 
         /*
          * listens for which roomba is selected, ensures that only one is selected at a time
@@ -753,27 +718,22 @@ namespace WpfApplication1
             if (arr.board[x, y] == 1)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
-                arr.board[x, y] = 0;
-                remove_path(arr.red_path, x, y, currRed);  
-                
+                arr.board[x, y] = 0;                 
             }
             else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(11, 162, 94));
                 arr.board[x, y] = 6;
-                remove_path(arr.red_path, x, y, currRed);
             }
             else if (arr.board[x, y] == 4)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                 arr.board[x, y] = 2;
-                remove_path(arr.red_path, x, y, currRed);
             }
             else if (arr.board[x, y] == 5)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                 arr.board[x, y] = 3;
-                remove_path(arr.red_path, x, y, currRed);
             }
         }
 
@@ -787,25 +747,21 @@ namespace WpfApplication1
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
-                remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(188, 226, 14));
                 arr.board[x, y] = 5;
-                remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 4)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                 arr.board[x, y] = 1;
-                remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 6)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                 arr.board[x, y] = 3;
-                remove_path(arr.blue_path, x, y, currBlue);
             }
         }
         public void remove_green(int x, int y,int midX, int midY, System.Windows.Shapes.Rectangle Rec, Boolean b)
@@ -818,25 +774,21 @@ namespace WpfApplication1
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
-                remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 21, 226));
                 arr.board[x, y] = 4;
-                remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 5)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                 arr.board[x, y] = 1;
-                remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 6)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                 arr.board[x, y] = 2;
-                remove_path(arr.green_path, x, y, currGreen);
             }
         }
 
@@ -936,11 +888,6 @@ namespace WpfApplication1
                 }
             }
         }
-        public void remove_path(int[,] a, int x, int y, int val)
-        {
-            a[x, y] = 0;
-        }
-
 
         /*
          * sets a block back to a blank state
@@ -1129,22 +1076,7 @@ namespace WpfApplication1
             Roomba2.Margin = new Thickness(411, 78, 0, 0);
             Roomba3.Margin = new Thickness(411, 112, 0, 0);
             clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
-            /*Console.Write("first coordinates: ");
-            Console.Write(coords[0]);
-            Console.Write(", ");
-            Console.WriteLine(coords[1]);
-            Console.Write("second coordinates: ");
-            Console.Write(coords2[0]);
-            Console.Write(", ");
-            Console.WriteLine(coords2[1]);*/
-            int[] vector;
-            vector = new int[2];
-            vector[0] = coords2[0] - coords[0];
-            vector[1] = coords2[1] - coords[1];
-           /* Console.Write("vector: ");
-            Console.Write(vector[0]);
-            Console.Write(", ");
-            Console.WriteLine(vector[0]);*/
+
             if (printboards == true)
             {
                 try
@@ -1162,66 +1094,6 @@ namespace WpfApplication1
                         Console.WriteLine(aname.red1.width);
 
                     }
-                   /* pathNode current = new pathNode();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        if (i == 0)
-                        {
-                            current = redHead;
-                            Console.Write("currRed: ");
-                            Console.WriteLine(currRed);
-                            Console.WriteLine("Red Roomba: ");
-                            Console.Write("( ");
-                            while (current != null)
-                            {
-                                Console.Write("[");
-                                Console.Write(current.x_coord);
-                                Console.Write(", ");
-                                Console.Write(current.y_coord);
-                                Console.Write("] ");
-                                current = current.Next;
-                            }
-                            Console.Write(")");
-                            Console.WriteLine("");
-
-                        }
-                        else if (i == 1)
-                        {
-                            current = blueHead;
-                            Console.Write("currblue: ");
-                            Console.WriteLine(currBlue);
-                            Console.WriteLine("blue Roomba: ");
-                            Console.Write("( ");
-                            while (current != null)
-                            {
-                                Console.Write("[");
-                                Console.Write(current.x_coord);
-                                Console.Write(", ");
-                                Console.Write(current.y_coord);
-                                Console.Write("], ");
-                                current = current.Next;
-                            }
-                            Console.WriteLine(")");
-                        }
-                        else if (i == 2)
-                        {
-                            current = greenHead;
-                            Console.Write("currgreen: ");
-                            Console.WriteLine(currGreen);
-                            Console.WriteLine("green Roomba: ");
-                            Console.Write("( ");
-                            while (current != null)
-                            {
-                                Console.Write("[");
-                                Console.Write(current.x_coord);
-                                Console.Write(", ");
-                                Console.Write(current.y_coord);
-                                Console.Write("], ");
-                                current = current.Next;
-                            }
-                            Console.WriteLine(")");
-                        }
-                    }*/
                 }
                 catch (Exception exc)
                 {
