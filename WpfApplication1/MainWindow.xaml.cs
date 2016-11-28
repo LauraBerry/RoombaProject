@@ -42,7 +42,6 @@ namespace WpfApplication1
         arrayClass arr = new arrayClass();
         AForge.Video.DirectShow.FilterInfoCollection videoDevices;
         AForge.Video.DirectShow.VideoCaptureDevice vidsource1, videosource2;
-        int[] coords, coords2;
         bool red_list_started, blue_list_started, green_list_started;
         pathNode redHead, blueHead, greenHead;
         logic aname= new logic();
@@ -50,10 +49,6 @@ namespace WpfApplication1
         public MainWindow()
         {
             red_list_started = blue_list_started = green_list_started = false;
-            coords = new int[2];
-            coords[0] = coords[1] = 0;
-            coords2 = new int[2];
-            coords2[0] = coords2[1] = 0;
             roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
             currBlue = currGreen = currRed = 1;
             arr.init();
