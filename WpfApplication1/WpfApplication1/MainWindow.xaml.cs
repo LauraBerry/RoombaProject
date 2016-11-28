@@ -35,7 +35,7 @@ using AForge.Video;
 
 namespace WpfApplication1
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         bool roomba1_pressed, roomba2_pressed, roomba3_pressed;
         int currRed, currBlue, currGreen;
@@ -44,8 +44,9 @@ namespace WpfApplication1
         AForge.Video.DirectShow.VideoCaptureDevice vidsource1, videosource2;
         int[] coords, coords2;
         int firstOrSecond = 0;
-        pathNode currNode_red, currNode_blue, currNode_green;
         bool red_list_started, blue_list_started, green_list_started;
+        pathNode redHead, blueHead, greenHead;
+        logic aname= new logic();
 
         public MainWindow()
         {
@@ -57,6 +58,7 @@ namespace WpfApplication1
             roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
             currBlue = currGreen = currRed = 1;
             arr.init();
+            aname.init();
             InitializeComponent();
 
             /*
@@ -94,11 +96,13 @@ namespace WpfApplication1
                     int[] vector;
                     vector = new int[2];
                     vector[0] = coords2[0] - coords[0];
-                    vector[1] = coords2[1] - coords[1];         //Nico: for some reason if this result is negative it shows up in vector as 0
+                    vector[1] = coords2[1] - coords[1];
                     break;
                 }
                 counter++;
             }
+            //timer
+            //call getBarring
 
             // signal to stop when you no longer need capturing
             //videoSource.SignalToStop( );
@@ -149,8 +153,15 @@ namespace WpfApplication1
             blobCounter.ProcessImage(grayImage);
             System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
             // draw rectangle around the biggest blob           //todo maybe alter this if it is not seeing the roomba properly
+
+
             if (rects.Length > 0)
             {
+               /* Console.Write("rectangle Height: ");
+                Console.Write(rects[0].Size.Height);
+                Console.Write(" ");
+                Console.Write("rectangle Width: ");
+                Console.WriteLine(rects[0].Size.Width);*/
                 for (int i = 0; i < rects.Length; i++)
                 {
                     System.Drawing.Rectangle objectRect = rects[i];
@@ -163,29 +174,19 @@ namespace WpfApplication1
                         int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
                         int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
                         System.Drawing.Color a = bitmap.GetPixel(x1, y1);
-                        System.Drawing.Color green_color = System.Drawing.Color.FromArgb(255, 100, 155, 15);
-                        System.Drawing.Color blue_color = System.Drawing.Color.FromArgb(255, 76, 143, 204);
-                        System.Drawing.Color red_color = System.Drawing.Color.FromArgb(255, 121, 177, 255);
-                        /*
-                         * alternates which coordinates the x and y will be stored in to allow for vector calculations
-                         */
+                        write_to_struct(a, x1, y1, rects[i]);                                       //assigns rectangles to struct based on color
+                        aname.get_barring(aname.blue1, aname.blue2, aname.blue3, blueHead.x_coord, blueHead.y_coord);   //get the barring and decide if and where to turn
                         if (firstOrSecond == 0)
                         {
                             coords[0] = x1;
                             coords[1] = y1;
                             location = actual_location(coords);
-                            /*bool on_path = check_if_on_path(location, "red");
-                            Console.Write("on the path? ");
-                            Console.WriteLine(on_path);*/
                         }
                         else
                         {
                             coords2[0] = x1;
                             coords2[1] = y1;
                             location = actual_location(coords2);
-                            /*bool on_path = check_if_on_path(location, "red");
-                            Console.Write("on the path? ");
-                            Console.WriteLine(on_path);*/
                         }
                     }
                     g.Dispose();
@@ -193,59 +194,106 @@ namespace WpfApplication1
             }
         }
 
-        /*
-         * checks to see if the roomba is on the path it is supposed to be
-         * returns true if so and false if not.
-         * 
-         * TODO: this may need to be changed so that it takes in a int and 
-         * checks if it is the same as an int so that we can check that the
-         * roombas are following the path correctly (ie. not backwards)
-         * 
-         */
-        public bool check_if_on_path(int[] a, string b)
+/*
+ * takes in a rectangle around a seen object. it checks if the seen object is one of the 3 colors and if so assigns it to 
+ * a open struct. it stores the center point as well as the height and width of each object within the struct 
+ */
+        public void write_to_struct(System.Drawing.Color a, int x1, int y1, System.Drawing.Rectangle rec)
         {
-            try
+            float color = a.GetHue();
+            if(color<30) //red
             {
-                if (String.ReferenceEquals("red", b))
+                if (aname.red1.taken == false)
                 {
-                    if (arr.red_path[a[0], a[1]] != 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    aname.red1.xCoord = x1;
+                    aname.red1.yCoord = y1;
+                    aname.red1.height = rec.Size.Height;
+                    aname.red1.width = rec.Size.Width;
+                    aname.red1.color = a;
+                    aname.red1.taken = true;
                 }
-                else if (String.ReferenceEquals("blue", b))
+                else if (aname.red2.taken == false)
                 {
-                    if (arr.blue_path[a[0], a[1]] != 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    aname.red2.xCoord = x1;
+                    aname.red2.yCoord = y1;
+                    aname.red2.height = rec.Size.Height;
+                    aname.red2.width = rec.Size.Width;
+                    aname.red2.color = a;
+                    aname.red2.taken = true;
                 }
-                else if (String.ReferenceEquals("green", b))
+                else if (aname.red3.taken == false)
                 {
-                    if (arr.green_path[a[0], a[1]] != 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    aname.red3.xCoord = x1;
+                    aname.red3.yCoord = y1;
+                    aname.red3.height = rec.Size.Height;
+                    aname.red3.width = rec.Size.Width;
+                    aname.red3.color = a;
+                    aname.red3.taken = true;
                 }
-
-                return false;
             }
-            catch (Exception e)
+            else if (color<150)//green
             {
-                Console.WriteLine(e);
-                return false;
+                if (aname.green1.taken == false)
+                {
+                    aname.green1.xCoord = x1;
+                    aname.green1.yCoord = y1;
+                    aname.green1.height = rec.Size.Height;
+                    aname.green1.width = rec.Size.Width;
+                    aname.green1.color = a;
+                    aname.green1.taken = true;
+                }
+                else if (aname.green2.taken == false)
+                {
+                    aname.green2.xCoord = x1;
+                    aname.green2.yCoord = y1;
+                    aname.green2.height = rec.Size.Height;
+                    aname.green2.width = rec.Size.Width;
+                    aname.green2.color = a;
+                    aname.green2.taken = true;
+                }
+                else if (aname.green3.taken == false)
+                {
+                    aname.green3.xCoord = x1;
+                    aname.green3.yCoord = y1;
+                    aname.green3.height = rec.Size.Height;
+                    aname.green3.width = rec.Size.Width;
+                    aname.green3.color = a;
+                    aname.green3.taken = true;
+                }
+            }
+            else if (color<270)//blue
+            {
+                if (aname.blue1.taken == false)
+                {
+                    aname.blue1.xCoord = x1;
+                    aname.blue1.yCoord = y1;
+                    aname.blue1.height = rec.Size.Height;
+                    aname.blue1.width = rec.Size.Width;
+                    aname.blue1.color = a;
+                    aname.blue1.taken = true;
+                }
+                else if (aname.blue2.taken == false)
+                {
+                    aname.blue2.xCoord = x1;
+                    aname.blue2.yCoord = y1;
+                    aname.blue2.height = rec.Size.Height;
+                    aname.blue2.width = rec.Size.Width;
+                    aname.blue2.color = a;
+                    aname.blue2.taken = true;
+                }
+                else if (aname.blue3.taken == false)
+                {
+                    aname.blue3.xCoord = x1;
+                    aname.blue3.yCoord = y1;
+                    aname.blue3.height = rec.Size.Height;
+                    aname.blue3.width = rec.Size.Width;
+                    aname.blue3.color = a;
+                    aname.blue3.taken = true;
+                }
+                else
+                {
+                    return;
+                }
             }
         }
 
@@ -324,7 +372,6 @@ namespace WpfApplication1
             return location_coords;
         }
 
-
         /*
          * listens for which roomba is selected, ensures that only one is selected at a time
          */
@@ -343,7 +390,6 @@ namespace WpfApplication1
             }
             else
             {
-
                 Roomba1.Width = 96;
                 Roomba1.Margin = new Thickness(411, 44, 0, 0);
                 roomba1_pressed = false;
@@ -545,225 +591,299 @@ namespace WpfApplication1
 
         public void add_to_linkedList(int x, int y)
         {
+
             if (roomba1_pressed == true)
             {
                 if (red_list_started == false)
                 {
-                    currNode_red.Head = currNode_red;
-                    currNode_red.Tail = currNode_red;
+                    redHead = new pathNode();
+                    redHead.x_coord=x;
+                    redHead.y_coord=y;
+                    currRed++;
                     red_list_started = true;
                 }
                 else
                 {
                     pathNode newNode = new pathNode();
-                    currNode_red.Next = newNode;
-                    currNode_red.Tail = newNode;
-                    newNode.Prev = currNode_red;
-                    newNode.Head = currNode_red.Head;
-                    currNode_red = newNode;
+                    newNode.x_coord=x; 
+                    newNode.y_coord=y;
+                    currRed++;
+                    pathNode finder = redHead;
+                    while(finder.Next!=null)
+                    {
+                        finder=finder.Next;
+                    }
+                    finder.Next=newNode;
                 }
-                currNode_red.x_coord = x;
-                currNode_red.y_coord = y;
-                currNode_red.sequence = currRed;
-                //currRed++;
-                currNode_red.color = "red";
+                currRed++;
+                
             }
             else if (roomba2_pressed == true)
             {
-                if (blue_list_started==false)
+                if (blue_list_started == false)
                 {
-                    currNode_blue.Head = currNode_blue;
-                    currNode_blue.Tail = currNode_blue;
+                    blueHead = new pathNode();
+                    blueHead.x_coord=x;
+                    blueHead.y_coord=y;
+                    currBlue++;
                     blue_list_started = true;
                 }
                 else
                 {
                     pathNode newNode = new pathNode();
-                    currNode_blue.Next = newNode;
-                    currNode_blue.Tail = newNode;
-                    newNode.Prev = currNode_blue;
-                    newNode.Head = currNode_blue.Head;
-                    currNode_blue = newNode;
+                    newNode.x_coord=x; 
+                    newNode.y_coord=y;
+                    currBlue++;
+                    pathNode finder = blueHead;
+                    while(finder.Next!=null)
+                    {
+                        finder=finder.Next;
+                    }
+                    finder.Next=newNode;
                 }
-                currNode_blue.x_coord = y;
-                currNode_blue.y_coord = x;
-                currNode_blue.sequence = currBlue;
-                //currBlue++;
-                currNode_blue.color = "blue";
+                currBlue++;
             }
             else if (roomba3_pressed == true)
             {
-                if (green_list_started==false)
+                if (green_list_started == false)
                 {
-                    currNode_green.Head = currNode_green;
-                    currNode_green.Tail = currNode_green;
+                    greenHead = new pathNode();
+                    greenHead.x_coord=x;
+                    greenHead.y_coord=y;
+                    currGreen++;
                     green_list_started = true;
                 }
                 else
                 {
                     pathNode newNode = new pathNode();
-                    currNode_green.Next = newNode;
-                    currNode_green.Tail = newNode;
-                    newNode.Prev = currNode_green;
-                    newNode.Head = currNode_green.Head;
-                    currNode_green = newNode;
+                    newNode.x_coord=x; 
+                    newNode.y_coord=y;
+                    currGreen++;
+                    pathNode finder = greenHead;
+                    while(finder.Next!=null)
+                    {
+                        finder=finder.Next;
+                    }
+                    finder.Next=newNode;
                 }
-                currNode_green.x_coord = y;
-                currNode_green.y_coord = x;
-                currNode_green.sequence = currGreen;
-                //currGreen++;
-                currNode_green.color = "green";
+                currGreen++;
             }
         }
+
+        public void remove_from_linkedList(int x, int y)
+        {
+            pathNode findnode;
+            if (roomba1_pressed == true)
+            {
+                currRed--;
+                findnode = redHead;
+                if (findnode.x_coord==x&&findnode.y_coord==y)
+                {
+                    redHead = findnode.Next;
+                    findnode.Next = null;
+                    return;
+                }
+            }
+            else if (roomba2_pressed == true)
+            {
+                currBlue--;
+                findnode = blueHead;
+                if (findnode.x_coord == x && findnode.y_coord == y)
+                {
+                    blueHead = findnode.Next;
+                    findnode.Next = null;
+                    return;
+                }
+            }
+            else if (roomba3_pressed==true)
+            {
+                currGreen--;
+                findnode = greenHead;
+                if (findnode.x_coord == x && findnode.y_coord == y)
+                {
+                    greenHead = findnode.Next;
+                    findnode.Next = null;
+                    return;
+                }
+            }
+            else
+            {
+                redHead = null;
+                red_list_started = false;
+                greenHead = null;
+                green_list_started = false;
+                blueHead = null;
+                blue_list_started = false;
+                return;
+            }
+            do
+            {
+                if (findnode.Next==null)
+                {
+                    break;
+                }
+                else if(findnode.Next.x_coord==x && findnode.Next.y_coord==y)
+                {
+                    findnode.Next = findnode.Next.Next;
+                    findnode = findnode.Next;
+                    break;
+                }
+                else
+                {
+                    findnode = findnode.Next;
+                }
+
+            } while (findnode.Next != null);
+        }
+
         /*
          * changes the color of the System.Windows.Shapes.Rectangle based on which roomba is selected
          */
-        public void remove_red(int x, int y, System.Windows.Shapes.Rectangle Rec)
+        public void remove_red(int x, int y, int midX,int midY,System.Windows.Shapes.Rectangle Rec, bool b)
         {
+            if (b == true)
+            {
+                remove_from_linkedList(midX, midY);
+            }
             if (arr.board[x, y] == 1)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
-                arr.board[x, y] = 0;
-                currRed = remove_path(arr.red_path, x, y, currRed);
+                arr.board[x, y] = 0;                 
             }
             else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(11, 162, 94));
                 arr.board[x, y] = 6;
-                currRed = remove_path(arr.red_path, x, y, currRed);
             }
             else if (arr.board[x, y] == 4)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                 arr.board[x, y] = 2;
-                currRed = remove_path(arr.red_path, x, y, currRed);
             }
             else if (arr.board[x, y] == 5)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                 arr.board[x, y] = 3;
-                currRed = remove_path(arr.red_path, x, y, currRed);
             }
         }
 
-        public void remove_blue(int x, int y, System.Windows.Shapes.Rectangle Rec)
+        public void remove_blue(int x, int y, int midX, int midY, System.Windows.Shapes.Rectangle Rec, bool b)
         {
+            if (b == true)
+            {
+                remove_from_linkedList(midX, midY);
+            }
             if (arr.board[x, y] == 2)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
-                currBlue = remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(188, 226, 14));
                 arr.board[x, y] = 5;
-                currBlue = remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 4)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                 arr.board[x, y] = 1;
-                currBlue = remove_path(arr.blue_path, x, y, currBlue);
             }
             else if (arr.board[x, y] == 6)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                 arr.board[x, y] = 3;
-                currBlue = remove_path(arr.blue_path, x, y, currBlue);
             }
         }
-        public void remove_green(int x, int y, System.Windows.Shapes.Rectangle Rec)
+        public void remove_green(int x, int y,int midX, int midY, System.Windows.Shapes.Rectangle Rec, Boolean b)
         {
+            if (b == true)
+            {
+                remove_from_linkedList(midX, midY);
+            }
             if (arr.board[x, y] == 3)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 245));
                 arr.board[x, y] = 0;
-                currGreen = remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 7)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 21, 226));
                 arr.board[x, y] = 4;
-                currGreen = remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 5)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                 arr.board[x, y] = 1;
-                currGreen = remove_path(arr.green_path, x, y, currGreen);
             }
             else if (arr.board[x, y] == 6)
             {
                 Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                 arr.board[x, y] = 2;
-                currGreen = remove_path(arr.green_path, x, y, currGreen);
             }
         }
 
         public void change(System.Windows.Shapes.Rectangle Rec, int x, int y, int midX, int midY)
-        {
+        {          
             if (roomba1_pressed == true)
             {
                 if (arr.board[x, y] == 2)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 21, 226));
                     arr.board[x, y] = 4;
-                    currRed = add_path(arr.red_path, x, y, currRed);
+                    add_to_linkedList(midX, midY);
                 }
                 else if (arr.board[x, y] == 3)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(188, 226, 14));
                     arr.board[x, y] = 5;
-                    currRed = add_path(arr.red_path, x, y, currRed);
+                    add_to_linkedList(midX, midY);
                 }
                 else if (arr.board[x, y] == 6)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(58, 58, 58));
                     arr.board[x, y] = 7;
-                    currRed = add_path(arr.red_path, x, y, currRed);
+                    add_to_linkedList(midX, midY);
                 }
                 else if (arr.board[x, y] == 0)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                     arr.board[x, y] = 1;
-                    currRed = add_path(arr.red_path, x, y, currRed);
+                    add_to_linkedList(midX, midY);
                 }
                 else
                 {
-                    remove_red(x, y, Rec);
+                    remove_red(x, y, midX, midY, Rec, true);
                 }
             }
-
             else if (roomba2_pressed == true)
             {
                 if (arr.board[x, y] == 1)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 21, 226));
                     arr.board[x, y] = 4;
-                    currBlue = add_path(arr.blue_path, x, y, currBlue);
+                    add_to_linkedList(midX, midY);
                 }
                 else if (arr.board[x, y] == 3)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(11, 162, 94));
                     arr.board[x, y] = 6;
-                    currBlue = add_path(arr.blue_path, x, y, currBlue);
+                    add_to_linkedList(midX, midY);
                 }
                 else if (arr.board[x, y] == 5)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(58, 58, 58));
                     arr.board[x, y] = 7;
-                    currBlue = add_path(arr.blue_path, x, y, currBlue);
+                    add_to_linkedList(midX, midY);
                 }
                 else if (arr.board[x, y] == 0)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                     arr.board[x, y] = 2;
-                    currBlue = add_path(arr.blue_path, x, y, currBlue);
+                    add_to_linkedList(midX, midY);
                 }
                 else
                 {
-                    remove_blue(x, y, Rec);
+                    remove_blue(x, y,midX, midY, Rec, true);
                 }
             }
             else if (roomba3_pressed == true)
@@ -772,54 +892,41 @@ namespace WpfApplication1
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(188, 226, 14));
                     arr.board[x, y] = 5;
-                    currGreen = add_path(arr.green_path, x, y, currGreen);
+                    add_to_linkedList(midX, midY);
                 }
                 else if (arr.board[x, y] == 2)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(11, 162, 94));
                     arr.board[x, y] = 6;
-                    currGreen = add_path(arr.green_path, x, y, currGreen);
+                    add_to_linkedList(midX, midY);
                 }
                 else if (arr.board[x, y] == 4)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(58, 58, 58));
                     arr.board[x, y] = 7;
-                    currGreen = add_path(arr.green_path, x, y, currGreen);
+                    add_to_linkedList(midX, midY);
                 }
                 else if (arr.board[x, y] == 0)
                 {
                     Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                     arr.board[x, y] = 3;
-                    currGreen = add_path(arr.green_path, x, y, currGreen);
+                    add_to_linkedList(midX, midY);
                 }
                 else
                 {
-                    remove_green(x, y, Rec);
+                    remove_green(x, y, midX, midY, Rec, true);
                 }
             }
         }
-        public int remove_path(int[,] a, int x, int y, int val)
-        {
-            a[x, y] = 0;
-            val--;
-            return val;
-        }
-        public int add_path(int[,] a, int x, int y, int val)
-        {
-            a[x, y] = val;
-            val++;
-            return val;
-        }
-
-
 
         /*
          * sets a block back to a blank state
          */
-        public void clear_block(System.Windows.Shapes.Rectangle rec, int x, int y)
+        public void clear_block(System.Windows.Shapes.Rectangle rec, int x, int y, int midX, int midY)
         {
             rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 244, 244));
             arr.board[x, y] = 0;
+            remove_from_linkedList(midX, midY);
         }
 
         /*
@@ -829,155 +936,160 @@ namespace WpfApplication1
         {
             if (roomba1_pressed == true)
             {
-                remove_red(0, 0, Rec_11);
-                remove_red(0, 1, Rec_12);
-                remove_red(0, 2, Rec_13);
-                remove_red(0, 3, Rec_14);
-                remove_red(0, 4, Rec_15);
-                remove_red(0, 5, Rec_16);
-                remove_red(0, 6, Rec_17);
-                remove_red(1, 0, Rec_21);
-                remove_red(1, 1, Rec_22);
-                remove_red(1, 2, Rec_23);
-                remove_red(1, 3, Rec_24);
-                remove_red(1, 4, Rec_25);
-                remove_red(1, 5, Rec_26);
-                remove_red(1, 6, Rec_27);
-                remove_red(2, 0, Rec_31);
-                remove_red(2, 1, Rec_32);
-                remove_red(2, 2, Rec_33);
-                remove_red(2, 3, Rec_34);
-                remove_red(2, 4, Rec_35);
-                remove_red(2, 5, Rec_36);
-                remove_red(2, 6, Rec_37);
-                remove_red(3, 0, Rec_41);
-                remove_red(3, 1, Rec_42);
-                remove_red(3, 2, Rec_43);
-                remove_red(3, 3, Rec_44);
-                remove_red(3, 4, Rec_45);
-                remove_red(3, 5, Rec_46);
-                remove_red(3, 6, Rec_47);
-                remove_red(4, 0, Rec_51);
-                remove_red(4, 1, Rec_52);
-                remove_red(4, 2, Rec_53);
-                remove_red(4, 3, Rec_54);
-                remove_red(4, 4, Rec_55);
-                remove_red(4, 5, Rec_56);
-                remove_red(4, 6, Rec_57);
-            }
+                redHead = null;
+                red_list_started = false;
+                remove_red( 0, 0, 48, 45,Rec_11, false);     
+                remove_red(0, 1, 48, 137,Rec_12, false);
+                remove_red(0, 2, 48, 228,Rec_13, false);
+                remove_red( 0, 3, 48, 320,Rec_14, false);
+                remove_red( 0, 4, 48, 411,Rec_15, false);
+                remove_red( 0, 5, 48, 502,Rec_16, false);
+                remove_red(0, 6, 48, 594,Rec_17, false);
+                remove_red( 1, 0, 144, 45,Rec_21, false);
+                remove_red( 1, 1, 144, 137,Rec_22, false);
+                remove_red( 1, 2, 144, 228,Rec_23, false);
+                remove_red( 1, 3, 144, 320,Rec_24, false);
+                remove_red( 1, 4, 144, 411,Rec_25, false);
+                remove_red( 1, 5, 144, 502,Rec_26, false);
+                remove_red( 1, 6, 144, 594,Rec_27, false);
+                remove_red( 2, 0, 240, 45,Rec_31, false);
+                remove_red( 2, 1, 240, 144,Rec_32, false);
+                remove_red( 2, 2, 240, 228,Rec_33, false);
+                remove_red( 2, 3, 240, 320,Rec_34, false);
+                remove_red( 2, 4, 240, 411,Rec_35, false);
+                remove_red( 2, 5, 240, 502,Rec_36, false);
+                remove_red( 2, 6, 240, 594,Rec_37, false);
+                remove_red( 3, 0, 336, 45,Rec_41, false);
+                remove_red( 3, 1, 336, 137,Rec_42, false);
+                remove_red( 3, 2, 336, 228,Rec_43, false);
+                remove_red( 3, 3, 336, 320,Rec_44, false);
+                remove_red( 3, 4, 336, 411,Rec_45, false);
+                remove_red( 3, 5, 336, 502,Rec_46, false);
+                remove_red( 3, 6, 336, 594,Rec_47, false);
+                remove_red( 4, 0, 432, 45,Rec_51, false);
+                remove_red( 4, 1, 432, 137,Rec_52, false);
+                remove_red( 4, 2, 432, 228,Rec_53, false);
+                remove_red( 4, 3, 432, 320,Rec_54, false);
+                remove_red( 4, 4, 432, 411,Rec_55, false);
+                remove_red( 4, 6, 432, 502,Rec_57, false);
+                remove_red( 4, 5, 432, 137,Rec_56, false);
+        }
             else if (roomba2_pressed == true)
             {
-                remove_blue(0, 0, Rec_11);
-                remove_blue(0, 1, Rec_12);
-                remove_blue(0, 2, Rec_13);
-                remove_blue(0, 3, Rec_14);
-                remove_blue(0, 4, Rec_15);
-                remove_blue(0, 5, Rec_16);
-                remove_blue(0, 6, Rec_17);
-                remove_blue(1, 0, Rec_21);
-                remove_blue(1, 1, Rec_22);
-                remove_blue(1, 2, Rec_23);
-                remove_blue(1, 3, Rec_24);
-                remove_blue(1, 4, Rec_25);
-                remove_blue(1, 5, Rec_26);
-                remove_blue(1, 6, Rec_27);
-                remove_blue(2, 0, Rec_31);
-                remove_blue(2, 1, Rec_32);
-                remove_blue(2, 2, Rec_33);
-                remove_blue(2, 3, Rec_34);
-                remove_blue(2, 4, Rec_35);
-                remove_blue(2, 5, Rec_36);
-                remove_blue(2, 6, Rec_37);
-                remove_blue(3, 0, Rec_41);
-                remove_blue(3, 1, Rec_42);
-                remove_blue(3, 2, Rec_43);
-                remove_blue(3, 3, Rec_44);
-                remove_blue(3, 4, Rec_45);
-                remove_blue(3, 5, Rec_46);
-                remove_blue(3, 6, Rec_47);
-                remove_blue(4, 0, Rec_51);
-                remove_blue(4, 1, Rec_52);
-                remove_blue(4, 2, Rec_53);
-                remove_blue(4, 3, Rec_54);
-                remove_blue(4, 4, Rec_55);
-                remove_blue(4, 5, Rec_56);
-                remove_blue(4, 6, Rec_57);
+                blueHead = null;
+                blue_list_started = false;
+                remove_blue( 0, 0, 48, 45,Rec_11, false);     
+                remove_blue(0, 1, 48, 137,Rec_12, false);
+                remove_blue(0, 2, 48, 228,Rec_13, false);
+                remove_blue( 0, 3, 48, 320,Rec_14, false);
+                remove_blue( 0, 4, 48, 411,Rec_15, false);
+                remove_blue( 0, 5, 48, 502,Rec_16, false);
+                remove_blue(0, 6, 48, 594,Rec_17, false);
+                remove_blue( 1, 0, 144, 45,Rec_21, false);
+                remove_blue( 1, 1, 144, 137,Rec_22, false);
+                remove_blue( 1, 2, 144, 228,Rec_23, false);
+                remove_blue( 1, 3, 144, 320,Rec_24, false);
+                remove_blue( 1, 4, 144, 411,Rec_25, false);
+                remove_blue( 1, 5, 144, 502,Rec_26, false);
+                remove_blue( 1, 6, 144, 594,Rec_27, false);
+                remove_blue( 2, 0, 240, 45,Rec_31, false);
+                remove_blue( 2, 1, 240, 144,Rec_32, false);
+                remove_blue( 2, 2, 240, 228,Rec_33, false);
+                remove_blue( 2, 3, 240, 320,Rec_34, false);
+                remove_blue( 2, 4, 240, 411,Rec_35, false);
+                remove_blue( 2, 5, 240, 502,Rec_36, false);
+                remove_blue( 2, 6, 240, 594,Rec_37, false);
+                remove_blue( 3, 0, 336, 45,Rec_41, false);
+                remove_blue( 3, 1, 336, 137,Rec_42, false);
+                remove_blue( 3, 2, 336, 228,Rec_43, false);
+                remove_blue( 3, 3, 336, 320,Rec_44, false);
+                remove_blue( 3, 4, 336, 411,Rec_45, false);
+                remove_blue( 3, 5, 336, 502,Rec_46, false);
+                remove_blue( 3, 6, 336, 594,Rec_47, false);
+                remove_blue( 4, 0, 432, 45,Rec_51, false);
+                remove_blue( 4, 1, 432, 137,Rec_52, false);
+                remove_blue( 4, 2, 432, 228,Rec_53, false);
+                remove_blue( 4, 3, 432, 320,Rec_54, false);
+                remove_blue( 4, 4, 432, 411,Rec_55, false);
+                remove_blue( 4, 6, 432, 502,Rec_57, false);
+                remove_blue( 4, 5, 432, 137,Rec_56, false);
             }
             else if (roomba3_pressed == true)
             {
-                remove_green(0, 0, Rec_11);
-                remove_green(0, 1, Rec_12);
-                remove_green(0, 2, Rec_13);
-                remove_green(0, 3, Rec_14);
-                remove_green(0, 4, Rec_15);
-                remove_green(0, 5, Rec_16);
-                remove_green(0, 6, Rec_17);
-                remove_green(1, 0, Rec_21);
-                remove_green(1, 1, Rec_22);
-                remove_green(1, 2, Rec_23);
-                remove_green(1, 3, Rec_24);
-                remove_green(1, 4, Rec_25);
-                remove_green(1, 5, Rec_26);
-                remove_green(1, 6, Rec_27);
-                remove_green(2, 0, Rec_31);
-                remove_green(2, 1, Rec_32);
-                remove_green(2, 2, Rec_33);
-                remove_green(2, 3, Rec_34);
-                remove_green(2, 4, Rec_35);
-                remove_green(2, 5, Rec_36);
-                remove_green(2, 6, Rec_37);
-                remove_green(3, 0, Rec_41);
-                remove_green(3, 1, Rec_42);
-                remove_green(3, 2, Rec_43);
-                remove_green(3, 3, Rec_44);
-                remove_green(3, 4, Rec_45);
-                remove_green(3, 5, Rec_46);
-                remove_green(3, 6, Rec_47);
-                remove_green(4, 0, Rec_51);
-                remove_green(4, 1, Rec_52);
-                remove_green(4, 2, Rec_53);
-                remove_green(4, 3, Rec_54);
-                remove_green(4, 4, Rec_55);
-                remove_green(4, 5, Rec_56);
-                remove_green(4, 6, Rec_57);
+                greenHead = null;
+                green_list_started = false;
+                remove_green( 0, 0, 48, 45,Rec_11, false);     
+                remove_green(0, 1, 48, 137,Rec_12, false);
+                remove_green(0, 2, 48, 228,Rec_13, false);
+                remove_green( 0, 3, 48, 320,Rec_14, false);
+                remove_green( 0, 4, 48, 411,Rec_15, false);
+                remove_green( 0, 5, 48, 502,Rec_16, false);
+                remove_green(0, 6, 48, 594,Rec_17, false);
+                remove_green( 1, 0, 144, 45,Rec_21, false);
+                remove_green( 1, 1, 144, 137,Rec_22, false);
+                remove_green( 1, 2, 144, 228,Rec_23, false);
+                remove_green( 1, 3, 144, 320,Rec_24, false);
+                remove_green( 1, 4, 144, 411,Rec_25, false);
+                remove_green( 1, 5, 144, 502,Rec_26, false);
+                remove_green( 1, 6, 144, 594,Rec_27, false);
+                remove_green( 2, 0, 240, 45,Rec_31, false);
+                remove_green( 2, 1, 240, 144,Rec_32, false);
+                remove_green( 2, 2, 240, 228,Rec_33, false);
+                remove_green( 2, 3, 240, 320,Rec_34, false);
+                remove_green( 2, 4, 240, 411,Rec_35, false);
+                remove_green( 2, 5, 240, 502,Rec_36, false);
+                remove_green( 2, 6, 240, 594,Rec_37, false);
+                remove_green( 3, 0, 336, 45,Rec_41, false);
+                remove_green( 3, 1, 336, 137,Rec_42, false);
+                remove_green( 3, 2, 336, 228,Rec_43, false);
+                remove_green( 3, 3, 336, 320,Rec_44, false);
+                remove_green( 3, 4, 336, 411,Rec_45, false);
+                remove_green( 3, 5, 336, 502,Rec_46, false);
+                remove_green( 3, 6, 336, 594,Rec_47, false);
+                remove_green( 4, 0, 432, 45,Rec_51, false);
+                remove_green( 4, 1, 432, 137,Rec_52, false);
+                remove_green( 4, 2, 432, 228,Rec_53, false);
+                remove_green( 4, 3, 432, 320,Rec_54, false);
+                remove_green( 4, 4, 432, 411,Rec_55, false);
+                remove_green( 4, 6, 432, 502,Rec_57, false);
+                remove_green( 4, 5, 432, 137,Rec_56, false);
             }
             else
             {
-                clear_block(Rec_11, 0, 0);
-                clear_block(Rec_12, 0, 1);
-                clear_block(Rec_13, 0, 2);
-                clear_block(Rec_14, 0, 3);
-                clear_block(Rec_15, 0, 4);
-                clear_block(Rec_16, 0, 5);
-                clear_block(Rec_17, 0, 6);
-                clear_block(Rec_21, 1, 0);
-                clear_block(Rec_22, 1, 1);
-                clear_block(Rec_23, 1, 2);
-                clear_block(Rec_24, 1, 3);
-                clear_block(Rec_25, 1, 4);
-                clear_block(Rec_26, 1, 5);
-                clear_block(Rec_27, 1, 6);
-                clear_block(Rec_31, 2, 0);
-                clear_block(Rec_32, 2, 1);
-                clear_block(Rec_33, 2, 2);
-                clear_block(Rec_34, 2, 3);
-                clear_block(Rec_35, 2, 4);
-                clear_block(Rec_36, 2, 5);
-                clear_block(Rec_37, 2, 6);
-                clear_block(Rec_41, 3, 0);
-                clear_block(Rec_42, 3, 1);
-                clear_block(Rec_43, 3, 2);
-                clear_block(Rec_44, 3, 3);
-                clear_block(Rec_45, 3, 4);
-                clear_block(Rec_46, 3, 5);
-                clear_block(Rec_47, 3, 6);
-                clear_block(Rec_51, 4, 0);
-                clear_block(Rec_52, 4, 1);
-                clear_block(Rec_53, 4, 2);
-                clear_block(Rec_54, 4, 3);
-                clear_block(Rec_55, 4, 4);
-                clear_block(Rec_56, 4, 5);
-                clear_block(Rec_57, 4, 6);
+                clear_block(Rec_11, 0, 0,48, 45);
+                clear_block(Rec_12,0,1, 48, 137);
+                clear_block(Rec_13,0, 2, 48, 228);
+                clear_block(Rec_14, 0, 3, 48, 320);
+                clear_block(Rec_15, 0, 4, 48, 411);
+                clear_block(Rec_16, 0, 5, 48, 502);
+                clear_block(Rec_17, 0, 6, 48, 594);
+                clear_block(Rec_21, 1, 0, 144, 45);
+                clear_block(Rec_22, 1, 1, 144, 137);
+                clear_block(Rec_23, 1, 2, 144, 228);
+                clear_block(Rec_24, 1, 3, 144, 320);
+                clear_block(Rec_25, 1, 4, 144, 411);
+                clear_block(Rec_26, 1, 5, 144, 502);
+                clear_block(Rec_27, 1, 6, 144, 594);
+                clear_block(Rec_31, 2, 0, 240, 45);
+                clear_block(Rec_32, 2, 1, 240, 144);
+                clear_block(Rec_33, 2, 2, 240, 228);
+                clear_block(Rec_34, 2, 3, 240, 320);
+                clear_block(Rec_35, 2, 4, 240, 411);
+                clear_block(Rec_36, 2, 5, 240, 502);
+                clear_block(Rec_37, 2, 6, 240, 594);
+                clear_block(Rec_41, 3, 0, 336, 45);
+                clear_block(Rec_42, 3, 1, 336, 137);
+                clear_block(Rec_43, 3, 2, 336, 228);
+                clear_block(Rec_44, 3, 3, 336, 320);
+                clear_block(Rec_46, 3, 5, 336, 502);
+                clear_block(Rec_47, 3, 6, 336, 594);
+                clear_block(Rec_51, 4, 0, 432, 45);
+                clear_block(Rec_52, 4, 1, 432, 137);
+                clear_block(Rec_53, 4, 2, 432, 228);
+                clear_block(Rec_54, 4, 3, 432, 320);
+                clear_block(Rec_55, 4, 4, 432, 411);
+                clear_block(Rec_57, 4, 6, 432, 502);
+                clear_block(Rec_56, 4, 5, 432, 137);
             }
         }
 
@@ -986,7 +1098,7 @@ namespace WpfApplication1
          */
         private void start_clicked(object sender, RoutedEventArgs e)
         {
-            bool printboards = false;
+            bool printboards = true;
             roomba1_pressed = false;
             roomba2_pressed = false;
             roomba3_pressed = false;
@@ -994,129 +1106,23 @@ namespace WpfApplication1
             Roomba2.Margin = new Thickness(411, 78, 0, 0);
             Roomba3.Margin = new Thickness(411, 112, 0, 0);
             clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
-            Console.Write("first coordinates: ");
-            Console.Write(coords[0]);
-            Console.Write(", ");
-            Console.WriteLine(coords[1]);
-            Console.Write("second coordinates: ");
-            Console.Write(coords2[0]);
-            Console.Write(", ");
-            Console.WriteLine(coords2[1]);
-            int[] vector;
-            vector = new int[2];
-            vector[0] = coords2[0] - coords[0];
-            vector[1] = coords2[1] - coords[1];
-            Console.Write("vector: ");
-            Console.Write(vector[0]);
-            Console.Write(", ");
-            Console.WriteLine(vector[0]);
+
             if (printboards == true)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    if (i == 0)
-                    {
-                        Console.Write("currRed: ");
-                        Console.WriteLine(currRed);
-                        Console.WriteLine("Red Roomba: ");
-                        for (int j = 0; j < 5; j++)
-                        {
-                            for (int k = 0; k < 7; k++)
-                            {
-                                Console.Write(arr.red_path[j, k]);
-                            }
-                            Console.WriteLine("");
-                        }
-                    }
-                    else if (i == 1)
-                    {
-                        Console.Write("currblue: ");
-                        Console.WriteLine(currBlue);
-                        Console.WriteLine("Blue Roomba: ");
-                        for (int j = 0; j < 5; j++)
-                        {
-                            for (int k = 0; k < 7; k++)
-                            {
-                                Console.Write(arr.blue_path[j, k]);
-                            }
-                            Console.WriteLine("");
-                        }
-                    }
-                    else if (i == 2)
-                    {
-                        Console.Write("currGreen: ");
-                        Console.WriteLine(currGreen);
-                        Console.WriteLine("Green Roomba: ");
-                        for (int j = 0; j < 5; j++)
-                        {
-                            for (int k = 0; k < 7; k++)
-                            {
-                                Console.Write(arr.green_path[j, k]);
-                            }
-                            Console.WriteLine("");
-                        }
-                    }
-                }
-            }
-            else
             {
                 try
                 {
-                    pathNode current = new pathNode();
-                    for (int i = 0; i < 3; i++)
+                    if(aname.blue1.taken==true)
                     {
-                        if (i == 0)
-                        {
-                            current = currNode_red.Head;
-                            Console.Write("currRed: ");
-                            Console.WriteLine(currRed);
-                            Console.WriteLine("Red Roomba: ");
-                            while (current != currNode_red.Tail)
-                            {
-                                Console.Write("(");
-                                Console.Write(current.x_coord);
-                                Console.Write(", ");
-                                Console.Write(current.y_coord);
-                                Console.Write(") ");
-                                current = currNode_red.Next;
-                            }
-                            Console.WriteLine("");
+                        Console.WriteLine("blue Object");
+                        Console.Write("x coordinate: ");
+                        Console.Write(aname.blue1.xCoord);
+                        Console.Write(", y coordinate: ");
+                        Console.Write(aname.blue1.yCoord);
+                        Console.Write(", height: ");
+                        Console.Write(aname.blue1.height);
+                        Console.Write(", width: ");
+                        Console.WriteLine(aname.red1.width);
 
-                        }
-                        else if (i == 1)
-                        {
-                            current = currNode_blue.Head;
-                            Console.Write("currblue: ");
-                            Console.WriteLine(currBlue);
-                            Console.WriteLine("blue Roomba: ");
-                            while (current != currNode_blue.Tail)
-                            {
-                                Console.Write("(");
-                                Console.Write(current.x_coord);
-                                Console.Write(", ");
-                                Console.Write(current.y_coord);
-                                Console.Write(") ");
-                                current = currNode_blue.Next;
-                            }
-                            Console.WriteLine("");
-                        }
-                        else if (i == 2)
-                        {
-                            current = currNode_green.Head;
-                            Console.Write("currgreen: ");
-                            Console.WriteLine(currGreen);
-                            Console.WriteLine("green Roomba: ");
-                            while (current != currNode_green.Tail)
-                            {
-                                Console.Write("(");
-                                Console.Write(current.x_coord);
-                                Console.Write(", ");
-                                Console.Write(current.y_coord);
-                                Console.Write(") ");
-                                current = currNode_green.Next;
-                            }
-                            Console.WriteLine("");
-                        }
                     }
                 }
                 catch (Exception exc)

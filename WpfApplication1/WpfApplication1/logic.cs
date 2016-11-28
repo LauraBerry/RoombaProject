@@ -8,79 +8,166 @@ namespace WpfApplication1
 {
     class logic
     {
-        public bool done=false;
-        public int redLocation = 1;
-        public int blueLocation = 1;
-        public int greenLocation = 1;
+        public bool done = false;
+        public object_seen blue1;
+        public object_seen blue2;
+        public object_seen blue3;
+        public object_seen red1;
+        public object_seen red2;
+        public object_seen red3;
+        public object_seen green1;
+        public object_seen green2;
+        public object_seen green3;
         arrayClass arr = new arrayClass();
-
-        /*
-         * checks roomba location on array (so where it should be according to what the user drew in)
-         * and compairs it to where the kinect camera sees it to be and adjusts roomba path to match
-         * if it cannot find a next block that the roomba wants to go to it returns false otherwise 
-         * it returns true.
-         */
-        public bool checkpath(String color)
+        public movement roombaControl = new movement();
+        //struct to hold things the camera recognizes in the frame
+        public struct object_seen
         {
-            int should_be_currX = 0;
-            int should_be_currY = 0;
-            int currX = 0;
-            int CurrY = 0;
-            //find current location
-            for (int i = 0; i < 4; i++)
+            public int xCoord;
+            public int yCoord;
+            public int height;
+            public int width;
+            public System.Drawing.Color color;
+            public bool taken;
+        }
+        public void init()
+        {
+            blue1 = new object_seen();
+            blue2 = new object_seen();
+            blue3 = new object_seen();
+            blue1.taken = false;
+            blue2.taken = false;
+            blue3.taken = false;
+
+            red1 = new object_seen();
+            red2 = new object_seen();
+            red3 = new object_seen();
+            red1.taken = false;
+            red2.taken = false;
+            red3.taken = false;
+
+            green1 = new object_seen();
+            green2 = new object_seen();
+            green3 = new object_seen();
+            green1.taken = false;
+            green2.taken = false;
+            green3.taken = false;
+        }
+        //compare size of objects and put them in an array from biggest to smallest.
+        public object_seen[] findBiggest(object_seen a, object_seen b, object_seen c)
+        {
+            object_seen[] inOrder;
+            inOrder= new object_seen[3];
+            if (a.height>b.height)
             {
-                for (int j = 0; j < 4; j++)
+                if(b.height>c.height)
                 {
-                    if (color.Equals("red"))
-                    {
-                        if (arr.red_path[i, j] == redLocation)
-                        {
-                            should_be_currX = i;
-                            should_be_currY = j;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
+                    inOrder[0] = a;
+                    inOrder[1] = b;
+                    inOrder[2] = c;
+                }
+                else if(c.height>a.height)
+                {
+                    inOrder[0] = c;
+                    inOrder[1] = a;
+                    inOrder[2] = b;
                 }
             }
-            //find actual location (code for kinect should go here-ish)
-            int a = should_be_currX;
-            bool on_path = false;
-            while (!on_path)
+            else if (a.height>c.height)
             {
-                if (currX != a || CurrY != should_be_currY)
-                {
-                    //something to correct the roomba's path to fix it
+                inOrder[0] = b;
+                inOrder[1] = a;
+                inOrder[2] = c;
+            }
+            else if (b.height>c.height)
+            {
+                inOrder[0] = b;
+                inOrder[1] = c;
+                inOrder[2] = a;
+            }
+            else
+            {
+                inOrder[0] = c;
+                inOrder[1] = b;
+                inOrder[2] = a;
+            }
+            return inOrder;
+        }
+        //checks if any of the objects given are empty
+        public bool three_filled(object_seen a, object_seen b, object_seen c)
+        {
+            if (a.taken==true && b.taken==true && c.taken==true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        //figure out where each object is relative to the desired location.
+        public void get_barring(object_seen a, object_seen b, object_seen c, int destinationX, int destinationY)
+        {
+            bool isNull = three_filled(a, b, c);
+            if (isNull==false)
+            {
+                //not all are filled
+                //wait
+                return;
+            }
+            else
+            {
+                object_seen[] arr;
+                arr = new object_seen[3];
+                arr = findBiggest(a, b, c);
+                //math stuff
+                double distance_to_biggest;
+                double distance_to_middle;  
+                double distance_to_smallest;
 
+                distance_to_biggest = System.Math.Sqrt(System.Math.Pow((arr[0].xCoord - destinationX), 2.0) + System.Math.Pow((arr[0].yCoord - destinationY), 2.0));
+                distance_to_middle = System.Math.Sqrt(System.Math.Pow((arr[1].xCoord - destinationX), 2.0) + System.Math.Pow((arr[1].yCoord - destinationY), 2.0));
+                distance_to_smallest = System.Math.Sqrt(System.Math.Pow((arr[2].xCoord - destinationX), 2.0) + System.Math.Pow((arr[2].yCoord - destinationY), 2.0));
+
+                if (positiveResult(distance_to_middle, distance_to_smallest) < 10)
+                {
+                    if (distance_to_smallest < distance_to_biggest && distance_to_middle < distance_to_biggest)
+                    {
+                        roombaControl.go_forward(roombaControl.FaroreID);
+                        //go forward
+                    }
+                    else
+                    {
+                        roombaControl.long_turn(roombaControl.FaroreID);
+                        //long turn
+                    }
                 }
                 else
                 {
-                    on_path = true;
+                    if (distance_to_middle < distance_to_smallest)
+                    {
+                        roombaControl.turn_towards_middle(roombaControl.FaroreID);
+                        //turn towards middle
+                    }
+                    else if (distance_to_smallest<distance_to_middle)
+                    {
+                        roombaControl.turn_toward_small(roombaControl.FaroreID);
+                        //turn towards smallest
+                    }
                 }
             }
-            return true;
-
+            return;
         }
 
-        /*
-         * will eventually loop infinitly until all 3 roombas are at their destinations as plotted out by the user
-         * this may need to be re-worked to ensure that all 3 roombas run at the same time (for now we will focus on
-         * getting one roomba running and tracking)
-         */
-        public void running(String color)
+        public double positiveResult(double a, double b)
         {
-            bool on_right_path = false;
-            while (done == false)
+            double result;
+            result = a - b;
+            if (result<0)
             {
-                on_right_path = checkpath(color);
-                if (on_right_path==false)
-                {
-                    done = true;
-                }
-                redLocation++;
+                result = result * -1;
             }
+            return result;
         }
     }
 }
