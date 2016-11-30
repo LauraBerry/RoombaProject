@@ -112,11 +112,10 @@ namespace WpfApplication1
             // configure the filter
 
             System.Drawing.Bitmap filteredImage = colorFilter.Apply(bitmap);
-
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
-            blobCounter.MinHeight = 5;                                              //nico it will see my phone but not the roomba? what is the unit here?
-            blobCounter.MinWidth = 5;
+           // blobCounter.MinHeight = 10;                                              //nico it will see my phone but not the roomba? what is the unit here?
+            //blobCounter.MinWidth = 10;
             blobCounter.FilterBlobs = true;                                         // filter blobs by size
             blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
             // grayscaling
@@ -125,7 +124,6 @@ namespace WpfApplication1
             Bitmap grayImage = grayFilter.Apply(filteredImage);
             // locate blobs 
             blobCounter.ProcessImage(grayImage);
-            AForge.Imaging.Blob[] blobs = blobCounter.GetObjectsInformation();
             System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
             // draw rectangle around all seen objects
             if (rects.Length > 0)
@@ -181,120 +179,123 @@ namespace WpfApplication1
           }
           return c;
       }
+        
 /*
  * takes in a rectangle around a seen object. it checks if the seen object is one of the 3 colors and if so assigns it to 
  * a open struct. it stores the center point as well as the height and width of each object within the struct 
  */
-        public void write_to_struct(System.Drawing.Color a, int x1, int y1, System.Drawing.Rectangle rec)
-        {
-            float color = a.GetHue();
-            if (color < 30) //red
-            {
-                
-                if (aname.red1.taken == false &&(x1!=aname.red1.xCoord || y1!= aname.red1.yCoord))
-                {
-                    Console.WriteLine("saw a red thing 1");
-                    aname.red1.xCoord = x1;
-                    aname.red1.yCoord = y1;
-                    aname.red1.height = rec.Height;
-                    aname.red1.width = rec.Width;
-                    aname.red1.color = a;
-                    aname.red1.taken = true;
-                }
-                else if (aname.red2.taken == false && (x1 != aname.red2.xCoord || y1 != aname.red2.yCoord))
-                {
-                    Console.WriteLine("saw a red thing 2");
-                    aname.red2.xCoord = x1;
-                    aname.red2.yCoord = y1;
-                    aname.red2.height = rec.Height;
-                    aname.red2.width = rec.Width;
-                    aname.red2.color = a;
-                    aname.red2.taken = true;
-                }
-                else if (aname.red3.taken == false && (x1 != aname.red3.xCoord || y1 != aname.red3.yCoord))
-                {
-                    Console.WriteLine("saw a red thing 3");
-                    aname.red3.xCoord = x1;
-                    aname.red3.yCoord = y1;
-                    aname.red3.height = rec.Height;
-                    aname.red3.width = rec.Width;
-                    aname.red3.color = a;
-                    aname.red3.taken = true;
-                }
-            }
-            else if (color < 150)//green
-            {
-                
-                if (aname.green1.taken == false && (x1 != aname.green1.xCoord || y1 != aname.green1.yCoord))
-                {
-                    Console.WriteLine("saw a green thing 1");
-                    aname.green1.xCoord = x1;
-                    aname.green1.yCoord = y1;
-                    aname.green1.height = rec.Size.Height;
-                    aname.green1.width = rec.Size.Width;
-                    aname.green1.color = a;
-                    aname.green1.taken = true;
-                }
-                else if (aname.green2.taken == false && (x1 != aname.green2.xCoord || y1 != aname.green2.yCoord))
-                {
-                    Console.WriteLine("saw a green thing 2");
-                    aname.green2.xCoord = x1;
-                    aname.green2.yCoord = y1;
-                    aname.green2.height = rec.Size.Height;
-                    aname.green2.width = rec.Size.Width;
-                    aname.green2.color = a;
-                    aname.green2.taken = true;
-                }
-                else if (aname.green3.taken == false && (x1 != aname.green3.xCoord || y1 != aname.green3.yCoord))
-                {
-                    Console.WriteLine("saw a green thing 3");
-                    aname.green3.xCoord = x1;
-                    aname.green3.yCoord = y1;
-                    aname.green3.height = rec.Size.Height;
-                    aname.green3.width = rec.Size.Width;
-                    aname.green3.color = a;
-                    aname.green3.taken = true;
-                }
-            }
-            else if (color < 270)//blue
-            {
-                
-                if (aname.blue1.taken == false && (x1 != aname.blue1.xCoord || y1 != aname.blue1.yCoord))
-                {
-                    Console.WriteLine("saw a blue thing 1");
-                    aname.blue1.xCoord = x1;
-                    aname.blue1.yCoord = y1;
-                    aname.blue1.height = rec.Top - rec.Bottom;
-                    aname.blue1.width = rec.Left - rec.Right;
-                    aname.blue1.color = a;
-                    aname.blue1.taken = true;
-                }
-                else if (aname.blue2.taken == false && (x1 != aname.blue2.xCoord || y1 != aname.blue2.yCoord))
-                {
-                    Console.WriteLine("saw a blue thing 2");
-                    aname.blue2.xCoord = x1;
-                    aname.blue2.yCoord = y1;
-                    aname.blue2.height = rec.Height;
-                    aname.blue2.width = rec.Width;
-                    aname.blue2.color = a;
-                    aname.blue2.taken = true;
-                }
-                else if (aname.blue3.taken == false && (x1 != aname.blue3.xCoord || y1 != aname.blue3.yCoord))
-                {
-                    Console.WriteLine("saw a blue thing 3");
-                    aname.blue3.xCoord = x1;
-                    aname.blue3.yCoord = y1;
-                    aname.blue3.height = rec.Size.Height;
-                    aname.blue3.width = rec.Size.Width;
-                    aname.blue3.color = a;
-                    aname.blue3.taken = true;
-                }
-                else
-                {
-                    return;
-                }
-            }
-        }
+      public void write_to_struct(System.Drawing.Color a, int x1, int y1, System.Drawing.Rectangle rec)
+      {
+          float color = a.GetHue();
+          if (color != 120)
+          {
+              Console.WriteLine(color);
+          }
+          if (color < 40)//red
+          {
+              if (aname.helperMethod(aname.red1, aname.red2, aname.red3, x1, y1))
+              {
+                  Console.WriteLine("saw a red thing 1");
+                  aname.red1.xCoord = x1;
+                  aname.red1.yCoord = y1;
+                  aname.red1.height = rec.Height;
+                  aname.red1.width = rec.Width;
+                  aname.red1.color = a;
+                  aname.red1.taken = true;
+              }
+              else if (aname.helperMethod(aname.red2, aname.red1, aname.red3, x1, y1))
+              {
+                  Console.WriteLine("saw a red thing 2");
+                  aname.red2.xCoord = x1;
+                  aname.red2.yCoord = y1;
+                  aname.red2.height = rec.Height;
+                  aname.red2.width = rec.Width;
+                  aname.red2.color = a;
+                  aname.red2.taken = true;
+              }
+              else if (aname.helperMethod(aname.red3, aname.red2, aname.red1, x1, y1))
+              {
+                  Console.WriteLine("saw a red thing 3");
+                  aname.red3.xCoord = x1;
+                  aname.red3.yCoord = y1;
+                  aname.red3.height = rec.Height;
+                  aname.red3.width = rec.Width;
+                  aname.red3.color = a;
+                  aname.red3.taken = true;
+              }
+          }
+          else if (color <115)
+          {
+              if (aname.helperMethod(aname.green1, aname.green2, aname.green3, x1, y1))
+              {
+                  Console.WriteLine("saw a green thing 1");
+                  aname.green1.xCoord = x1;
+                  aname.green1.yCoord = y1;
+                  aname.green1.height = rec.Size.Height;
+                  aname.green1.width = rec.Size.Width;
+                  aname.green1.color = a;
+                  aname.green1.taken = true;
+              }
+              else if (aname.helperMethod(aname.green2, aname.green1, aname.green3, x1, y1))
+              {
+                  Console.WriteLine("saw a green thing 2");
+                  aname.green2.xCoord = x1;
+                  aname.green2.yCoord = y1;
+                  aname.green2.height = rec.Size.Height;
+                  aname.green2.width = rec.Size.Width;
+                  aname.green2.color = a;
+                  aname.green2.taken = true;
+              }
+              else if (aname.helperMethod(aname.green3, aname.green2, aname.green1, x1, y1))
+              {
+                  Console.WriteLine("saw a green thing 3");
+                  aname.green3.xCoord = x1;
+                  aname.green3.yCoord = y1;
+                  aname.green3.height = rec.Size.Height;
+                  aname.green3.width = rec.Size.Width;
+                  aname.green3.color = a;
+                  aname.green3.taken = true;
+              }
+          }
+          else if (color < 160)//blue
+          {
+              if (aname.helperMethod(aname.blue1, aname.blue2, aname.blue3, x1, y1))
+              {
+                  Console.WriteLine("saw a blue thing 1");
+                  aname.blue1.xCoord = x1;
+                  aname.blue1.yCoord = y1;
+                  aname.blue1.height = makePositive(rec.Right, rec.Left);
+                  aname.blue1.width = makePositive(rec.Top,rec.Bottom);
+                  aname.blue1.color = a;
+                  aname.blue1.taken = true;
+              }
+              else if (aname.helperMethod(aname.blue2, aname.blue1, aname.blue3, x1, y1))
+              {
+                  Console.WriteLine("saw a blue thing 2");
+                  aname.blue2.xCoord = x1;
+                  aname.blue2.yCoord = y1;
+                  aname.blue2.height = makePositive(rec.Right, rec.Left);
+                  aname.blue2.width = makePositive(rec.Top, rec.Bottom);
+                  aname.blue2.color = a;
+                  aname.blue2.taken = true;
+              }
+              else if (aname.helperMethod(aname.blue3, aname.blue2, aname.blue1, x1, y1))
+              {
+                  Console.WriteLine("saw a blue thing 3");
+                  aname.blue3.xCoord = x1;
+                  aname.blue3.yCoord = y1;
+                  aname.blue3.height = makePositive(rec.Right, rec.Left);
+                  aname.blue3.width = makePositive(rec.Top, rec.Bottom);
+                  aname.blue3.color = a;
+                  aname.blue3.taken = true;
+              }
+          }
+          else
+          {
+
+             return;
+          }
+      }
 
         /*
          * listens for which roomba is selected, ensures that only one is selected at a time
@@ -1056,7 +1057,6 @@ namespace WpfApplication1
                 {
                     Console.Write("objects are null");
                     Console.WriteLine(except);
-
                 }
             }
             if (printboards == true)
@@ -1100,6 +1100,45 @@ namespace WpfApplication1
                         Console.Write(aname.blue3.height);
                         Console.Write(", width: ");
                         Console.WriteLine(aname.blue3.width);
+
+                    }
+                    if (aname.green1.taken == true)
+                    {
+                        Console.WriteLine("green Object");
+                        Console.Write("x coordinate: ");
+                        Console.Write(aname.green1.xCoord);
+                        Console.Write(", y coordinate: ");
+                        Console.Write(aname.green1.yCoord);
+                        Console.Write(", height: ");
+                        Console.Write(aname.green1.height);
+                        Console.Write(", width: ");
+                        Console.WriteLine(aname.red1.width);
+
+                    }
+                    if (aname.green2.taken == true)
+                    {
+                        Console.WriteLine("green Object #2");
+                        Console.Write("x coordinate: ");
+                        Console.Write(aname.green2.xCoord);
+                        Console.Write(", y coordinate: ");
+                        Console.Write(aname.green2.yCoord);
+                        Console.Write(", height: ");
+                        Console.Write(aname.green2.height);
+                        Console.Write(", width: ");
+                        Console.WriteLine(aname.green2.width);
+
+                    }
+                    if (aname.green3.taken == true)
+                    {
+                        Console.WriteLine("green Object #3 ");
+                        Console.Write("x coordinate: ");
+                        Console.Write(aname.green3.xCoord);
+                        Console.Write(", y coordinate: ");
+                        Console.Write(aname.green3.yCoord);
+                        Console.Write(", height: ");
+                        Console.Write(aname.green3.height);
+                        Console.Write(", width: ");
+                        Console.WriteLine(aname.green3.width);
 
                     }
                 }
