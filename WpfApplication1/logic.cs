@@ -44,23 +44,27 @@ namespace WpfApplication1
             blue1 = new object_seen();
             blue2 = new object_seen();
             blue3 = new object_seen();
-            blue1.taken = false;
-            blue2.taken = false;
-            blue3.taken = false;
+            reInit(blue1, blue2, blue3);
 
             red1 = new object_seen();
             red2 = new object_seen();
             red3 = new object_seen();
-            red1.taken = false;
-            red2.taken = false;
-            red3.taken = false;
+            reInit(red1, red2, red3);
 
             green1 = new object_seen();
             green2 = new object_seen();
             green3 = new object_seen();
-            green1.taken = false;
-            green2.taken = false;
-            green3.taken = false;
+            reInit(green1, green2, green3);
+        }
+
+        public void reInit(object_seen a, object_seen b, object_seen c)
+        {
+            a.taken = false;
+            a.xCoord = 300000;
+            b.taken = false;
+            b.xCoord = 300000;
+            c.taken = false;
+            c.xCoord = 300000;
         }
         //compare size of objects and put them in an array from biggest to smallest.
         public object_seen[] findBiggest(object_seen a, object_seen b, object_seen c)
@@ -142,11 +146,13 @@ namespace WpfApplication1
                 {
                     if (distance_to_smallest < distance_to_biggest && distance_to_middle < distance_to_biggest)
                     {
+                        Console.WriteLine("go forward");
                         go_forward(FaroreID);
                         //go forward
                     }
                     else
                     {
+                        Console.WriteLine("long turn");
                         long_turn(FaroreID);
                         //long turn
                     }
@@ -155,16 +161,19 @@ namespace WpfApplication1
                 {
                     if (distance_to_middle < distance_to_smallest)
                     {
+                        Console.WriteLine("turn towards middle");
                         turn_towards_middle(FaroreID);
                         //turn towards middle
                     }
                     else if (distance_to_smallest<distance_to_middle)
                     {
+                        Console.WriteLine("turn towards smallest");
                         turn_toward_small(FaroreID);
                         //turn towards smallest
                     }
                 }
             }
+            reInit(a, b, c);
             return;
         }
 
@@ -192,9 +201,6 @@ namespace WpfApplication1
         {
                 //stop(FaroreID);
                 //stop roomba
-                blue1.taken = false;                //set taken to false so that on next frame the x and y coordinates of the object will be updated
-                blue2.taken = false;
-                blue3.taken = false;
                 return;
         }
         public void turn_toward_small(string ID)
@@ -203,9 +209,6 @@ namespace WpfApplication1
                 // or
                 //driveDirect(FaroreID, 10, 0);
                 //turn towards the smallest shape (left or right)
-                blue1.taken = false;                //set taken to false so that on next frame the x and y coordinates of the object will be updated
-                blue2.taken = false;
-                blue3.taken = false;
                 return;
 
         }
@@ -216,9 +219,6 @@ namespace WpfApplication1
                 // or
                 //driveDirect(FaroreID, 10, 0);
                 //turn towards the middle shape (left or right, opposit of small)
-                blue1.taken = false;                //set taken to false so that on next frame the x and y coordinates of the object will be updated
-                blue2.taken = false;
-                blue3.taken = false;
                 return;
         }
         public void go_forward(string ID)
@@ -226,9 +226,6 @@ namespace WpfApplication1
 
                 //go(FaroreID, 10, 0);
                 //move forward
-                blue1.taken = false;                //set taken to false so that on next frame the x and y coordinates of the object will be updated
-                blue2.taken = false;
-                blue3.taken = false;
                 return;
         }
         public void long_turn(string ID)
@@ -236,9 +233,6 @@ namespace WpfApplication1
 
                 //driveDirect(FaroreID, 0, 30);
                 //turn for a long time
-                blue1.taken = false;                //set taken to false so that on next frame the x and y coordinates of the object will be updated
-                blue2.taken = false;
-                blue3.taken = false;
                 return;
         }
     }

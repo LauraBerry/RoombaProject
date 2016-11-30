@@ -68,17 +68,13 @@ namespace WpfApplication1
             // start the video source
             videoSource.Start();
             int counter = 0;
-            while (true)
+            while (counter<2)
             {
                 // set NewFrame event handler
                 videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
                 // wait until we have two acquired images
                 /*camera1Acquired.WaitOne();
                 camera2Acquired.WaitOne();*/
-                if (counter >= 2)
-                {
-                    break;
-                }
                 counter++;
             }
             //timer
@@ -107,15 +103,13 @@ namespace WpfApplication1
             }
             catch (Exception ex)
             {
+                Console.Write("can't get frame");
                 Console.Write(ex);
             }
             System.Drawing.Bitmap bitmap = eventArgs.Frame;
             // create filter
             AForge.Imaging.Filters.ColorFiltering colorFilter = new AForge.Imaging.Filters.ColorFiltering();
             // configure the filter
-            colorFilter.Red = new AForge.IntRange(0, 100);
-            colorFilter.Green = new AForge.IntRange(0, 200);
-            colorFilter.Blue = new AForge.IntRange(150, 255);
 
             System.Drawing.Bitmap filteredImage = colorFilter.Apply(bitmap);
 
@@ -127,35 +121,66 @@ namespace WpfApplication1
             blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
             // grayscaling
             AForge.Imaging.Filters.Grayscale grayFilter = new AForge.Imaging.Filters.Grayscale(0.2125, 0.7154, 0.0721); ;
-
+            
             Bitmap grayImage = grayFilter.Apply(filteredImage);
             // locate blobs 
             blobCounter.ProcessImage(grayImage);
+            AForge.Imaging.Blob[] blobs = blobCounter.GetObjectsInformation();
             System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
-            // draw rectangle around the biggest blob           //todo maybe alter this if it is not seeing the roomba properly
-
-
+            // draw rectangle around all seen objects
             if (rects.Length > 0)
             {
                 for (int i = 0; i < rects.Length; i++)
                 {
                     System.Drawing.Rectangle objectRect = rects[i];
                     Graphics g = Graphics.FromImage(bitmap);
-
-                    using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
-                    {
-                        int[] location = new int[2];
-                        g.DrawRectangle(pen, objectRect);
-                        int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
-                        int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
-                        System.Drawing.Color a = bitmap.GetPixel(x1, y1);
-                        write_to_struct(a, x1, y1, rects[i]);                                       //assigns rectangles to struct based on color)
-                    }
-                    g.Dispose();
+                        using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
+                        {
+                            g.DrawRectangle(pen, objectRect);
+                            int x1 = makePositive(objectRect.Right, objectRect.Left);
+                            x1 = x1 / 2;
+                            x1 = objectRect.Left + x1;
+                            int y1 = makePositive(objectRect.Top, objectRect.Bottom);
+                            y1 = y1 / 2;
+                            y1 = objectRect.Bottom + y1;
+                            if (x1<0)
+                            {
+                                x1 = 0;
+                            }
+                            if (x1>639)
+                            {
+                                x1 = 639;
+                            }
+                            if (y1<0)
+                            {
+                                y1 = 0;
+                            }
+                            if (y1>479)
+                            {
+                                y1 = 479;
+                            }
+                            System.Drawing.Color a = bitmap.GetPixel(x1,y1);
+                            write_to_struct(a, x1, y1, rects[i]);                                       //assigns rectangles to struct based on color)
+                        }
+                        g.Dispose();
                 }
+
+            }
+            else
+            {
+                Console.WriteLine("didn't see it");
             }
         }
 
+      public int makePositive (int a, int b)
+      {
+          int c = a - b;
+          if (c<0)
+          {
+              c = c * -1;
+          }
+          return c;
+      }
 /*
  * takes in a rectangle around a seen object. it checks if the seen object is one of the 3 colors and if so assigns it to 
  * a open struct. it stores the center point as well as the height and width of each object within the struct 
@@ -165,38 +190,44 @@ namespace WpfApplication1
             float color = a.GetHue();
             if (color < 30) //red
             {
-                if (aname.red1.taken == false)
+                
+                if (aname.red1.taken == false &&(x1!=aname.red1.xCoord || y1!= aname.red1.yCoord))
                 {
+                    Console.WriteLine("saw a red thing 1");
                     aname.red1.xCoord = x1;
                     aname.red1.yCoord = y1;
-                    aname.red1.height = rec.Size.Height;
-                    aname.red1.width = rec.Size.Width;
+                    aname.red1.height = rec.Height;
+                    aname.red1.width = rec.Width;
                     aname.red1.color = a;
                     aname.red1.taken = true;
                 }
-                else if (aname.red2.taken == false)
+                else if (aname.red2.taken == false && (x1 != aname.red2.xCoord || y1 != aname.red2.yCoord))
                 {
+                    Console.WriteLine("saw a red thing 2");
                     aname.red2.xCoord = x1;
                     aname.red2.yCoord = y1;
-                    aname.red2.height = rec.Size.Height;
-                    aname.red2.width = rec.Size.Width;
+                    aname.red2.height = rec.Height;
+                    aname.red2.width = rec.Width;
                     aname.red2.color = a;
                     aname.red2.taken = true;
                 }
-                else if (aname.red3.taken == false)
+                else if (aname.red3.taken == false && (x1 != aname.red3.xCoord || y1 != aname.red3.yCoord))
                 {
+                    Console.WriteLine("saw a red thing 3");
                     aname.red3.xCoord = x1;
                     aname.red3.yCoord = y1;
-                    aname.red3.height = rec.Size.Height;
-                    aname.red3.width = rec.Size.Width;
+                    aname.red3.height = rec.Height;
+                    aname.red3.width = rec.Width;
                     aname.red3.color = a;
                     aname.red3.taken = true;
                 }
             }
             else if (color < 150)//green
             {
-                if (aname.green1.taken == false)
+                
+                if (aname.green1.taken == false && (x1 != aname.green1.xCoord || y1 != aname.green1.yCoord))
                 {
+                    Console.WriteLine("saw a green thing 1");
                     aname.green1.xCoord = x1;
                     aname.green1.yCoord = y1;
                     aname.green1.height = rec.Size.Height;
@@ -204,8 +235,9 @@ namespace WpfApplication1
                     aname.green1.color = a;
                     aname.green1.taken = true;
                 }
-                else if (aname.green2.taken == false)
+                else if (aname.green2.taken == false && (x1 != aname.green2.xCoord || y1 != aname.green2.yCoord))
                 {
+                    Console.WriteLine("saw a green thing 2");
                     aname.green2.xCoord = x1;
                     aname.green2.yCoord = y1;
                     aname.green2.height = rec.Size.Height;
@@ -213,8 +245,9 @@ namespace WpfApplication1
                     aname.green2.color = a;
                     aname.green2.taken = true;
                 }
-                else if (aname.green3.taken == false)
+                else if (aname.green3.taken == false && (x1 != aname.green3.xCoord || y1 != aname.green3.yCoord))
                 {
+                    Console.WriteLine("saw a green thing 3");
                     aname.green3.xCoord = x1;
                     aname.green3.yCoord = y1;
                     aname.green3.height = rec.Size.Height;
@@ -225,26 +258,30 @@ namespace WpfApplication1
             }
             else if (color < 270)//blue
             {
-                if (aname.blue1.taken == false)
+                
+                if (aname.blue1.taken == false && (x1 != aname.blue1.xCoord || y1 != aname.blue1.yCoord))
                 {
+                    Console.WriteLine("saw a blue thing 1");
                     aname.blue1.xCoord = x1;
                     aname.blue1.yCoord = y1;
-                    aname.blue1.height = rec.Size.Height;
-                    aname.blue1.width = rec.Size.Width;
+                    aname.blue1.height = rec.Top - rec.Bottom;
+                    aname.blue1.width = rec.Left - rec.Right;
                     aname.blue1.color = a;
                     aname.blue1.taken = true;
                 }
-                else if (aname.blue2.taken == false)
+                else if (aname.blue2.taken == false && (x1 != aname.blue2.xCoord || y1 != aname.blue2.yCoord))
                 {
+                    Console.WriteLine("saw a blue thing 2");
                     aname.blue2.xCoord = x1;
                     aname.blue2.yCoord = y1;
-                    aname.blue2.height = rec.Size.Height;
-                    aname.blue2.width = rec.Size.Width;
+                    aname.blue2.height = rec.Height;
+                    aname.blue2.width = rec.Width;
                     aname.blue2.color = a;
                     aname.blue2.taken = true;
                 }
-                else if (aname.blue3.taken == false)
+                else if (aname.blue3.taken == false && (x1 != aname.blue3.xCoord || y1 != aname.blue3.yCoord))
                 {
+                    Console.WriteLine("saw a blue thing 3");
                     aname.blue3.xCoord = x1;
                     aname.blue3.yCoord = y1;
                     aname.blue3.height = rec.Size.Height;
@@ -346,10 +383,7 @@ namespace WpfApplication1
          */
         private void selected_11(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_11, 0, 0, 48, 45);
-            }
+            if(!start_pressed){change(Rec_11, 0, 0, 48, 45);}
         }
         private void selected_12(object sender, MouseButtonEventArgs e)
         {
@@ -409,7 +443,7 @@ namespace WpfApplication1
         }
         private void selected_32(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed){change(Rec_32, 2, 1, 240, 144);}
+            if(!start_pressed){change(Rec_32, 2, 1, 240, 137);}
         }
         private void selected_33(object sender, MouseButtonEventArgs e)
         {
@@ -437,95 +471,57 @@ namespace WpfApplication1
         }
         private void selected_42(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_42, 3, 1, 336, 137);
-            }
+            if(!start_pressed){change(Rec_42, 3, 1, 336, 137);}
         }
         private void selected_43(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_43, 3, 2, 336, 228);
-            }
+            if(!start_pressed){change(Rec_43, 3, 2, 336, 228);}
         }
         private void selected_44(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_44, 3, 3, 336, 320);
-            }
+            if(!start_pressed){change(Rec_44, 3, 3, 336, 320);}
         }
         private void selected_45(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_45, 3, 4, 336, 411);
-            }
+            if(!start_pressed){change(Rec_45, 3, 4, 336, 411);}
         }
         private void selected_46(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_46, 3, 5, 336, 502);
-            }
+            if(!start_pressed){change(Rec_46, 3, 5, 336, 502);}
         }
         private void selected_47(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_47, 3, 6, 336, 594);
-            }
+            if(!start_pressed){change(Rec_47, 3, 6, 336, 594);}
         }
         private void selected_51(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_51, 4, 0, 432, 45);
-            }
+            if(!start_pressed){change(Rec_51, 4, 0, 432, 45);}
         }
         private void selected_52(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_52, 4, 1, 432, 137);
-            }
+            if(!start_pressed){change(Rec_52, 4, 1, 432, 137);}
         }
         private void selected_53(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_53, 4, 2, 432, 228);
-            }
+            if(!start_pressed){change(Rec_53, 4, 2, 432, 228);}
         }
         private void selected_54(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_54, 4, 3, 432, 320);
-            }
+            if(!start_pressed){change(Rec_54, 4, 3, 432, 320);}
         }
         private void selected_55(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_55, 4, 4, 432, 411);
-            }
-        }
-        private void selected_57(object sender, MouseButtonEventArgs e)
-        {
-            if(!start_pressed)
-            {
-                change(Rec_57, 4, 6, 432, 502);
-            }
+            if(!start_pressed){change(Rec_55, 4, 4, 432, 411);}
         }
         private void selected_56(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed)
-            {
-                change(Rec_56, 4, 5, 432, 137);
-            }
+            if (!start_pressed) { change(Rec_56, 4, 5, 432, 500); }
         }
+        private void selected_57(object sender, MouseButtonEventArgs e)
+        {
+            if(!start_pressed){change(Rec_57, 4, 6, 432, 594);}
+        }
+
 
         public void add_to_linkedList(int x, int y)
         {
@@ -1058,7 +1054,9 @@ namespace WpfApplication1
                 }
                 catch (Exception except)
                 {
+                    Console.Write("objects are null");
                     Console.WriteLine(except);
+
                 }
             }
             if (printboards == true)
@@ -1078,10 +1076,36 @@ namespace WpfApplication1
                         Console.WriteLine(aname.red1.width);
 
                     }
+                    if (aname.blue2.taken == true)
+                    {
+                        Console.WriteLine("blue Object #2");
+                        Console.Write("x coordinate: ");
+                        Console.Write(aname.blue2.xCoord);
+                        Console.Write(", y coordinate: ");
+                        Console.Write(aname.blue2.yCoord);
+                        Console.Write(", height: ");
+                        Console.Write(aname.blue2.height);
+                        Console.Write(", width: ");
+                        Console.WriteLine(aname.blue2.width);
+
+                    }
+                    if (aname.blue3.taken == true)
+                    {
+                        Console.WriteLine("blue Object #3 ");
+                        Console.Write("x coordinate: ");
+                        Console.Write(aname.blue3.xCoord);
+                        Console.Write(", y coordinate: ");
+                        Console.Write(aname.blue3.yCoord);
+                        Console.Write(", height: ");
+                        Console.Write(aname.blue3.height);
+                        Console.Write(", width: ");
+                        Console.WriteLine(aname.blue3.width);
+
+                    }
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine(exc);
+                    Console.WriteLine("won't print");
                 }
             }
         }
@@ -1098,6 +1122,7 @@ namespace WpfApplication1
                 }
                 catch (Exception exc)
                 {
+                    Console.Write("problem with pause button");
                     Console.WriteLine(exc);
                 }
             }
