@@ -37,25 +37,17 @@ namespace WpfApplication1
 {
     public partial class MainWindow
     {
-        bool roomba1_pressed, roomba2_pressed, roomba3_pressed;
+        bool roomba1_pressed, roomba2_pressed, roomba3_pressed, red_list_started, blue_list_started, green_list_started, start_pressed;
         int currRed, currBlue, currGreen;
         arrayClass arr = new arrayClass();
         AForge.Video.DirectShow.FilterInfoCollection videoDevices;
         AForge.Video.DirectShow.VideoCaptureDevice vidsource1, videosource2;
-        int[] coords, coords2;
-        int firstOrSecond = 0;
-        bool red_list_started, blue_list_started, green_list_started;
         pathNode redHead, blueHead, greenHead;
         logic aname= new logic();
 
         public MainWindow()
         {
-            red_list_started = blue_list_started = green_list_started = false;
-            coords = new int[2];
-            coords[0] = coords[1] = 0;
-            coords2 = new int[2];
-            coords2[0] = coords2[1] = 0;
-            roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
+            red_list_started = blue_list_started = green_list_started=start_pressed = roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
             currBlue = currGreen = currRed = 1;
             arr.init();
             aname.init();
@@ -76,29 +68,13 @@ namespace WpfApplication1
             // start the video source
             videoSource.Start();
             int counter = 0;
-            while (true)
+            while (counter<2)
             {
                 // set NewFrame event handler
                 videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
-                if (firstOrSecond == 0)
-                {
-                    firstOrSecond = 1;
-                }
-                else
-                {
-                    firstOrSecond = 0;
-                }
                 // wait until we have two acquired images
                 /*camera1Acquired.WaitOne();
                 camera2Acquired.WaitOne();*/
-                if (counter >= 2)
-                {
-                    int[] vector;
-                    vector = new int[2];
-                    vector[0] = coords2[0] - coords[0];
-                    vector[1] = coords2[1] - coords[1];
-                    break;
-                }
                 counter++;
             }
             //timer
@@ -127,73 +103,85 @@ namespace WpfApplication1
             }
             catch (Exception ex)
             {
+                Console.Write("can't get frame");
                 Console.Write(ex);
             }
             System.Drawing.Bitmap bitmap = eventArgs.Frame;
             // create filter
             AForge.Imaging.Filters.ColorFiltering colorFilter = new AForge.Imaging.Filters.ColorFiltering();
             // configure the filter
-            colorFilter.Red = new AForge.IntRange(0, 100);
-            colorFilter.Green = new AForge.IntRange(0, 200);
-            colorFilter.Blue = new AForge.IntRange(150, 255);
 
             System.Drawing.Bitmap filteredImage = colorFilter.Apply(bitmap);
 
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
-            blobCounter.MinHeight = 5;                                              //nico it will see my phone but not the roomba? what is the unit here?
-            blobCounter.MinWidth = 5;
+            blobCounter.MinHeight = 10;                                              //nico it will see my phone but not the roomba? what is the unit here?
+            blobCounter.MinWidth = 10;
             blobCounter.FilterBlobs = true;                                         // filter blobs by size
             blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
             // grayscaling
             AForge.Imaging.Filters.Grayscale grayFilter = new AForge.Imaging.Filters.Grayscale(0.2125, 0.7154, 0.0721); ;
-
+            
             Bitmap grayImage = grayFilter.Apply(filteredImage);
             // locate blobs 
             blobCounter.ProcessImage(grayImage);
+            AForge.Imaging.Blob[] blobs = blobCounter.GetObjectsInformation();
             System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
-            // draw rectangle around the biggest blob           //todo maybe alter this if it is not seeing the roomba properly
-
-
+            // draw rectangle around all seen objects
             if (rects.Length > 0)
             {
-               /* Console.Write("rectangle Height: ");
-                Console.Write(rects[0].Size.Height);
-                Console.Write(" ");
-                Console.Write("rectangle Width: ");
-                Console.WriteLine(rects[0].Size.Width);*/
                 for (int i = 0; i < rects.Length; i++)
                 {
                     System.Drawing.Rectangle objectRect = rects[i];
                     Graphics g = Graphics.FromImage(bitmap);
-
-                    using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
-                    {
-                        int[] location = new int[2];
-                        g.DrawRectangle(pen, objectRect);
-                        int x1 = (objectRect.Left + objectRect.Right) / 2;                          //finds the x coordinate of the middle of the rectangle
-                        int y1 = (objectRect.Top + objectRect.Bottom) / 2;                          //finds the y coordinate of the middle of the rectangle
-                        System.Drawing.Color a = bitmap.GetPixel(x1, y1);
-                        write_to_struct(a, x1, y1, rects[i]);                                       //assigns rectangles to struct based on color
-                        aname.get_barring(aname.blue1, aname.blue2, aname.blue3, blueHead.x_coord, blueHead.y_coord);   //get the barring and decide if and where to turn
-                        if (firstOrSecond == 0)
+                        using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
                         {
-                            coords[0] = x1;
-                            coords[1] = y1;
-                            location = actual_location(coords);
+                            g.DrawRectangle(pen, objectRect);
+                            int x1 = makePositive(objectRect.Right, objectRect.Left);
+                            x1 = x1 / 2;
+                            x1 = objectRect.Left + x1;
+                            int y1 = makePositive(objectRect.Top, objectRect.Bottom);
+                            y1 = y1 / 2;
+                            y1 = objectRect.Bottom + y1;
+                            if (x1<0)
+                            {
+                                x1 = 0;
+                            }
+                            if (x1>639)
+                            {
+                                x1 = 639;
+                            }
+                            if (y1<0)
+                            {
+                                y1 = 0;
+                            }
+                            if (y1>479)
+                            {
+                                y1 = 479;
+                            }
+                            System.Drawing.Color a = bitmap.GetPixel(x1,y1);
+                            write_to_struct(a, x1, y1, rects[i]);                                       //assigns rectangles to struct based on color)
                         }
-                        else
-                        {
-                            coords2[0] = x1;
-                            coords2[1] = y1;
-                            location = actual_location(coords2);
-                        }
-                    }
-                    g.Dispose();
+                        g.Dispose();
                 }
+
+            }
+            else
+            {
+                Console.WriteLine("didn't see it");
             }
         }
 
+      public int makePositive (int a, int b)
+      {
+          int c = a - b;
+          if (c<0)
+          {
+              c = c * -1;
+          }
+          return c;
+      }
+        
 /*
  * takes in a rectangle around a seen object. it checks if the seen object is one of the 3 colors and if so assigns it to 
  * a open struct. it stores the center point as well as the height and width of each object within the struct 
@@ -201,40 +189,46 @@ namespace WpfApplication1
         public void write_to_struct(System.Drawing.Color a, int x1, int y1, System.Drawing.Rectangle rec)
         {
             float color = a.GetHue();
-            if(color<30) //red
+            if (color < 30) //red
             {
-                if (aname.red1.taken == false)
+                
+                if (aname.helperMethod(aname.red1, aname.red2, aname.red3, x1,y1))
                 {
+                    Console.WriteLine("saw a red thing 1");
                     aname.red1.xCoord = x1;
                     aname.red1.yCoord = y1;
-                    aname.red1.height = rec.Size.Height;
-                    aname.red1.width = rec.Size.Width;
+                    aname.red1.height = rec.Height;
+                    aname.red1.width = rec.Width;
                     aname.red1.color = a;
                     aname.red1.taken = true;
                 }
-                else if (aname.red2.taken == false)
+                else if (aname.helperMethod(aname.red2, aname.red1, aname.red3, x1,y1))
                 {
+                    Console.WriteLine("saw a red thing 2");
                     aname.red2.xCoord = x1;
                     aname.red2.yCoord = y1;
-                    aname.red2.height = rec.Size.Height;
-                    aname.red2.width = rec.Size.Width;
+                    aname.red2.height = rec.Height;
+                    aname.red2.width = rec.Width;
                     aname.red2.color = a;
                     aname.red2.taken = true;
                 }
-                else if (aname.red3.taken == false)
+                else if (aname.helperMethod(aname.red3, aname.red2, aname.red1, x1, y1))
                 {
+                    Console.WriteLine("saw a red thing 3");
                     aname.red3.xCoord = x1;
                     aname.red3.yCoord = y1;
-                    aname.red3.height = rec.Size.Height;
-                    aname.red3.width = rec.Size.Width;
+                    aname.red3.height = rec.Height;
+                    aname.red3.width = rec.Width;
                     aname.red3.color = a;
                     aname.red3.taken = true;
                 }
             }
-            else if (color<150)//green
+            else if (color < 150)//green
             {
-                if (aname.green1.taken == false)
+
+                if (aname.helperMethod(aname.green1, aname.green2, aname.green3, x1, y1))
                 {
+                    Console.WriteLine("saw a green thing 1");
                     aname.green1.xCoord = x1;
                     aname.green1.yCoord = y1;
                     aname.green1.height = rec.Size.Height;
@@ -242,8 +236,9 @@ namespace WpfApplication1
                     aname.green1.color = a;
                     aname.green1.taken = true;
                 }
-                else if (aname.green2.taken == false)
+                else if (aname.helperMethod(aname.green2, aname.green1, aname.green3, x1, y1))
                 {
+                    Console.WriteLine("saw a green thing 2");
                     aname.green2.xCoord = x1;
                     aname.green2.yCoord = y1;
                     aname.green2.height = rec.Size.Height;
@@ -251,8 +246,9 @@ namespace WpfApplication1
                     aname.green2.color = a;
                     aname.green2.taken = true;
                 }
-                else if (aname.green3.taken == false)
+                else if (aname.helperMethod(aname.green3, aname.green2, aname.green1, x1, y1))
                 {
+                    Console.WriteLine("saw a green thing 3");
                     aname.green3.xCoord = x1;
                     aname.green3.yCoord = y1;
                     aname.green3.height = rec.Size.Height;
@@ -261,28 +257,32 @@ namespace WpfApplication1
                     aname.green3.taken = true;
                 }
             }
-            else if (color<270)//blue
+            else if (color < 270)//blue
             {
-                if (aname.blue1.taken == false)
+
+                if (aname.helperMethod(aname.blue1, aname.blue2, aname.blue3, x1, y1))
                 {
+                    Console.WriteLine("saw a blue thing 1");
                     aname.blue1.xCoord = x1;
                     aname.blue1.yCoord = y1;
-                    aname.blue1.height = rec.Size.Height;
-                    aname.blue1.width = rec.Size.Width;
+                    aname.blue1.height = rec.Top - rec.Bottom;
+                    aname.blue1.width = rec.Left - rec.Right;
                     aname.blue1.color = a;
                     aname.blue1.taken = true;
                 }
-                else if (aname.blue2.taken == false)
+                else if (aname.helperMethod(aname.blue2, aname.blue1, aname.blue3, x1, y1))
                 {
+                    Console.WriteLine("saw a blue thing 2");
                     aname.blue2.xCoord = x1;
                     aname.blue2.yCoord = y1;
-                    aname.blue2.height = rec.Size.Height;
-                    aname.blue2.width = rec.Size.Width;
+                    aname.blue2.height = rec.Height;
+                    aname.blue2.width = rec.Width;
                     aname.blue2.color = a;
                     aname.blue2.taken = true;
                 }
-                else if (aname.blue3.taken == false)
+                else if (aname.helperMethod(aname.blue3, aname.blue2, aname.blue1, x1, y1))
                 {
+                    Console.WriteLine("saw a blue thing 3");
                     aname.blue3.xCoord = x1;
                     aname.blue3.yCoord = y1;
                     aname.blue3.height = rec.Size.Height;
@@ -298,150 +298,84 @@ namespace WpfApplication1
         }
 
         /*
-         * caluclates the coordinates of the roomba on a 5X7 grid 
-         * from the 640X480 grid on the image and returns it as a tuple.
-         */
-        public int[] actual_location(int[] a)
-        {
-            int[] location_coords = new int[2];
-            if (a[0] <= 91)
-            {
-                location_coords[0] = 0;
-            }
-            else if (a[0] <= 182)
-            {
-                location_coords[0] = 1;
-            }
-            else if (a[0] <= 273)
-            {
-                location_coords[0] = 2;
-            }
-            else if (a[0] <= 364)
-            {
-                location_coords[0] = 3;
-            }
-            else if (a[0] <= 455)
-            {
-                location_coords[0] = 4;
-            }
-            else if (a[0] <= 546)
-            {
-                location_coords[0] = 5;
-            }
-            else if (a[0] <= 640)
-            {
-                location_coords[0] = 6;
-            }
-            if (a[1] <= 96)
-            {
-                location_coords[1] = 0;
-            }
-            else if (a[1] <= 192)
-            {
-                location_coords[1] = 1;
-            }
-            else if (a[1] <= 288)
-            {
-                location_coords[1] = 2;
-            }
-            else if (a[1] <= 385)
-            {
-                location_coords[1] = 3;
-            }
-            else if (a[1] <= 480)
-            {
-                location_coords[1] = 4;
-            }
-            if (location_coords[0] > 4)
-            {
-                location_coords[0] = 4;
-            }
-            else if (location_coords[0] < 0)
-            {
-                location_coords[0] = 0;
-            }
-            if (location_coords[1] > 6)
-            {
-                location_coords[1] = 6;
-            }
-            else if (location_coords[1] < 0)
-            {
-                location_coords[1] = 0;
-            }
-
-            return location_coords;
-        }
-
-        /*
          * listens for which roomba is selected, ensures that only one is selected at a time
          */
         private void Din_clicked(object sender, RoutedEventArgs e)
         {
-            if (roomba1_pressed == false)
+            if (!start_pressed)
             {
-                roomba1_pressed = true;
-                Roomba1.Width = 106;
-                Roomba1.Margin = new Thickness(401, 44, 0, 0);
-                Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                roomba2_pressed = false;
-                Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
-            }
-            else
-            {
-                Roomba1.Width = 96;
-                Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                roomba1_pressed = false;
-                roomba2_pressed = false;
-                roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
+                if (roomba1_pressed == false)
+                {
+                    roomba1_pressed = true;
+                    Roomba1.Width = 106;
+                    Roomba1.Margin = new Thickness(401, 44, 0, 0);
+                    Roomba2.Margin = new Thickness(411, 78, 0, 0);
+                    roomba2_pressed = false;
+                    Roomba3.Margin = new Thickness(411, 112, 0, 0);
+                    roomba3_pressed = false;
+                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
+                }
+                else
+                {
+                    Roomba1.Width = 96;
+                    Roomba1.Margin = new Thickness(411, 44, 0, 0);
+                    roomba1_pressed = false;
+                    roomba2_pressed = false;
+                    roomba3_pressed = false;
+                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
+                }
             }
         }
         private void Farore_clicked(object sender, RoutedEventArgs e)
         {
-            if (roomba2_pressed == false)
+            if (!start_pressed)
             {
-                roomba2_pressed = true;
-                Roomba2.Width = 106;
-                Roomba2.Margin = new Thickness(401, 78, 0, 0);
-                Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                roomba1_pressed = false;
-                Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
-            }
-            else
-            {
-                Roomba2.Width = 96;
-                Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                roomba1_pressed = false;
-                roomba2_pressed = false;
-                roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
+                if (roomba2_pressed == false)
+                {
+                    roomba2_pressed = true;
+                    Roomba2.Width = 106;
+                    Roomba2.Margin = new Thickness(401, 78, 0, 0);
+                    Roomba1.Margin = new Thickness(411, 44, 0, 0);
+                    roomba1_pressed = false;
+                    Roomba3.Margin = new Thickness(411, 112, 0, 0);
+                    roomba3_pressed = false;
+                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
+                }
+                else
+                {
+                    Roomba2.Width = 96;
+                    Roomba2.Margin = new Thickness(411, 78, 0, 0);
+                    roomba1_pressed = false;
+                    roomba2_pressed = false;
+                    roomba3_pressed = false;
+                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
+                }
             }
         }
         private void Nayru_clicked(object sender, RoutedEventArgs e)
         {
-            if (roomba3_pressed == false)
+            if (!start_pressed)
             {
-                roomba3_pressed = true;
-                Roomba3.Width = 106;
-                Roomba3.Margin = new Thickness(401, 112, 0, 0);
-                Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                roomba1_pressed = false;
-                Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                roomba2_pressed = false;
-                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
-            }
-            else
-            {
-                Roomba3.Width = 96;
-                Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                roomba1_pressed = false;
-                roomba2_pressed = false;
-                roomba3_pressed = false;
-                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
+                if (roomba3_pressed == false)
+                {
+                    roomba3_pressed = true;
+                    Roomba3.Width = 106;
+                    Roomba3.Margin = new Thickness(401, 112, 0, 0);
+                    Roomba1.Margin = new Thickness(411, 44, 0, 0);
+                    roomba1_pressed = false;
+                    Roomba2.Margin = new Thickness(411, 78, 0, 0);
+                    roomba2_pressed = false;
+                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
+                }
+                else
+                {
+                    Roomba3.Width = 96;
+                    Roomba3.Margin = new Thickness(411, 112, 0, 0);
+                    roomba1_pressed = false;
+                    roomba2_pressed = false;
+                    roomba3_pressed = false;
+                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
+                }
             }
         }
 
@@ -450,144 +384,145 @@ namespace WpfApplication1
          */
         private void selected_11(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_11, 0, 0, 48, 45);
+            if(!start_pressed){change(Rec_11, 0, 0, 48, 45);}
         }
         private void selected_12(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_12, 0, 1, 48, 137);
+            if (!start_pressed) { change(Rec_12, 0, 1, 48, 137); }
         }
         private void selected_13(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_13, 0, 2, 48, 228);
+            if(!start_pressed){change(Rec_13, 0, 2, 48, 228);}
         }
         private void selected_14(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_14, 0, 3, 48, 320);
+            if(!start_pressed){change(Rec_14, 0, 3, 48, 320);}
         }
         private void selected_15(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_15, 0, 4, 48, 411);
+            if(!start_pressed){change(Rec_15, 0, 4, 48, 411);}
         }
         private void selected_16(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_16, 0, 5, 48, 502);
+            if(!start_pressed){change(Rec_16, 0, 5, 48, 502);}
         }
         private void selected_17(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_17, 0, 6, 48, 594);
+            if(!start_pressed){change(Rec_17, 0, 6, 48, 594);}
         }
         private void selected_21(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_21, 1, 0, 144, 45);
+            if(!start_pressed){change(Rec_21, 1, 0, 144, 45);}
         }
         private void selected_22(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_22, 1, 1, 144, 137);
+            if(!start_pressed){change(Rec_22, 1, 1, 144, 137);}
         }
         private void selected_23(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_23, 1, 2, 144, 228);
+            if(!start_pressed){change(Rec_23, 1, 2, 144, 228);}
         }
         private void selected_24(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_24, 1, 3, 144, 320);
+            if(!start_pressed){change(Rec_24, 1, 3, 144, 320);}
         }
         private void selected_25(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_25, 1, 4, 144, 411);
+            if(!start_pressed){change(Rec_25, 1, 4, 144, 411);}
         }
         private void selected_26(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_26, 1, 5, 144, 502);
+            if(!start_pressed){change(Rec_26, 1, 5, 144, 502);}
         }
         private void selected_27(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_27, 1, 6, 144, 594);
+            if(!start_pressed){change(Rec_27, 1, 6, 144, 594);}
         }
         private void selected_31(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_31, 2, 0, 240, 45);
+            if(!start_pressed){change(Rec_31, 2, 0, 240, 45);}
         }
         private void selected_32(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_32, 2, 1, 240, 144);
+            if(!start_pressed){change(Rec_32, 2, 1, 240, 137);}
         }
         private void selected_33(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_33, 2, 2, 240, 228);
+            if(!start_pressed){change(Rec_33, 2, 2, 240, 228);}
         }
         private void selected_34(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_34, 2, 3, 240, 320);
+            if(!start_pressed){change(Rec_34, 2, 3, 240, 320);}
         }
         private void selected_35(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_35, 2, 4, 240, 411);
+            if(!start_pressed){change(Rec_35, 2, 4, 240, 411);}
         }
         private void selected_36(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_36, 2, 5, 240, 502);
+            if(!start_pressed){change(Rec_36, 2, 5, 240, 502);}
         }
         private void selected_37(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_37, 2, 6, 240, 594);
+            if(!start_pressed){change(Rec_37, 2, 6, 240, 594);}
         }
         private void selected_41(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_41, 3, 0, 336, 45);
+            if(!start_pressed){change(Rec_41, 3, 0, 336, 45);}
         }
         private void selected_42(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_42, 3, 1, 336, 137);
+            if(!start_pressed){change(Rec_42, 3, 1, 336, 137);}
         }
         private void selected_43(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_43, 3, 2, 336, 228);
+            if(!start_pressed){change(Rec_43, 3, 2, 336, 228);}
         }
         private void selected_44(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_44, 3, 3, 336, 320);
+            if(!start_pressed){change(Rec_44, 3, 3, 336, 320);}
         }
         private void selected_45(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_45, 3, 4, 336, 411);
+            if(!start_pressed){change(Rec_45, 3, 4, 336, 411);}
         }
         private void selected_46(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_46, 3, 5, 336, 502);
+            if(!start_pressed){change(Rec_46, 3, 5, 336, 502);}
         }
         private void selected_47(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_47, 3, 6, 336, 594);
+            if(!start_pressed){change(Rec_47, 3, 6, 336, 594);}
         }
         private void selected_51(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_51, 4, 0, 432, 45);
+            if(!start_pressed){change(Rec_51, 4, 0, 432, 45);}
         }
         private void selected_52(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_52, 4, 1, 432, 137);
+            if(!start_pressed){change(Rec_52, 4, 1, 432, 137);}
         }
         private void selected_53(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_53, 4, 2, 432, 228);
+            if(!start_pressed){change(Rec_53, 4, 2, 432, 228);}
         }
         private void selected_54(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_54, 4, 3, 432, 320);
+            if(!start_pressed){change(Rec_54, 4, 3, 432, 320);}
         }
         private void selected_55(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_55, 4, 4, 432, 411);
-        }
-        private void selected_57(object sender, MouseButtonEventArgs e)
-        {
-            change(Rec_57, 4, 6, 432, 502);
+            if(!start_pressed){change(Rec_55, 4, 4, 432, 411);}
         }
         private void selected_56(object sender, MouseButtonEventArgs e)
         {
-            change(Rec_56, 4, 5, 432, 137);
+            if (!start_pressed) { change(Rec_56, 4, 5, 432, 500); }
         }
+        private void selected_57(object sender, MouseButtonEventArgs e)
+        {
+            if(!start_pressed){change(Rec_57, 4, 6, 432, 594);}
+        }
+
 
         public void add_to_linkedList(int x, int y)
         {
@@ -934,131 +869,136 @@ namespace WpfApplication1
          */
         private void clear_board(object sender, RoutedEventArgs e)
         {
+            clear_board_2();
+        }
+
+        public void clear_board_2()
+        {
             if (roomba1_pressed == true)
             {
                 redHead = null;
                 red_list_started = false;
-                remove_red( 0, 0, 48, 45,Rec_11, false);     
-                remove_red(0, 1, 48, 137,Rec_12, false);
-                remove_red(0, 2, 48, 228,Rec_13, false);
-                remove_red( 0, 3, 48, 320,Rec_14, false);
-                remove_red( 0, 4, 48, 411,Rec_15, false);
-                remove_red( 0, 5, 48, 502,Rec_16, false);
-                remove_red(0, 6, 48, 594,Rec_17, false);
-                remove_red( 1, 0, 144, 45,Rec_21, false);
-                remove_red( 1, 1, 144, 137,Rec_22, false);
-                remove_red( 1, 2, 144, 228,Rec_23, false);
-                remove_red( 1, 3, 144, 320,Rec_24, false);
-                remove_red( 1, 4, 144, 411,Rec_25, false);
-                remove_red( 1, 5, 144, 502,Rec_26, false);
-                remove_red( 1, 6, 144, 594,Rec_27, false);
-                remove_red( 2, 0, 240, 45,Rec_31, false);
-                remove_red( 2, 1, 240, 144,Rec_32, false);
-                remove_red( 2, 2, 240, 228,Rec_33, false);
-                remove_red( 2, 3, 240, 320,Rec_34, false);
-                remove_red( 2, 4, 240, 411,Rec_35, false);
-                remove_red( 2, 5, 240, 502,Rec_36, false);
-                remove_red( 2, 6, 240, 594,Rec_37, false);
-                remove_red( 3, 0, 336, 45,Rec_41, false);
-                remove_red( 3, 1, 336, 137,Rec_42, false);
-                remove_red( 3, 2, 336, 228,Rec_43, false);
-                remove_red( 3, 3, 336, 320,Rec_44, false);
-                remove_red( 3, 4, 336, 411,Rec_45, false);
-                remove_red( 3, 5, 336, 502,Rec_46, false);
-                remove_red( 3, 6, 336, 594,Rec_47, false);
-                remove_red( 4, 0, 432, 45,Rec_51, false);
-                remove_red( 4, 1, 432, 137,Rec_52, false);
-                remove_red( 4, 2, 432, 228,Rec_53, false);
-                remove_red( 4, 3, 432, 320,Rec_54, false);
-                remove_red( 4, 4, 432, 411,Rec_55, false);
-                remove_red( 4, 6, 432, 502,Rec_57, false);
-                remove_red( 4, 5, 432, 137,Rec_56, false);
-        }
+                remove_red(0, 0, 48, 45, Rec_11, false);
+                remove_red(0, 1, 48, 137, Rec_12, false);
+                remove_red(0, 2, 48, 228, Rec_13, false);
+                remove_red(0, 3, 48, 320, Rec_14, false);
+                remove_red(0, 4, 48, 411, Rec_15, false);
+                remove_red(0, 5, 48, 502, Rec_16, false);
+                remove_red(0, 6, 48, 594, Rec_17, false);
+                remove_red(1, 0, 144, 45, Rec_21, false);
+                remove_red(1, 1, 144, 137, Rec_22, false);
+                remove_red(1, 2, 144, 228, Rec_23, false);
+                remove_red(1, 3, 144, 320, Rec_24, false);
+                remove_red(1, 4, 144, 411, Rec_25, false);
+                remove_red(1, 5, 144, 502, Rec_26, false);
+                remove_red(1, 6, 144, 594, Rec_27, false);
+                remove_red(2, 0, 240, 45, Rec_31, false);
+                remove_red(2, 1, 240, 144, Rec_32, false);
+                remove_red(2, 2, 240, 228, Rec_33, false);
+                remove_red(2, 3, 240, 320, Rec_34, false);
+                remove_red(2, 4, 240, 411, Rec_35, false);
+                remove_red(2, 5, 240, 502, Rec_36, false);
+                remove_red(2, 6, 240, 594, Rec_37, false);
+                remove_red(3, 0, 336, 45, Rec_41, false);
+                remove_red(3, 1, 336, 137, Rec_42, false);
+                remove_red(3, 2, 336, 228, Rec_43, false);
+                remove_red(3, 3, 336, 320, Rec_44, false);
+                remove_red(3, 4, 336, 411, Rec_45, false);
+                remove_red(3, 5, 336, 502, Rec_46, false);
+                remove_red(3, 6, 336, 594, Rec_47, false);
+                remove_red(4, 0, 432, 45, Rec_51, false);
+                remove_red(4, 1, 432, 137, Rec_52, false);
+                remove_red(4, 2, 432, 228, Rec_53, false);
+                remove_red(4, 3, 432, 320, Rec_54, false);
+                remove_red(4, 4, 432, 411, Rec_55, false);
+                remove_red(4, 6, 432, 502, Rec_57, false);
+                remove_red(4, 5, 432, 137, Rec_56, false);
+            }
             else if (roomba2_pressed == true)
             {
                 blueHead = null;
                 blue_list_started = false;
-                remove_blue( 0, 0, 48, 45,Rec_11, false);     
-                remove_blue(0, 1, 48, 137,Rec_12, false);
-                remove_blue(0, 2, 48, 228,Rec_13, false);
-                remove_blue( 0, 3, 48, 320,Rec_14, false);
-                remove_blue( 0, 4, 48, 411,Rec_15, false);
-                remove_blue( 0, 5, 48, 502,Rec_16, false);
-                remove_blue(0, 6, 48, 594,Rec_17, false);
-                remove_blue( 1, 0, 144, 45,Rec_21, false);
-                remove_blue( 1, 1, 144, 137,Rec_22, false);
-                remove_blue( 1, 2, 144, 228,Rec_23, false);
-                remove_blue( 1, 3, 144, 320,Rec_24, false);
-                remove_blue( 1, 4, 144, 411,Rec_25, false);
-                remove_blue( 1, 5, 144, 502,Rec_26, false);
-                remove_blue( 1, 6, 144, 594,Rec_27, false);
-                remove_blue( 2, 0, 240, 45,Rec_31, false);
-                remove_blue( 2, 1, 240, 144,Rec_32, false);
-                remove_blue( 2, 2, 240, 228,Rec_33, false);
-                remove_blue( 2, 3, 240, 320,Rec_34, false);
-                remove_blue( 2, 4, 240, 411,Rec_35, false);
-                remove_blue( 2, 5, 240, 502,Rec_36, false);
-                remove_blue( 2, 6, 240, 594,Rec_37, false);
-                remove_blue( 3, 0, 336, 45,Rec_41, false);
-                remove_blue( 3, 1, 336, 137,Rec_42, false);
-                remove_blue( 3, 2, 336, 228,Rec_43, false);
-                remove_blue( 3, 3, 336, 320,Rec_44, false);
-                remove_blue( 3, 4, 336, 411,Rec_45, false);
-                remove_blue( 3, 5, 336, 502,Rec_46, false);
-                remove_blue( 3, 6, 336, 594,Rec_47, false);
-                remove_blue( 4, 0, 432, 45,Rec_51, false);
-                remove_blue( 4, 1, 432, 137,Rec_52, false);
-                remove_blue( 4, 2, 432, 228,Rec_53, false);
-                remove_blue( 4, 3, 432, 320,Rec_54, false);
-                remove_blue( 4, 4, 432, 411,Rec_55, false);
-                remove_blue( 4, 6, 432, 502,Rec_57, false);
-                remove_blue( 4, 5, 432, 137,Rec_56, false);
+                remove_blue(0, 0, 48, 45, Rec_11, false);
+                remove_blue(0, 1, 48, 137, Rec_12, false);
+                remove_blue(0, 2, 48, 228, Rec_13, false);
+                remove_blue(0, 3, 48, 320, Rec_14, false);
+                remove_blue(0, 4, 48, 411, Rec_15, false);
+                remove_blue(0, 5, 48, 502, Rec_16, false);
+                remove_blue(0, 6, 48, 594, Rec_17, false);
+                remove_blue(1, 0, 144, 45, Rec_21, false);
+                remove_blue(1, 1, 144, 137, Rec_22, false);
+                remove_blue(1, 2, 144, 228, Rec_23, false);
+                remove_blue(1, 3, 144, 320, Rec_24, false);
+                remove_blue(1, 4, 144, 411, Rec_25, false);
+                remove_blue(1, 5, 144, 502, Rec_26, false);
+                remove_blue(1, 6, 144, 594, Rec_27, false);
+                remove_blue(2, 0, 240, 45, Rec_31, false);
+                remove_blue(2, 1, 240, 144, Rec_32, false);
+                remove_blue(2, 2, 240, 228, Rec_33, false);
+                remove_blue(2, 3, 240, 320, Rec_34, false);
+                remove_blue(2, 4, 240, 411, Rec_35, false);
+                remove_blue(2, 5, 240, 502, Rec_36, false);
+                remove_blue(2, 6, 240, 594, Rec_37, false);
+                remove_blue(3, 0, 336, 45, Rec_41, false);
+                remove_blue(3, 1, 336, 137, Rec_42, false);
+                remove_blue(3, 2, 336, 228, Rec_43, false);
+                remove_blue(3, 3, 336, 320, Rec_44, false);
+                remove_blue(3, 4, 336, 411, Rec_45, false);
+                remove_blue(3, 5, 336, 502, Rec_46, false);
+                remove_blue(3, 6, 336, 594, Rec_47, false);
+                remove_blue(4, 0, 432, 45, Rec_51, false);
+                remove_blue(4, 1, 432, 137, Rec_52, false);
+                remove_blue(4, 2, 432, 228, Rec_53, false);
+                remove_blue(4, 3, 432, 320, Rec_54, false);
+                remove_blue(4, 4, 432, 411, Rec_55, false);
+                remove_blue(4, 6, 432, 502, Rec_57, false);
+                remove_blue(4, 5, 432, 137, Rec_56, false);
             }
             else if (roomba3_pressed == true)
             {
                 greenHead = null;
                 green_list_started = false;
-                remove_green( 0, 0, 48, 45,Rec_11, false);     
-                remove_green(0, 1, 48, 137,Rec_12, false);
-                remove_green(0, 2, 48, 228,Rec_13, false);
-                remove_green( 0, 3, 48, 320,Rec_14, false);
-                remove_green( 0, 4, 48, 411,Rec_15, false);
-                remove_green( 0, 5, 48, 502,Rec_16, false);
-                remove_green(0, 6, 48, 594,Rec_17, false);
-                remove_green( 1, 0, 144, 45,Rec_21, false);
-                remove_green( 1, 1, 144, 137,Rec_22, false);
-                remove_green( 1, 2, 144, 228,Rec_23, false);
-                remove_green( 1, 3, 144, 320,Rec_24, false);
-                remove_green( 1, 4, 144, 411,Rec_25, false);
-                remove_green( 1, 5, 144, 502,Rec_26, false);
-                remove_green( 1, 6, 144, 594,Rec_27, false);
-                remove_green( 2, 0, 240, 45,Rec_31, false);
-                remove_green( 2, 1, 240, 144,Rec_32, false);
-                remove_green( 2, 2, 240, 228,Rec_33, false);
-                remove_green( 2, 3, 240, 320,Rec_34, false);
-                remove_green( 2, 4, 240, 411,Rec_35, false);
-                remove_green( 2, 5, 240, 502,Rec_36, false);
-                remove_green( 2, 6, 240, 594,Rec_37, false);
-                remove_green( 3, 0, 336, 45,Rec_41, false);
-                remove_green( 3, 1, 336, 137,Rec_42, false);
-                remove_green( 3, 2, 336, 228,Rec_43, false);
-                remove_green( 3, 3, 336, 320,Rec_44, false);
-                remove_green( 3, 4, 336, 411,Rec_45, false);
-                remove_green( 3, 5, 336, 502,Rec_46, false);
-                remove_green( 3, 6, 336, 594,Rec_47, false);
-                remove_green( 4, 0, 432, 45,Rec_51, false);
-                remove_green( 4, 1, 432, 137,Rec_52, false);
-                remove_green( 4, 2, 432, 228,Rec_53, false);
-                remove_green( 4, 3, 432, 320,Rec_54, false);
-                remove_green( 4, 4, 432, 411,Rec_55, false);
-                remove_green( 4, 6, 432, 502,Rec_57, false);
-                remove_green( 4, 5, 432, 137,Rec_56, false);
+                remove_green(0, 0, 48, 45, Rec_11, false);
+                remove_green(0, 1, 48, 137, Rec_12, false);
+                remove_green(0, 2, 48, 228, Rec_13, false);
+                remove_green(0, 3, 48, 320, Rec_14, false);
+                remove_green(0, 4, 48, 411, Rec_15, false);
+                remove_green(0, 5, 48, 502, Rec_16, false);
+                remove_green(0, 6, 48, 594, Rec_17, false);
+                remove_green(1, 0, 144, 45, Rec_21, false);
+                remove_green(1, 1, 144, 137, Rec_22, false);
+                remove_green(1, 2, 144, 228, Rec_23, false);
+                remove_green(1, 3, 144, 320, Rec_24, false);
+                remove_green(1, 4, 144, 411, Rec_25, false);
+                remove_green(1, 5, 144, 502, Rec_26, false);
+                remove_green(1, 6, 144, 594, Rec_27, false);
+                remove_green(2, 0, 240, 45, Rec_31, false);
+                remove_green(2, 1, 240, 144, Rec_32, false);
+                remove_green(2, 2, 240, 228, Rec_33, false);
+                remove_green(2, 3, 240, 320, Rec_34, false);
+                remove_green(2, 4, 240, 411, Rec_35, false);
+                remove_green(2, 5, 240, 502, Rec_36, false);
+                remove_green(2, 6, 240, 594, Rec_37, false);
+                remove_green(3, 0, 336, 45, Rec_41, false);
+                remove_green(3, 1, 336, 137, Rec_42, false);
+                remove_green(3, 2, 336, 228, Rec_43, false);
+                remove_green(3, 3, 336, 320, Rec_44, false);
+                remove_green(3, 4, 336, 411, Rec_45, false);
+                remove_green(3, 5, 336, 502, Rec_46, false);
+                remove_green(3, 6, 336, 594, Rec_47, false);
+                remove_green(4, 0, 432, 45, Rec_51, false);
+                remove_green(4, 1, 432, 137, Rec_52, false);
+                remove_green(4, 2, 432, 228, Rec_53, false);
+                remove_green(4, 3, 432, 320, Rec_54, false);
+                remove_green(4, 4, 432, 411, Rec_55, false);
+                remove_green(4, 6, 432, 502, Rec_57, false);
+                remove_green(4, 5, 432, 137, Rec_56, false);
             }
             else
             {
-                clear_block(Rec_11, 0, 0,48, 45);
-                clear_block(Rec_12,0,1, 48, 137);
-                clear_block(Rec_13,0, 2, 48, 228);
+                clear_block(Rec_11, 0, 0, 48, 45);
+                clear_block(Rec_12, 0, 1, 48, 137);
+                clear_block(Rec_13, 0, 2, 48, 228);
                 clear_block(Rec_14, 0, 3, 48, 320);
                 clear_block(Rec_15, 0, 4, 48, 411);
                 clear_block(Rec_16, 0, 5, 48, 502);
@@ -1081,6 +1021,7 @@ namespace WpfApplication1
                 clear_block(Rec_42, 3, 1, 336, 137);
                 clear_block(Rec_43, 3, 2, 336, 228);
                 clear_block(Rec_44, 3, 3, 336, 320);
+                clear_block(Rec_45, 3, 4, 336, 411);
                 clear_block(Rec_46, 3, 5, 336, 502);
                 clear_block(Rec_47, 3, 6, 336, 594);
                 clear_block(Rec_51, 4, 0, 432, 45);
@@ -1098,15 +1039,27 @@ namespace WpfApplication1
          */
         private void start_clicked(object sender, RoutedEventArgs e)
         {
+            start_pressed = true;
             bool printboards = true;
-            roomba1_pressed = false;
-            roomba2_pressed = false;
-            roomba3_pressed = false;
+            roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
             Roomba1.Margin = new Thickness(411, 44, 0, 0);
             Roomba2.Margin = new Thickness(411, 78, 0, 0);
             Roomba3.Margin = new Thickness(411, 112, 0, 0);
             clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
+            bool filled = aname.three_filled(aname.blue1, aname.blue2, aname.blue3);
+            if (filled == true)
+            {
+                try
+                {
+                    aname.get_barring(aname.blue1, aname.blue2, aname.blue3, blueHead.x_coord, blueHead.y_coord);   //get the barring and decide if and where to turn
+                }
+                catch (Exception except)
+                {
+                    Console.Write("objects are null");
+                    Console.WriteLine(except);
 
+                }
+            }
             if (printboards == true)
             {
                 try
@@ -1124,14 +1077,56 @@ namespace WpfApplication1
                         Console.WriteLine(aname.red1.width);
 
                     }
+                    if (aname.blue2.taken == true)
+                    {
+                        Console.WriteLine("blue Object #2");
+                        Console.Write("x coordinate: ");
+                        Console.Write(aname.blue2.xCoord);
+                        Console.Write(", y coordinate: ");
+                        Console.Write(aname.blue2.yCoord);
+                        Console.Write(", height: ");
+                        Console.Write(aname.blue2.height);
+                        Console.Write(", width: ");
+                        Console.WriteLine(aname.blue2.width);
+
+                    }
+                    if (aname.blue3.taken == true)
+                    {
+                        Console.WriteLine("blue Object #3 ");
+                        Console.Write("x coordinate: ");
+                        Console.Write(aname.blue3.xCoord);
+                        Console.Write(", y coordinate: ");
+                        Console.Write(aname.blue3.yCoord);
+                        Console.Write(", height: ");
+                        Console.Write(aname.blue3.height);
+                        Console.Write(", width: ");
+                        Console.WriteLine(aname.blue3.width);
+
+                    }
                 }
                 catch (Exception exc)
                 {
+                    Console.WriteLine("won't print");
+                }
+            }
+        }
+
+        private void pause_clicked(object sender, RoutedEventArgs e)
+        {
+            if (start_pressed)
+            {
+                start_pressed = false;
+                clear_board_2();
+                try
+                {
+                    aname.stop(aname.FaroreID);
+                }
+                catch (Exception exc)
+                {
+                    Console.Write("problem with pause button");
                     Console.WriteLine(exc);
                 }
             }
-
-
         }
     }
 }

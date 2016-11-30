@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace WpfApplication1
 {
+    //use socket not websocket
+    //use 5 digit port number to avoid conflicts
+
     class logic
     {
         public bool done = false;
@@ -18,40 +21,50 @@ namespace WpfApplication1
         public object_seen green1;
         public object_seen green2;
         public object_seen green3;
+        public string FaroreID = "FireFly-9E83";
+        public string DinID = "FireFly-E5E8";
+        public string NayruID = "FireFly-E5AE";
+        public string password = "1234";
         arrayClass arr = new arrayClass();
-        public movement roombaControl = new movement();
         //struct to hold things the camera recognizes in the frame
         public struct object_seen
         {
-            public int xCoord;
-            public int yCoord;
-            public int height;
-            public int width;
-            public System.Drawing.Color color;
-            public bool taken;
+            public int xCoord;                                  //location x-coordinate
+            public int yCoord;                                  // location y-coordinate
+            public int height;                                  //height of object
+            public int width;                                   //width of object
+            public System.Drawing.Color color;                  // color of object
+            public bool taken;                                  //is this object filled?
         }
+        /*
+         * initalizes the object_seen structs such that the taken value is false
+         */
         public void init()
         {
             blue1 = new object_seen();
             blue2 = new object_seen();
             blue3 = new object_seen();
-            blue1.taken = false;
-            blue2.taken = false;
-            blue3.taken = false;
+            reInit(blue1, blue2, blue3);
 
             red1 = new object_seen();
             red2 = new object_seen();
             red3 = new object_seen();
-            red1.taken = false;
-            red2.taken = false;
-            red3.taken = false;
+            reInit(red1, red2, red3);
 
             green1 = new object_seen();
             green2 = new object_seen();
             green3 = new object_seen();
-            green1.taken = false;
-            green2.taken = false;
-            green3.taken = false;
+            reInit(green1, green2, green3);
+        }
+
+        public void reInit(object_seen a, object_seen b, object_seen c)
+        {
+            a.taken = false;
+            a.xCoord = 300000;
+            b.taken = false;
+            b.xCoord = 300000;
+            c.taken = false;
+            c.xCoord = 300000;
         }
         //compare size of objects and put them in an array from biggest to smallest.
         public object_seen[] findBiggest(object_seen a, object_seen b, object_seen c)
@@ -93,6 +106,33 @@ namespace WpfApplication1
             }
             return inOrder;
         }
+
+        public bool helperMethod(object_seen a, object_seen b, object_seen c, int x, int y)
+        {
+            if (a.taken == false && (positiveResult(x, a.xCoord) > 10 || positiveResult(y, a.yCoord) > 10))
+            {
+                if(b.xCoord!=300000)
+                {
+                    if (positiveResult(x, b.xCoord)>5 ||positiveResult(y,b.yCoord)>5)
+                    {
+                        return true;
+                    }
+                }
+                else if (c.xCoord!=300000)
+                {
+                    if (positiveResult(x, c.xCoord)>5|| positiveResult(y, c.yCoord)>5)
+                    {
+                        return true;
+                    }
+                }
+                else 
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         //checks if any of the objects given are empty
         public bool three_filled(object_seen a, object_seen b, object_seen c)
         {
@@ -133,12 +173,14 @@ namespace WpfApplication1
                 {
                     if (distance_to_smallest < distance_to_biggest && distance_to_middle < distance_to_biggest)
                     {
-                        roombaControl.go_forward(roombaControl.FaroreID);
+                        Console.WriteLine("go forward");
+                        go_forward(FaroreID);
                         //go forward
                     }
                     else
                     {
-                        roombaControl.long_turn(roombaControl.FaroreID);
+                        Console.WriteLine("long turn");
+                        long_turn(FaroreID);
                         //long turn
                     }
                 }
@@ -146,16 +188,19 @@ namespace WpfApplication1
                 {
                     if (distance_to_middle < distance_to_smallest)
                     {
-                        roombaControl.turn_towards_middle(roombaControl.FaroreID);
+                        Console.WriteLine("turn towards middle");
+                        turn_towards_middle(FaroreID);
                         //turn towards middle
                     }
                     else if (distance_to_smallest<distance_to_middle)
                     {
-                        roombaControl.turn_toward_small(roombaControl.FaroreID);
+                        Console.WriteLine("turn towards smallest");
+                        turn_toward_small(FaroreID);
                         //turn towards smallest
                     }
                 }
             }
+            reInit(a, b, c);
             return;
         }
 
@@ -168,6 +213,54 @@ namespace WpfApplication1
                 result = result * -1;
             }
             return result;
+        }
+
+        public void init_contorls()
+        {
+            /*
+             * how do we start? this my guess is.
+             * _init_(self, FaroreID, startingMode=SAFE_MODE, sim_mode = False);
+             * _init_(self, DinID, startingMode=SAFE_MODE, sim_mode = False);
+             * _init_(self, NayruID, startingMode=SAFE_MODE, sim_mode = False);
+             */
+        }
+        public void stop(string ID)
+        {
+                //stop(FaroreID);
+                //stop roomba
+                return;
+        }
+        public void turn_toward_small(string ID)
+        {
+  //driveDirect(FaroreID, 0, 10);
+                // or
+                //driveDirect(FaroreID, 10, 0);
+                //turn towards the smallest shape (left or right)
+                return;
+
+        }
+        public void turn_towards_middle(string ID)
+        {
+
+                //driveDirect(FaroreID, 0, 10);
+                // or
+                //driveDirect(FaroreID, 10, 0);
+                //turn towards the middle shape (left or right, opposit of small)
+                return;
+        }
+        public void go_forward(string ID)
+        {
+
+                //go(FaroreID, 10, 0);
+                //move forward
+                return;
+        }
+        public void long_turn(string ID)
+        {
+
+                //driveDirect(FaroreID, 0, 30);
+                //turn for a long time
+                return;
         }
     }
 }
