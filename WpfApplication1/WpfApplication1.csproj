@@ -84,6 +84,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="arrayClass.cs" />
+    <Compile Include="csclient.cs" />
     <Compile Include="logic.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -91,7 +92,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="movement.cs" />
     <Compile Include="pathNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
