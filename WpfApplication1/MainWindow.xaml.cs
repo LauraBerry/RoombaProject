@@ -114,9 +114,9 @@ namespace WpfApplication1
             System.Drawing.Bitmap filteredImage = colorFilter.Apply(bitmap);
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
-           // blobCounter.MinHeight = 10;                                              //nico it will see my phone but not the roomba? what is the unit here?
-            //blobCounter.MinWidth = 10;
-            blobCounter.FilterBlobs = true;                                         // filter blobs by size
+            blobCounter.MinHeight = 5;                                              //nico it will see my phone but not the roomba? what is the unit here?
+            blobCounter.MinWidth = 5;
+            blobCounter.FilterBlobs = false;                                         // filter blobs by size
             blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
             // grayscaling
             AForge.Imaging.Filters.Grayscale grayFilter = new AForge.Imaging.Filters.Grayscale(0.2125, 0.7154, 0.0721); ;
@@ -135,15 +135,11 @@ namespace WpfApplication1
                         using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
                         {
                             g.DrawRectangle(pen, objectRect);
-                            int x1 = makePositive(objectRect.Right, objectRect.Left);
-                            x1 = x1 / 2;
-                            x1 = objectRect.Left + x1;
-                            int y1 = makePositive(objectRect.Top, objectRect.Bottom);
-                            y1 = y1 / 2;
-                            y1 = objectRect.Bottom + y1;
+                            int  x1 =( bitmap.Width -(objectRect.Left + objectRect.Right)) / 2;
+                            int y1 = (bitmap.Height - (objectRect.Top + objectRect.Bottom)) / 2;
                             if (x1<0)
                             {
-                                x1 = 0;
+                                x1 = x1*-1;
                             }
                             if (x1>639)
                             {
@@ -151,7 +147,7 @@ namespace WpfApplication1
                             }
                             if (y1<0)
                             {
-                                y1 = 0;
+                                y1 = y1*-1;
                             }
                             if (y1>479)
                             {
@@ -187,10 +183,6 @@ namespace WpfApplication1
       public void write_to_struct(System.Drawing.Color a, int x1, int y1, System.Drawing.Rectangle rec)
       {
           float color = a.GetHue();
-          if (color != 120)
-          {
-              Console.WriteLine(color);
-          }
           if (color < 40)//red
           {
               if (aname.helperMethod(aname.red1, aname.red2, aname.red3, x1, y1))
@@ -292,7 +284,6 @@ namespace WpfApplication1
           }
           else
           {
-
              return;
           }
       }
@@ -526,7 +517,6 @@ namespace WpfApplication1
 
         public void add_to_linkedList(int x, int y)
         {
-
             if (roomba1_pressed == true)
             {
                 if (red_list_started == false)
@@ -1039,24 +1029,28 @@ namespace WpfApplication1
          */
         private void start_clicked(object sender, RoutedEventArgs e)
         {
-            start_pressed = true;
-            bool printboards = true;
-            roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
-            Roomba1.Margin = new Thickness(411, 44, 0, 0);
-            Roomba2.Margin = new Thickness(411, 78, 0, 0);
-            Roomba3.Margin = new Thickness(411, 112, 0, 0);
-            clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
-            bool filled = aname.three_filled(aname.blue1, aname.blue2, aname.blue3);
-            if (filled == true)
+                            bool printboards = true;
+            if (start_pressed == false)
             {
-                try
+                start_pressed = true;
+
+                roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
+                Roomba1.Margin = new Thickness(411, 44, 0, 0);
+                Roomba2.Margin = new Thickness(411, 78, 0, 0);
+                Roomba3.Margin = new Thickness(411, 112, 0, 0);
+                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
+                bool filled = aname.three_filled(aname.blue1, aname.blue2, aname.blue3);
+                if (filled == true)
                 {
-                    aname.get_barring(aname.blue1, aname.blue2, aname.blue3, blueHead.x_coord, blueHead.y_coord);   //get the barring and decide if and where to turn
-                }
-                catch (Exception except)
-                {
-                    Console.Write("objects are null");
-                    Console.WriteLine(except);
+                    try
+                    {
+                        aname.get_barring(aname.blue1, aname.blue2, aname.blue3, blueHead.x_coord, blueHead.y_coord, blue_list_started);   //get the barring and decide if and where to turn
+                    }
+                    catch (Exception except)
+                    {
+                        Console.Write("objects are null");
+                        Console.WriteLine(except);
+                    }
                 }
             }
             if (printboards == true)
