@@ -26,6 +26,7 @@ namespace WpfApplication1
         public string NayruID = "FireFly-E5AE";
         public string password = "1234";
         arrayClass arr = new arrayClass();
+        
         //struct to hold things the camera recognizes in the frame
         public struct object_seen
         {
@@ -111,7 +112,8 @@ namespace WpfApplication1
         {
             if (a.taken == false && (positiveResult(x, a.xCoord) > 10 || positiveResult(y, a.yCoord) > 10))
             {
-                if(b.xCoord!=300000)
+                return true;
+               /* if(b.xCoord!=300000)
                 {
                     if (positiveResult(x, b.xCoord)>5 ||positiveResult(y,b.yCoord)>5)
                     {
@@ -128,7 +130,7 @@ namespace WpfApplication1
                 else 
                 {
                     return true;
-                }
+                }*/
             }
 
             return false;
@@ -146,8 +148,13 @@ namespace WpfApplication1
             }
         }
         //figure out where each object is relative to the desired location.
-        public void get_barring(object_seen a, object_seen b, object_seen c, int destinationX, int destinationY)
+        public void get_barring(object_seen a, object_seen b, object_seen c, int destinationX, int destinationY, bool d)
         {
+            
+            if(d==false)
+            {
+                return;
+            }
             bool isNull = three_filled(a, b, c);
             if (isNull==false)
             {
@@ -174,13 +181,13 @@ namespace WpfApplication1
                     if (distance_to_smallest < distance_to_biggest && distance_to_middle < distance_to_biggest)
                     {
                         Console.WriteLine("go forward");
-                        go_forward(FaroreID);
+                        csclient.StartClient("blue", "f");
                         //go forward
                     }
                     else
                     {
                         Console.WriteLine("long turn");
-                        long_turn(FaroreID);
+                        csclient.StartClient("blue", "a");
                         //long turn
                     }
                 }
@@ -189,13 +196,13 @@ namespace WpfApplication1
                     if (distance_to_middle < distance_to_smallest)
                     {
                         Console.WriteLine("turn towards middle");
-                        turn_towards_middle(FaroreID);
+                        csclient.StartClient("blue", "r");
                         //turn towards middle
                     }
                     else if (distance_to_smallest<distance_to_middle)
                     {
                         Console.WriteLine("turn towards smallest");
-                        turn_toward_small(FaroreID);
+                        csclient.StartClient("blue", "l");
                         //turn towards smallest
                     }
                 }
@@ -213,54 +220,6 @@ namespace WpfApplication1
                 result = result * -1;
             }
             return result;
-        }
-
-        public void init_contorls()
-        {
-            /*
-             * how do we start? this my guess is.
-             * _init_(self, FaroreID, startingMode=SAFE_MODE, sim_mode = False);
-             * _init_(self, DinID, startingMode=SAFE_MODE, sim_mode = False);
-             * _init_(self, NayruID, startingMode=SAFE_MODE, sim_mode = False);
-             */
-        }
-        public void stop(string ID)
-        {
-                //stop(FaroreID);
-                //stop roomba
-                return;
-        }
-        public void turn_toward_small(string ID)
-        {
-  //driveDirect(FaroreID, 0, 10);
-                // or
-                //driveDirect(FaroreID, 10, 0);
-                //turn towards the smallest shape (left or right)
-                return;
-
-        }
-        public void turn_towards_middle(string ID)
-        {
-
-                //driveDirect(FaroreID, 0, 10);
-                // or
-                //driveDirect(FaroreID, 10, 0);
-                //turn towards the middle shape (left or right, opposit of small)
-                return;
-        }
-        public void go_forward(string ID)
-        {
-
-                //go(FaroreID, 10, 0);
-                //move forward
-                return;
-        }
-        public void long_turn(string ID)
-        {
-
-                //driveDirect(FaroreID, 0, 30);
-                //turn for a long time
-                return;
         }
     }
 }

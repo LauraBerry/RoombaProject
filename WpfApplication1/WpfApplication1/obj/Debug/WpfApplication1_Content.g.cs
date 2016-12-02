@@ -8,7 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("webcamera_input.designer.wmv")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("webcamera_input.wmv")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("create.py")]
 
 

@@ -8,10 +8,9 @@ namespace WpfApplication1
 {
     class pathNode
     {
-        public String color;
         public pathNode Next=null;
         public pathNode Head=null;
-        public pathNode Tail=null;
-        public pathNode Prev=null;
+        public int x_coord;
+        public int y_coord;
     }
 }
