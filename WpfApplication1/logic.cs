@@ -221,53 +221,5 @@ namespace WpfApplication1
             }
             return result;
         }
-
-        public void init_contorls()
-        {
-            /*
-             * how do we start? this my guess is.
-             * _init_(self, FaroreID, startingMode=SAFE_MODE, sim_mode = False);
-             * _init_(self, DinID, startingMode=SAFE_MODE, sim_mode = False);
-             * _init_(self, NayruID, startingMode=SAFE_MODE, sim_mode = False);
-             */
-        }
-        public void stop(string ID)
-        {
-                //stop(FaroreID);
-                //stop roomba
-                return;
-        }
-        public void turn_toward_small(string ID)
-        {
-  //driveDirect(FaroreID, 0, 10);
-                // or
-                //driveDirect(FaroreID, 10, 0);
-                //turn towards the smallest shape (left or right)
-                return;
-
-        }
-        public void turn_towards_middle(string ID)
-        {
-
-                //driveDirect(FaroreID, 0, 10);
-                // or
-                //driveDirect(FaroreID, 10, 0);
-                //turn towards the middle shape (left or right, opposit of small)
-                return;
-        }
-        public void go_forward(string ID)
-        {
-
-                //go(FaroreID, 10, 0);
-                //move forward
-                return;
-        }
-        public void long_turn(string ID)
-        {
-
-                //driveDirect(FaroreID, 0, 30);
-                //turn for a long time
-                return;
-        }
     }
 }

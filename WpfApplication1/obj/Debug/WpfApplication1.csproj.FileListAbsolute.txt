@@ -24,3 +24,29 @@ D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfAp
 D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.Properties.Resources.resources
 D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.exe
 D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.pdb
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.exe.config
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.exe
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.pdb
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.exe
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.pdb
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\AForge.Controls.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\AForge.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\AForge.Imaging.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\AForge.Math.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\AForge.Video.DirectShow.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\AForge.Video.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.VisualGestureBuilder.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.Wpf.Controls.dll
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.xml
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.VisualGestureBuilder.xml
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\bin\Debug\Microsoft.Kinect.Wpf.Controls.xml
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.csprojResolveAssemblyReference.cache
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\MainWindow.baml
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\MainWindow.g.cs
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\App.g.cs
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1_Content.g.cs
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1_MarkupCompile.cache
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.g.resources
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.Properties.Resources.resources
+D:\lauraDocuments\school\ComputerScience\CPSC548\homework\RoombaAssignment - Copy\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.csproj.GenerateResource.Cache
