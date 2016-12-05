@@ -1199,12 +1199,14 @@ namespace WpfApplication1
             Start_button.Visibility= System.Windows.Visibility.Collapsed;
             clear_button.Visibility = System.Windows.Visibility.Collapsed;
             Pause_button.Visibility = System.Windows.Visibility.Collapsed;
+            Automatic_button.Visibility = System.Windows.Visibility.Visible;
             Roomba1.Margin = new Thickness(411, 44, 0, 0);
             roomba1_pressed = false;
             Roomba2.Margin = new Thickness(411, 78, 0, 0);
             roomba2_pressed = false;
             Roomba3.Margin = new Thickness(411, 112, 0, 0);
             roomba3_pressed = false;
+            clear_board_2();
             forward_button.Visibility = System.Windows.Visibility.Visible;
             left_button.Visibility = System.Windows.Visibility.Visible;
             right_button.Visibility = System.Windows.Visibility.Visible;
@@ -1289,6 +1291,27 @@ namespace WpfApplication1
             {
                 return;
             }
+        }
+
+        private void auto_control(object sender, RoutedEventArgs e)
+        {
+            manual_control = false;
+            control_switcher.Visibility = System.Windows.Visibility.Visible;
+            Start_button.Visibility = System.Windows.Visibility.Visible;
+            clear_button.Visibility = System.Windows.Visibility.Visible;
+            Pause_button.Visibility = System.Windows.Visibility.Visible;
+            Automatic_button.Visibility = System.Windows.Visibility.Collapsed;
+            Roomba1.Margin = new Thickness(411, 44, 0, 0);
+            roomba1_pressed = false;
+            Roomba2.Margin = new Thickness(411, 78, 0, 0);
+            roomba2_pressed = false;
+            Roomba3.Margin = new Thickness(411, 112, 0, 0);
+            roomba3_pressed = false;
+            clear_board_2();
+            forward_button.Visibility = System.Windows.Visibility.Collapsed;
+            left_button.Visibility = System.Windows.Visibility.Collapsed;
+            right_button.Visibility = System.Windows.Visibility.Collapsed;
+            turn_around.Visibility = System.Windows.Visibility.Collapsed;
         }
     }
 }

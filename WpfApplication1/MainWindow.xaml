@@ -55,6 +55,7 @@
         <Button x:Name="left_button" Content="L" Width="33" Height="35" Canvas.Top="39" Click="turn_left" Margin="397,204,87,80" Visibility="Collapsed"/>
         <Button x:Name="right_button" Content="R" Width="33" Height="35" Canvas.Top="39" Canvas.Left="71" Click="turn_right" Margin="469,205,15,79" Visibility="Collapsed"/>
         <Button x:Name="turn_around" Content="TA" Width="39" Height="35" Canvas.Top="70" Canvas.Left="33" Click="turn_around_pressed" Margin="430,239,48,45" Visibility="Collapsed"/>
+        <Button x:Name="Automatic_button" Content="Automatic" HorizontalAlignment="Left" Margin="306,290,0,0" VerticalAlignment="Top" Width="75" Visibility="Collapsed" Click="auto_control"/>
 
     </Grid>
 </Window>
