@@ -114,28 +114,25 @@ namespace WpfApplication1
 
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
-            //         blobCounter.MinHeight = 5;                                              //nico it will see my phone but not the roomba? what is the unit here?
-            //       blobCounter.MinWidth = 5;
-            blobCounter.FilterBlobs = false;                                         // filter blobs by size
+            blobCounter.MinHeight = 20;
+            blobCounter.MaxHeight = 40;
+            blobCounter.MaxWidth = 40;
+            blobCounter.MinWidth = 20;
+            blobCounter.FilterBlobs = true;                                         // filter blobs by size
             blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
             // grayscaling
-            //AForge.Imaging.Filters.Grayscale grayFilter = new AForge.Imaging.Filters.Grayscale(0.2125, 0.7154, 0.0721); ;
-            //Bitmap grayImage = grayFilter.Apply(filteredImage);
-            AForge.Imaging.Filters.PointedColorFloodFill pointedColor = new AForge.Imaging.Filters.PointedColorFloodFill();
-            pointedColor.Tolerance = System.Drawing.Color.FromArgb(238, 232, 232);
-            pointedColor.FillColor = System.Drawing.Color.FromArgb(0, 0, 0);
-            pointedColor.StartingPoint = new AForge.IntPoint(5, 5);
-            Bitmap filteredImage = pointedColor.Apply(bitmap);
-            /*AForge.Imaging.Filters.EuclideanColorFiltering filter = new AForge.Imaging.Filters.EuclideanColorFiltering();
-            filter.CenterColor = System.Drawing.Color.White; 
-            //Pure White  
-            filter.Radius = 100;
-            filter.FillOutside = true;
-            //Increase this to allow off-whites  
-            Bitmap filteredImage = filter.Apply(bitmap);*/
+            //AForge.Imaging.Filters.Grayscale grayFilter = new AForge.Imaging.Filters.Grayscale(0.2125, 0.7154, 0.0721);
+            AForge.Imaging.Filters.ColorFiltering colorFilter = new AForge.Imaging.Filters.ColorFiltering();
+            /*colorFilter.Red = new AForge.IntRange(20, 255);
+            colorFilter.Green = new AForge.IntRange(59, 220);
+            colorFilter.Blue = new AForge.IntRange(60, 230);*/
+            colorFilter.Red = new AForge.IntRange(60, 130);
+            colorFilter.Green = new AForge.IntRange(40, 150);
+            colorFilter.Blue = new AForge.IntRange(30, 170);
+            Bitmap colorfiltered = colorFilter.Apply(bitmap);
 
             // locate blobs 
-            blobCounter.ProcessImage(filteredImage);
+            blobCounter.ProcessImage(colorfiltered);
             System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
             // draw rectangle around all seen objects
             if (rects.Length > 0)
@@ -262,7 +259,7 @@ namespace WpfApplication1
                   aname.green3.taken = true;
               }
           }
-          else if (Hex == "#A0FFA0")//blue
+          else if (color<220)//blue
           {
               if (aname.helperMethod(aname.blue1, aname.blue2, aname.blue3, x1, y1))
               {
