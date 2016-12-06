@@ -16,6 +16,7 @@ public class csclient {
         // Data buffer for incoming data.
         byte[] bytes = new byte[1024];
         int IPAddress;
+        IPAddress = 0;
         // Connect to a remote device.
         try {
             // Establish the remote endpoint for the socket.
@@ -31,7 +32,7 @@ public class csclient {
             {
                 IPAddress = 12345;
             }
-            else if (color == "green") ;
+            else if (color == "green")
             {
                 IPAddress = 12346;
             }
