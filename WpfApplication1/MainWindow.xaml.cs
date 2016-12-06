@@ -310,13 +310,10 @@ namespace WpfApplication1
                     roomba1_pressed = true;
                     Roomba1.Width = 106;
                     Roomba1.Margin = new Thickness(401, 44, 0, 0);
-                    if (!manual_control)
-                    {
-                        Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                        roomba2_pressed = false;
-                        Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                        roomba3_pressed = false;
-                    }
+                    Roomba2.Margin = new Thickness(411, 78, 0, 0);
+                    roomba2_pressed = false;
+                    Roomba3.Margin = new Thickness(411, 112, 0, 0);
+                    roomba3_pressed = false;
                     clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
                 }
                 else
@@ -324,11 +321,8 @@ namespace WpfApplication1
                     Roomba1.Width = 96;
                     Roomba1.Margin = new Thickness(411, 44, 0, 0);
                     roomba1_pressed = false;
-                    if (!manual_control)
-                    {
-                        roomba2_pressed = false;
-                        roomba3_pressed = false;
-                    }
+                    roomba2_pressed = false;
+                    roomba3_pressed = false;
                     clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
                 }
             }
@@ -341,14 +335,11 @@ namespace WpfApplication1
                 {
                     roomba2_pressed = true;
                     Roomba2.Width = 106;
-                    Roomba2.Margin = new Thickness(401, 78, 0, 0);
-                    if (!manual_control)
-                    {
-                        Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                        roomba1_pressed = false;
-                        Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                        roomba3_pressed = false;
-                    }
+                    Roomba2.Margin = new Thickness(401, 78, 0, 0);  
+                    Roomba1.Margin = new Thickness(411, 44, 0, 0);
+                    roomba1_pressed = false;
+                    Roomba3.Margin = new Thickness(411, 112, 0, 0);
+                    roomba3_pressed = false;
                     clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
                 }
                 else
@@ -356,11 +347,8 @@ namespace WpfApplication1
                     Roomba2.Width = 96;
                     Roomba2.Margin = new Thickness(411, 78, 0, 0);
                     roomba2_pressed = false;
-                    if (!manual_control)
-                    {
-                        roomba1_pressed = false;
-                        roomba3_pressed = false;
-                    }
+                    roomba1_pressed = false;
+                    roomba3_pressed = false;
                     clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
                 }
             }
@@ -374,13 +362,10 @@ namespace WpfApplication1
                     roomba3_pressed = true;
                     Roomba3.Width = 106;
                     Roomba3.Margin = new Thickness(401, 112, 0, 0);
-                    if (!manual_control)
-                    {
-                        Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                        roomba1_pressed = false;
-                        Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                        roomba2_pressed = false;
-                    }
+                    Roomba1.Margin = new Thickness(411, 44, 0, 0);
+                    roomba1_pressed = false;
+                    Roomba2.Margin = new Thickness(411, 78, 0, 0);
+                    roomba2_pressed = false;
                     clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
                 }
                 else
@@ -388,11 +373,8 @@ namespace WpfApplication1
                     Roomba3.Width = 96;
                     Roomba3.Margin = new Thickness(411, 112, 0, 0);
                     roomba3_pressed = false;
-                    if (!manual_control)
-                    {
-                        roomba2_pressed = false;
-                        roomba1_pressed = false;
-                    }
+                    roomba2_pressed = false;
+                    roomba1_pressed = false;
                     clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
                 }
             }
