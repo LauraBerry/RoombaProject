@@ -114,10 +114,10 @@ namespace WpfApplication1
 
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
-            blobCounter.MinHeight = 20;
+            blobCounter.MinHeight = 15;
             blobCounter.MaxHeight = 40;
             blobCounter.MaxWidth = 40;
-            blobCounter.MinWidth = 20;
+            blobCounter.MinWidth = 25;
             blobCounter.FilterBlobs = true;                                         // filter blobs by size
             blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
             // grayscaling
@@ -259,7 +259,7 @@ namespace WpfApplication1
                   aname.green3.taken = true;
               }
           }
-          else if (color<220)//blue
+          else if (color<120)//blue
           {
               if (aname.helperMethod(aname.blue1, aname.blue2, aname.blue3, x1, y1))
               {
@@ -355,10 +355,10 @@ namespace WpfApplication1
                 {
                     Roomba2.Width = 96;
                     Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                    roomba1_pressed = false;
+                    roomba2_pressed = false;
                     if (!manual_control)
                     {
-                        roomba2_pressed = false;
+                        roomba1_pressed = false;
                         roomba3_pressed = false;
                     }
                     clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
@@ -387,11 +387,11 @@ namespace WpfApplication1
                 {
                     Roomba3.Width = 96;
                     Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                    roomba1_pressed = false;
+                    roomba3_pressed = false;
                     if (!manual_control)
                     {
                         roomba2_pressed = false;
-                        roomba3_pressed = false;
+                        roomba1_pressed = false;
                     }
                     clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
                 }
@@ -1215,17 +1215,13 @@ namespace WpfApplication1
             {
                 csclient.StartClient("red", "f");
             }
-            else if (roomba2_pressed == true)
+            if (roomba2_pressed == true)
             {
                 csclient.StartClient("blue", "f");
             }
-            else if (roomba3_pressed == true)
+            if (roomba3_pressed == true)
             {
                 csclient.StartClient("green", "f");
-            }
-            else
-            {
-                return;
             }
         }
 
@@ -1235,19 +1231,14 @@ namespace WpfApplication1
             {
                 csclient.StartClient("red", "l");
             }
-            else if (roomba2_pressed == true)
+            if (roomba2_pressed == true)
             {
                 csclient.StartClient("blue", "l");
             }
-            else if (roomba3_pressed == true)
+            if (roomba3_pressed == true)
             {
                 csclient.StartClient("green", "l");
             }
-            else
-            {
-                return;
-            }
-
         }
 
         private void turn_right(object sender, RoutedEventArgs e)
@@ -1256,17 +1247,13 @@ namespace WpfApplication1
             {
                 csclient.StartClient("red", "r");
             }
-            else if (roomba2_pressed == true)
+            if (roomba2_pressed == true)
             {
                 csclient.StartClient("blue", "r");
             }
-            else if (roomba3_pressed == true)
+            if (roomba3_pressed == true)
             {
                 csclient.StartClient("green", "r");
-            }
-            else
-            {
-                return;
             }
         }
 
@@ -1276,23 +1263,20 @@ namespace WpfApplication1
             {
                 csclient.StartClient("red", "a");
             }
-            else if (roomba2_pressed == true)
+            if (roomba2_pressed == true)
             {
                 csclient.StartClient("blue", "a");
             }
-            else if (roomba3_pressed == true)
+            if (roomba3_pressed == true)
             {
                 csclient.StartClient("green", "a");
-            }
-            else
-            {
-                return;
             }
         }
 
         private void auto_control(object sender, RoutedEventArgs e)
         {
             manual_control = false;
+            start_pressed = false;
             control_switcher.Visibility = System.Windows.Visibility.Visible;
             Start_button.Visibility = System.Windows.Visibility.Visible;
             clear_button.Visibility = System.Windows.Visibility.Visible;
