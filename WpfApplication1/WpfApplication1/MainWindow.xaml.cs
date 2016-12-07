@@ -37,8 +37,8 @@ namespace WpfApplication1
 {
     public partial class MainWindow
     {
-        bool roomba1_pressed, roomba2_pressed, roomba3_pressed, red_list_started, blue_list_started, green_list_started, start_pressed;
-        int currRed, currBlue, currGreen;
+        bool roomba1_pressed, roomba2_pressed, roomba3_pressed, red_list_started, blue_list_started, green_list_started, start_pressed, manual_control;
+        int currRed, currBlue, currGreen, biggest;
         arrayClass arr = new arrayClass();
         AForge.Video.DirectShow.FilterInfoCollection videoDevices;
         AForge.Video.DirectShow.VideoCaptureDevice vidsource1, videosource2;
@@ -47,15 +47,13 @@ namespace WpfApplication1
 
         public MainWindow()
         {
-            red_list_started = blue_list_started = green_list_started=start_pressed = roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
+            biggest = 0;
+            manual_control=red_list_started = blue_list_started = green_list_started=start_pressed = roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
             currBlue = currGreen = currRed = 1;
             arr.init();
             aname.init();
             InitializeComponent();
-//<Nico>
-            /*
-             * start of video feed code
-             */
+
             //find video device
             videoDevices = new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
             // create video source
@@ -67,16 +65,14 @@ namespace WpfApplication1
             AForge.Video.DirectShow.VideoCaptureDevice videoSource = new AForge.Video.DirectShow.VideoCaptureDevice(videoDevices2[0].MonikerString);
             // start the video source
             videoSource.Start();
-            int counter = 0;
-            while (counter<2)
-            {
+
                 // set NewFrame event handler
                 videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
                 // wait until we have two acquired images
                 /*camera1Acquired.WaitOne();
                 camera2Acquired.WaitOne();*/
-                counter++;
-            }
+
+            
             //timer
             //call getBarring
 
@@ -87,9 +83,10 @@ namespace WpfApplication1
 
         private void video_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
+            System.Drawing.Image image = (Bitmap)eventArgs.Frame.Clone();
             try
             {
-                System.Drawing.Image image = (Bitmap)eventArgs.Frame.Clone();                   //Width==640 , Height==480
+                //Width==640 , Height==480
                 System.IO.MemoryStream mssg = new System.IO.MemoryStream();
                 image.Save(mssg, System.Drawing.Imaging.ImageFormat.Bmp);
                 mssg.Seek(0, System.IO.SeekOrigin.Begin);
@@ -106,73 +103,180 @@ namespace WpfApplication1
                 Console.Write("can't get frame");
                 Console.Write(ex);
             }
-            System.Drawing.Bitmap bitmap = eventArgs.Frame;
+            System.Drawing.Bitmap bitmapRed = (Bitmap)eventArgs.Frame.Clone();
+            System.Drawing.Bitmap bitmapBlue = (Bitmap)eventArgs.Frame.Clone();
+            System.Drawing.Bitmap bitmapGreen = (Bitmap)eventArgs.Frame.Clone();
             // create filter
             //AForge.Imaging.Filters.ColorFiltering colorFilter = new AForge.Imaging.Filters.ColorFiltering();
             // configure the filter
-            
+            AForge.Imaging.Filters.ColorFiltering colorFilter = new AForge.Imaging.Filters.ColorFiltering();
+            /*colorFilter.Red = new AForge.IntRange(60, 130);
+            colorFilter.Green = new AForge.IntRange(40, 150);
+            colorFilter.Blue = new AForge.IntRange(30, 170);*/
+            colorFilter.Red = new AForge.IntRange(100, 200);
+            colorFilter.Green = new AForge.IntRange(40, 150);
+            colorFilter.Blue = new AForge.IntRange(30, 170);
+            colorFilter.ApplyInPlace(bitmapRed);
 
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
- //         blobCounter.MinHeight = 5;                                              //nico it will see my phone but not the roomba? what is the unit here?
-   //       blobCounter.MinWidth = 5;
-            blobCounter.FilterBlobs = false;                                         // filter blobs by size
+            blobCounter.MinHeight = 4;
+            blobCounter.MaxHeight = 100;
+            blobCounter.MaxWidth = 100;
+            blobCounter.MinWidth = 4;
+            blobCounter.FilterBlobs = true;                                         // filter blobs by size
             blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
-            // grayscaling
-            //AForge.Imaging.Filters.Grayscale grayFilter = new AForge.Imaging.Filters.Grayscale(0.2125, 0.7154, 0.0721); ;
-            //Bitmap grayImage = grayFilter.Apply(filteredImage);
-            AForge.Imaging.Filters.PointedColorFloodFill pointedColor = new AForge.Imaging.Filters.PointedColorFloodFill();
-            pointedColor.Tolerance = System.Drawing.Color.FromArgb(238, 232, 232);
-            pointedColor.FillColor = System.Drawing.Color.FromArgb(0, 0, 0);
-            pointedColor.StartingPoint = new AForge.IntPoint(5, 5);            
-            Bitmap filteredImage = pointedColor.Apply(bitmap);
-            /*AForge.Imaging.Filters.EuclideanColorFiltering filter = new AForge.Imaging.Filters.EuclideanColorFiltering();
-            filter.CenterColor = System.Drawing.Color.White; 
-            //Pure White  
-            filter.Radius = 100;
-            filter.FillOutside = true;
-            //Increase this to allow off-whites  
-            Bitmap filteredImage = filter.Apply(bitmap);*/
-            
             // locate blobs 
-            blobCounter.ProcessImage(filteredImage);
+            blobCounter.ProcessImage(bitmapRed);
             System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
+            //Console.WriteLine(rects.Count());
             // draw rectangle around all seen objects
             if (rects.Length > 0)
             {
                 for (int i = 0; i < rects.Length; i++)
                 {
                     System.Drawing.Rectangle objectRect = rects[i];
-                    Graphics g = Graphics.FromImage(bitmap);
+                    Graphics g = Graphics.FromImage(image);
+                    using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
+                    {
+                        g.DrawRectangle(pen, objectRect);
+                        int x1 = makePositive(objectRect.Right, objectRect.Left);
+                        x1 = x1 / 2;
+                        x1 = objectRect.Left + x1;
+                        int y1 = makePositive(objectRect.Top, objectRect.Bottom);
+                        y1 = y1 / 2;
+                        y1 = objectRect.Bottom + y1;
+                        if (x1 < 0)
+                        {
+                            x1 = x1 * -1;
+                        }
+                        if (x1 > 639)
+                        {
+                            x1 = 639;
+                        }
+                        if (y1 < 0)
+                        {
+                            y1 = y1 * -1;
+                        }
+                        if (y1 > 479)
+                        {
+                            y1 = 479;
+                        }
+                        System.Drawing.Color a = bitmapRed.GetPixel(x1, y1);
+                        write_to_struct(a, x1, y1, rects[i]);                                       //assigns rectangles to struct based on color)
+                        g.Dispose();
+                    }
+                }
+                colorFilter.Red = new AForge.IntRange(0,20);
+                colorFilter.Green = new AForge.IntRange(0,20);
+                colorFilter.Blue = new AForge.IntRange(0,20);
+                colorFilter.ApplyInPlace(bitmapBlue);
+
+                /// create blob counter and configure it
+                BlobCounter blobCounterBlue = new BlobCounter();
+                blobCounterBlue.MinHeight = 10;
+                blobCounterBlue.MaxHeight = 100;
+                blobCounterBlue.MaxWidth = 100;
+                blobCounterBlue.MinWidth = 10;
+                blobCounterBlue.FilterBlobs = true;                                         // filter blobs by size
+                blobCounterBlue.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
+                // locate blobs 
+                blobCounterBlue.ProcessImage(bitmapBlue);
+                System.Drawing.Rectangle[] rectsBlue = blobCounterBlue.GetObjectsRectangles();
+                //Console.WriteLine(rects.Count());
+                // draw rectangle around all seen objects
+                if (rectsBlue.Length > 0)
+                {
+                    for (int i = 0; i < rectsBlue.Length; i++)
+                    {
+                        System.Drawing.Rectangle objectRectBlue = rectsBlue[i];
+                        Graphics g = Graphics.FromImage(image);
                         using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
                         {
-                            g.DrawRectangle(pen, objectRect);
-                            int x1 = makePositive(objectRect.Right, objectRect.Left);
+                            g.DrawRectangle(pen, objectRectBlue);
+                            int x1 = makePositive(objectRectBlue.Right, objectRectBlue.Left);
                             x1 = x1 / 2;
-                            x1 = objectRect.Left + x1;
-                            int y1 = makePositive(objectRect.Top, objectRect.Bottom);
+                            x1 = objectRectBlue.Left + x1;
+                            int y1 = makePositive(objectRectBlue.Top, objectRectBlue.Bottom);
                             y1 = y1 / 2;
-                            y1 = objectRect.Bottom + y1;
-                            if (x1<0)
+                            y1 = objectRectBlue.Bottom + y1;
+                            if (x1 < 0)
                             {
-                                x1 = x1*-1;
+                                x1 = x1 * -1;
                             }
-                            if (x1>639)
+                            if (x1 > 639)
                             {
                                 x1 = 639;
                             }
-                            if (y1<0)
+                            if (y1 < 0)
                             {
-                                y1 = y1*-1;
+                                y1 = y1 * -1;
                             }
-                            if (y1>479)
+                            if (y1 > 479)
                             {
                                 y1 = 479;
                             }
-                            System.Drawing.Color a = bitmap.GetPixel(x1,y1);
-                            write_to_struct(a, x1, y1, rects[i]);                                       //assigns rectangles to struct based on color)
-//<Nico>                        }
-                        g.Dispose();
+                            System.Drawing.Color a = bitmapRed.GetPixel(x1, y1);
+                            write_to_struct(a, x1, y1, rectsBlue[i]);                                       //assigns rectangles to struct based on color)
+                            g.Dispose();
+                        }
+                    }
+                }
+
+                colorFilter.Red = new AForge.IntRange(10, 90);
+                colorFilter.Green = new AForge.IntRange(100, 255);
+                colorFilter.Blue = new AForge.IntRange(10, 110);
+                colorFilter.ApplyInPlace(bitmapBlue);
+
+                /// create blob counter and configure it
+                BlobCounter blobCounterGreen = new BlobCounter();
+                blobCounterGreen.MinHeight = 10;
+                blobCounterGreen.MaxHeight = 100;
+                blobCounterGreen.MaxWidth = 100;
+                blobCounterGreen.MinWidth = 10;
+                blobCounterGreen.FilterBlobs = true;                                         // filter blobs by size
+                blobCounterGreen.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
+                // locate blobs 
+                blobCounterGreen.ProcessImage(bitmapBlue);
+                System.Drawing.Rectangle[] rectsGreen = blobCounterGreen.GetObjectsRectangles();
+                //Console.WriteLine(rects.Count());
+                // draw rectangle around all seen objects
+                if (rectsGreen.Length > 0)
+                {
+                    for (int i = 0; i < rectsGreen.Length; i++)
+                    {
+                        System.Drawing.Rectangle objectRectGreen = rectsGreen[i];
+                        Graphics g = Graphics.FromImage(image);
+                        using (System.Drawing.Pen pen = new System.Drawing.Pen(System.Drawing.Color.FromArgb(160, 255, 160), 3))
+                        {
+                            g.DrawRectangle(pen, objectRectGreen);
+                            int x1 = makePositive(objectRectGreen.Right, objectRectGreen.Left);
+                            x1 = x1 / 2;
+                            x1 = objectRectGreen.Left + x1;
+                            int y1 = makePositive(objectRectGreen.Top, objectRectGreen.Bottom);
+                            y1 = y1 / 2;
+                            y1 = objectRectGreen.Bottom + y1;
+                            if (x1 < 0)
+                            {
+                                x1 = x1 * -1;
+                            }
+                            if (x1 > 639)
+                            {
+                                x1 = 639;
+                            }
+                            if (y1 < 0)
+                            {
+                                y1 = y1 * -1;
+                            }
+                            if (y1 > 479)
+                            {
+                                y1 = 479;
+                            }
+                            System.Drawing.Color a = bitmapRed.GetPixel(x1, y1);
+                            write_to_struct(a, x1, y1, rectsGreen[i]);                                       //assigns rectangles to struct based on color)
+                            g.Dispose();
+                        }
+                    }
                 }
             }
         }
@@ -193,89 +297,28 @@ namespace WpfApplication1
  */
       public void write_to_struct(System.Drawing.Color a, int x1, int y1, System.Drawing.Rectangle rec)
       {
-          string Hex = ColorTranslator.ToHtml(a);
           float color = a.GetHue();
-          if (color < 40)//red
+          if (color < 5)//black
           {
-              if (aname.helperMethod(aname.red1, aname.red2, aname.red3, x1, y1))
+              /*if (biggest < rec.Width)
               {
-                  Console.WriteLine("saw a red thing 1");
-                  aname.red1.xCoord = x1;
-                  aname.red1.yCoord = y1;
-                  aname.red1.height = rec.Height;
-                  aname.red1.width = rec.Width;
-                  aname.red1.color = a;
-                  aname.red1.taken = true;
+                  biggest = rec.Width;
               }
-              else if (aname.helperMethod(aname.red2, aname.red1, aname.red3, x1, y1))
+              Console.WriteLine(biggest);
+              Console.WriteLine(rec.Size);*/
+              if ((rec.Width < 15 || rec.Height < 15) && aname.blue1.taken == false)
               {
-                  Console.WriteLine("saw a red thing 2");
-                  aname.red2.xCoord = x1;
-                  aname.red2.yCoord = y1;
-                  aname.red2.height = rec.Height;
-                  aname.red2.width = rec.Width;
-                  aname.red2.color = a;
-                  aname.red2.taken = true;
-              }
-              else if (aname.helperMethod(aname.red3, aname.red2, aname.red1, x1, y1))
-              {
-                  Console.WriteLine("saw a red thing 3");
-                  aname.red3.xCoord = x1;
-                  aname.red3.yCoord = y1;
-                  aname.red3.height = rec.Height;
-                  aname.red3.width = rec.Width;
-                  aname.red3.color = a;
-                  aname.red3.taken = true;
-              }
-          }
-          else if (color <115)
-          {
-              if (aname.helperMethod(aname.green1, aname.green2, aname.green3, x1, y1))
-              {
-                  Console.WriteLine("saw a green thing 1");
-                  aname.green1.xCoord = x1;
-                  aname.green1.yCoord = y1;
-                  aname.green1.height = rec.Size.Height;
-                  aname.green1.width = rec.Size.Width;
-                  aname.green1.color = a;
-                  aname.green1.taken = true;
-              }
-              else if (aname.helperMethod(aname.green2, aname.green1, aname.green3, x1, y1))
-              {
-                  Console.WriteLine("saw a green thing 2");
-                  aname.green2.xCoord = x1;
-                  aname.green2.yCoord = y1;
-                  aname.green2.height = rec.Size.Height;
-                  aname.green2.width = rec.Size.Width;
-                  aname.green2.color = a;
-                  aname.green2.taken = true;
-              }
-              else if (aname.helperMethod(aname.green3, aname.green2, aname.green1, x1, y1))
-              {
-                  Console.WriteLine("saw a green thing 3");
-                  aname.green3.xCoord = x1;
-                  aname.green3.yCoord = y1;
-                  aname.green3.height = rec.Size.Height;
-                  aname.green3.width = rec.Size.Width;
-                  aname.green3.color = a;
-                  aname.green3.taken = true;
-              }
-          }
-          else if (Hex == "#A0FFA0")//blue
-          {
-              if (aname.helperMethod(aname.blue1, aname.blue2, aname.blue3, x1, y1))
-              {
-                  Console.WriteLine("saw a blue thing 1");
+                  Console.WriteLine("saw a black thing 1");
                   aname.blue1.xCoord = x1;
                   aname.blue1.yCoord = y1;
                   aname.blue1.height = makePositive(rec.Right, rec.Left);
-                  aname.blue1.width = makePositive(rec.Top,rec.Bottom);
+                  aname.blue1.width = makePositive(rec.Top, rec.Bottom);
                   aname.blue1.color = a;
                   aname.blue1.taken = true;
               }
-              else if (aname.helperMethod(aname.blue2, aname.blue1, aname.blue3, x1, y1))
+              if ((16 <= rec.Width || rec.Height >= 16) && (rec.Height < 50 || rec.Width < 50) && aname.blue2.taken == false)
               {
-                  Console.WriteLine("saw a blue thing 2");
+                  Console.WriteLine("saw a black thing 2");
                   aname.blue2.xCoord = x1;
                   aname.blue2.yCoord = y1;
                   aname.blue2.height = makePositive(rec.Right, rec.Left);
@@ -283,9 +326,9 @@ namespace WpfApplication1
                   aname.blue2.color = a;
                   aname.blue2.taken = true;
               }
-              else if (aname.helperMethod(aname.blue3, aname.blue2, aname.blue1, x1, y1))
+              if ((rec.Width >= 51 || rec.Height >= 51) && (rec.Height < 100 | rec.Width < 100) && aname.blue3.taken == false)
               {
-                  Console.WriteLine("saw a blue thing 3");
+                  Console.WriteLine("saw a black thing 3");
                   aname.blue3.xCoord = x1;
                   aname.blue3.yCoord = y1;
                   aname.blue3.height = makePositive(rec.Right, rec.Left);
@@ -294,93 +337,140 @@ namespace WpfApplication1
                   aname.blue3.taken = true;
               }
           }
-          else
+          else if (color < 100)//red
           {
-             return;
+             // Console.WriteLine(rec.Size);
+              if (rec.Width<15  && aname.red1.taken==false)
+              {
+                  Console.WriteLine("saw a red thing 1");
+                  Console.WriteLine(rec.Size);
+                  aname.red1.xCoord = x1;
+                  aname.red1.yCoord = y1;
+                  aname.red1.height = rec.Height;
+                  aname.red1.width = rec.Width;
+                  aname.red1.color = a;
+                  aname.red1.taken = true;
+              }
+              else if (16 <= rec.Width && rec.Width< 50 && aname.red2.taken == false)
+              {
+                  Console.WriteLine("saw a red thing 2");
+                  Console.WriteLine(rec.Size);
+                  aname.red2.xCoord = x1;
+                  aname.red2.yCoord = y1;
+                  aname.red2.height = rec.Height;
+                  aname.red2.width = rec.Width;
+                  aname.red2.color = a;
+                  aname.red2.taken = true;
+              }
+              else if (rec.Width>=51 && rec.Width < 100 && aname.red3.taken == false)
+              {
+                  Console.WriteLine("saw a red thing 3");
+                  Console.WriteLine(rec.Size);
+                  aname.red3.xCoord = x1;
+                  aname.red3.yCoord = y1;
+                  aname.red3.height = rec.Height;
+                  aname.red3.width = rec.Width;
+                  aname.red3.color = a;
+                  aname.red3.taken = true;
+              }
           }
+          else if (color <250)
+          {
+              //Console.WriteLine("green: " + rec.Size);
+              if ((rec.Width < 15 || rec.Height < 15) && aname.green1.taken == false)
+              {
+                  Console.WriteLine("saw a blue thing 1");
+                  aname.green1.xCoord = x1;
+                  aname.green1.yCoord = y1;
+                  aname.green1.height = rec.Size.Height;
+                  aname.green1.width = rec.Size.Width;
+                  aname.green1.color = a;
+                  aname.green1.taken = true;
+              }
+              if ((16 <= rec.Width || rec.Height >= 16) && (rec.Height < 50 || rec.Width < 50) && aname.green2.taken == false)
+              {
+                  Console.WriteLine("saw a blue thing 2");
+                  aname.green2.xCoord = x1;
+                  aname.green2.yCoord = y1;
+                  aname.green2.height = rec.Size.Height;
+                  aname.green2.width = rec.Size.Width;
+                  aname.green2.color = a;
+                  aname.green2.taken = true;
+              }
+              if ((rec.Width >= 51 || rec.Height >= 51) && (rec.Height < 100 | rec.Width < 100) && aname.green3.taken == false)
+              {
+                  Console.WriteLine("saw a blue thing 3");
+                  aname.green3.xCoord = x1;
+                  aname.green3.yCoord = y1;
+                  aname.green3.height = rec.Size.Height;
+                  aname.green3.width = rec.Size.Width;
+                  aname.green3.color = a;
+                  aname.green3.taken = true;
+              }
+          }
+          
       }
 
         /*
          * listens for which roomba is selected, ensures that only one is selected at a time
          */
-        private void Din_clicked(object sender, RoutedEventArgs e)
-        {
-            if (!start_pressed)
-            {
-                if (roomba1_pressed == false)
-                {
-                    roomba1_pressed = true;
-                    Roomba1.Width = 106;
-                    Roomba1.Margin = new Thickness(401, 44, 0, 0);
-                    Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                    roomba2_pressed = false;
-                    Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                    roomba3_pressed = false;
-                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(176, 5, 5));
-                }
-                else
-                {
-                    Roomba1.Width = 96;
-                    Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                    roomba1_pressed = false;
-                    roomba2_pressed = false;
-                    roomba3_pressed = false;
-                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
-                }
-            }
-        }
-        private void Farore_clicked(object sender, RoutedEventArgs e)
-        {
-            if (!start_pressed)
-            {
-                if (roomba2_pressed == false)
-                {
-                    roomba2_pressed = true;
-                    Roomba2.Width = 106;
-                    Roomba2.Margin = new Thickness(401, 78, 0, 0);
-                    Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                    roomba1_pressed = false;
-                    Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                    roomba3_pressed = false;
-                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
-                }
-                else
-                {
-                    Roomba2.Width = 96;
-                    Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                    roomba1_pressed = false;
-                    roomba2_pressed = false;
-                    roomba3_pressed = false;
-                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
-                }
-            }
-        }
-        private void Nayru_clicked(object sender, RoutedEventArgs e)
-        {
-            if (!start_pressed)
-            {
-                if (roomba3_pressed == false)
-                {
-                    roomba3_pressed = true;
-                    Roomba3.Width = 106;
-                    Roomba3.Margin = new Thickness(401, 112, 0, 0);
-                    Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                    roomba1_pressed = false;
-                    Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                    roomba2_pressed = false;
-                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
-                }
-                else
-                {
-                    Roomba3.Width = 96;
-                    Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                    roomba1_pressed = false;
-                    roomba2_pressed = false;
-                    roomba3_pressed = false;
-                    clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
-                }
-            }
-        }
+      private void Din_clicked(object sender, RoutedEventArgs e)
+      {
+          if (!start_pressed)
+          {
+              if (roomba1_pressed == false)
+              {
+                  roomba1_pressed = true;
+                  Roomba1.Width = 106;
+                  Roomba1.Margin = new Thickness(401, 44, 0, 0);
+              }
+              else
+              {
+                  Roomba1.Width = 96;
+                  Roomba1.Margin = new Thickness(411, 44, 0, 0);
+                  roomba1_pressed = false;
+              }
+          }
+          test_printer();
+      }
+      private void Farore_clicked(object sender, RoutedEventArgs e)
+      {
+          if (!start_pressed)
+          {
+              if (roomba2_pressed == false)
+              {
+                  roomba2_pressed = true;
+                  Roomba2.Width = 106;
+                  Roomba2.Margin = new Thickness(401, 78, 0, 0);
+              }
+              else
+              {
+                  Roomba2.Width = 96;
+                  Roomba2.Margin = new Thickness(411, 78, 0, 0);
+                  roomba2_pressed = false;
+              }
+          }
+          test_printer();
+      }
+      private void Nayru_clicked(object sender, RoutedEventArgs e)
+      {
+          if (!start_pressed)
+          {
+              if (roomba3_pressed == false)
+              {
+                  roomba3_pressed = true;
+                  Roomba3.Width = 106;
+                  Roomba3.Margin = new Thickness(401, 112, 0, 0);
+              }
+              else
+              {
+                  Roomba3.Width = 96;
+                  Roomba3.Margin = new Thickness(411, 112, 0, 0);
+                  roomba3_pressed = false;
+              }
+          }
+          test_printer();
+      }
 
         /*
          * listens for drag over grid blocks, sends grid block and array index to change method
@@ -792,7 +882,7 @@ namespace WpfApplication1
                     remove_red(x, y, midX, midY, Rec, true);
                 }
             }
-            else if (roomba2_pressed == true)
+            else if (roomba3_pressed == true)
             {
                 if (arr.board[x, y] == 1)
                 {
@@ -823,7 +913,7 @@ namespace WpfApplication1
                     remove_blue(x, y,midX, midY, Rec, true);
                 }
             }
-            else if (roomba3_pressed == true)
+            else if (roomba2_pressed == true)
             {
                 if (arr.board[x, y] == 1)
                 {
@@ -845,7 +935,7 @@ namespace WpfApplication1
                 }
                 else if (arr.board[x, y] == 0)
                 {
-                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(7, 147, 0));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(9,9,10));
                     arr.board[x, y] = 3;
                     add_to_linkedList(midX, midY);
                 }
@@ -1041,11 +1131,9 @@ namespace WpfApplication1
          */
         private void start_clicked(object sender, RoutedEventArgs e)
         {
-                            bool printboards = true;
             if (start_pressed == false)
             {
                 start_pressed = true;
-
                 roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
                 Roomba1.Margin = new Thickness(411, 44, 0, 0);
                 Roomba2.Margin = new Thickness(411, 78, 0, 0);
@@ -1063,94 +1151,6 @@ namespace WpfApplication1
                         Console.Write("objects are null");
                         Console.WriteLine(except);
                     }
-                }
-            }
-            if (printboards == true)
-            {
-                try
-                {
-                    if(aname.blue1.taken==true)
-                    {
-                        Console.WriteLine("blue Object");
-                        Console.Write("x coordinate: ");
-                        Console.Write(aname.blue1.xCoord);
-                        Console.Write(", y coordinate: ");
-                        Console.Write(aname.blue1.yCoord);
-                        Console.Write(", height: ");
-                        Console.Write(aname.blue1.height);
-                        Console.Write(", width: ");
-                        Console.WriteLine(aname.red1.width);
-
-                    }
-                    if (aname.blue2.taken == true)
-                    {
-                        Console.WriteLine("blue Object #2");
-                        Console.Write("x coordinate: ");
-                        Console.Write(aname.blue2.xCoord);
-                        Console.Write(", y coordinate: ");
-                        Console.Write(aname.blue2.yCoord);
-                        Console.Write(", height: ");
-                        Console.Write(aname.blue2.height);
-                        Console.Write(", width: ");
-                        Console.WriteLine(aname.blue2.width);
-
-                    }
-                    if (aname.blue3.taken == true)
-                    {
-                        Console.WriteLine("blue Object #3 ");
-                        Console.Write("x coordinate: ");
-                        Console.Write(aname.blue3.xCoord);
-                        Console.Write(", y coordinate: ");
-                        Console.Write(aname.blue3.yCoord);
-                        Console.Write(", height: ");
-                        Console.Write(aname.blue3.height);
-                        Console.Write(", width: ");
-                        Console.WriteLine(aname.blue3.width);
-
-                    }
-                    if (aname.green1.taken == true)
-                    {
-                        Console.WriteLine("green Object");
-                        Console.Write("x coordinate: ");
-                        Console.Write(aname.green1.xCoord);
-                        Console.Write(", y coordinate: ");
-                        Console.Write(aname.green1.yCoord);
-                        Console.Write(", height: ");
-                        Console.Write(aname.green1.height);
-                        Console.Write(", width: ");
-                        Console.WriteLine(aname.red1.width);
-
-                    }
-                    if (aname.green2.taken == true)
-                    {
-                        Console.WriteLine("green Object #2");
-                        Console.Write("x coordinate: ");
-                        Console.Write(aname.green2.xCoord);
-                        Console.Write(", y coordinate: ");
-                        Console.Write(aname.green2.yCoord);
-                        Console.Write(", height: ");
-                        Console.Write(aname.green2.height);
-                        Console.Write(", width: ");
-                        Console.WriteLine(aname.green2.width);
-
-                    }
-                    if (aname.green3.taken == true)
-                    {
-                        Console.WriteLine("green Object #3 ");
-                        Console.Write("x coordinate: ");
-                        Console.Write(aname.green3.xCoord);
-                        Console.Write(", y coordinate: ");
-                        Console.Write(aname.green3.yCoord);
-                        Console.Write(", height: ");
-                        Console.Write(aname.green3.height);
-                        Console.Write(", width: ");
-                        Console.WriteLine(aname.green3.width);
-
-                    }
-                }
-                catch (Exception exc)
-                {
-                    Console.WriteLine("won't print");
                 }
             }
         }
@@ -1171,6 +1171,133 @@ namespace WpfApplication1
                     Console.WriteLine(exc);
                 }
             }
+        }
+
+        private void switch_to_maual(object sender, RoutedEventArgs e)
+        {
+            manual_control = true;
+            control_switcher.Visibility = System.Windows.Visibility.Collapsed;
+            Start_button.Visibility= System.Windows.Visibility.Collapsed;
+            clear_button.Visibility = System.Windows.Visibility.Collapsed;
+            Pause_button.Visibility = System.Windows.Visibility.Collapsed;
+            Automatic_button.Visibility = System.Windows.Visibility.Visible;
+            Roomba1.Margin = new Thickness(411, 44, 0, 0);
+            roomba1_pressed = false;
+            Roomba2.Margin = new Thickness(411, 78, 0, 0);
+            roomba2_pressed = false;
+            Roomba3.Margin = new Thickness(411, 112, 0, 0);
+            roomba3_pressed = false;
+            clear_board_2();
+            forward_button.Visibility = System.Windows.Visibility.Visible;
+            left_button.Visibility = System.Windows.Visibility.Visible;
+            right_button.Visibility = System.Windows.Visibility.Visible;
+            turn_around.Visibility = System.Windows.Visibility.Visible;
+        }
+        public void test_printer()
+        {
+            if (roomba1_pressed==true)
+            {
+                Console.WriteLine("red selected");
+            }
+            if (roomba2_pressed==true)
+            {
+                Console.WriteLine("blue selected");
+            }
+            if (roomba3_pressed==true)
+            {
+                Console.WriteLine("green selected");
+            }
+        }
+
+        private void move_forward(object sender, RoutedEventArgs e)
+        {
+            test_printer();
+            if (roomba1_pressed == true)
+            {
+                csclient.StartClient("red", "f");
+            }
+            if (roomba2_pressed == true)
+            {
+                csclient.StartClient("blue", "f");
+            }
+            if (roomba3_pressed == true)
+            {
+                csclient.StartClient("green", "f");
+            }
+        }
+
+        private void turn_left(object sender, RoutedEventArgs e)
+        {
+            test_printer();
+            if (roomba1_pressed == true)
+            {
+                csclient.StartClient("red", "l");
+            }
+            if (roomba2_pressed == true)
+            {
+                csclient.StartClient("blue", "l");
+            }
+            if (roomba3_pressed == true)
+            {
+                csclient.StartClient("green", "l");
+            }
+        }
+
+        private void turn_right(object sender, RoutedEventArgs e)
+        {
+            test_printer();
+            if (roomba1_pressed == true)
+            {
+                csclient.StartClient("red", "r");
+            }
+            if (roomba2_pressed == true)
+            {
+                csclient.StartClient("blue", "r");
+            }
+            if (roomba3_pressed == true)
+            {
+                Console.WriteLine("in green");
+                csclient.StartClient("green", "r");
+            }
+        }
+
+        private void turn_around_pressed(object sender, RoutedEventArgs e)
+        {
+            test_printer();
+            if (roomba1_pressed == true)
+            {
+                csclient.StartClient("red", "a");
+            }
+            if (roomba2_pressed == true)
+            {
+                csclient.StartClient("blue", "a");
+            }
+            if (roomba3_pressed == true)
+            {
+                csclient.StartClient("green", "a");
+            }
+        }
+
+        private void auto_control(object sender, RoutedEventArgs e)
+        {
+            manual_control = false;
+            start_pressed = false;
+            control_switcher.Visibility = System.Windows.Visibility.Visible;
+            Start_button.Visibility = System.Windows.Visibility.Visible;
+            clear_button.Visibility = System.Windows.Visibility.Visible;
+            Pause_button.Visibility = System.Windows.Visibility.Visible;
+            Automatic_button.Visibility = System.Windows.Visibility.Collapsed;
+            Roomba1.Margin = new Thickness(411, 44, 0, 0);
+            roomba1_pressed = false;
+            Roomba2.Margin = new Thickness(411, 78, 0, 0);
+            roomba2_pressed = false;
+            Roomba3.Margin = new Thickness(411, 112, 0, 0);
+            roomba3_pressed = false;
+            clear_board_2();
+            forward_button.Visibility = System.Windows.Visibility.Collapsed;
+            left_button.Visibility = System.Windows.Visibility.Collapsed;
+            right_button.Visibility = System.Windows.Visibility.Collapsed;
+            turn_around.Visibility = System.Windows.Visibility.Collapsed;
         }
     }
 }

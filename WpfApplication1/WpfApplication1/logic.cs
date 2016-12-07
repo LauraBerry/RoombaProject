@@ -61,11 +61,11 @@ namespace WpfApplication1
         public void reInit(object_seen a, object_seen b, object_seen c)
         {
             a.taken = false;
-            a.xCoord = 300000;
+            a.height = 2; 
             b.taken = false;
-            b.xCoord = 300000;
+            b.height = 5;
             c.taken = false;
-            c.xCoord = 300000;
+            c.height = 7;
         }
         //compare size of objects and put them in an array from biggest to smallest.
         public object_seen[] findBiggest(object_seen a, object_seen b, object_seen c)
@@ -110,29 +110,16 @@ namespace WpfApplication1
 
         public bool helperMethod(object_seen a, object_seen b, object_seen c, int x, int y)
         {
-            if (a.taken == false && (positiveResult(x, a.xCoord) > 10 || positiveResult(y, a.yCoord) > 10))
+            if (a.taken == false)
             {
-                return true;
-               /* if(b.xCoord!=300000)
+                if (a.height != b.height)
                 {
-                    if (positiveResult(x, b.xCoord)>5 ||positiveResult(y,b.yCoord)>5)
+                    if (a.height != c.height)
                     {
                         return true;
                     }
                 }
-                else if (c.xCoord!=300000)
-                {
-                    if (positiveResult(x, c.xCoord)>5|| positiveResult(y, c.yCoord)>5)
-                    {
-                        return true;
-                    }
-                }
-                else 
-                {
-                    return true;
-                }*/
             }
-
             return false;
         }
         //checks if any of the objects given are empty
