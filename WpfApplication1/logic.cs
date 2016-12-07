@@ -11,7 +11,9 @@ namespace WpfApplication1
 
     class logic
     {
-        public bool done = false;
+        public bool Bluedone = false;
+        public bool Reddone = false;
+        public bool Blackdone = false;
         public object_seen blue1;
         public object_seen blue2;
         public object_seen blue3;
@@ -61,11 +63,11 @@ namespace WpfApplication1
         public void reInit(object_seen a, object_seen b, object_seen c)
         {
             a.taken = false;
-            a.xCoord = 300000;
+            a.height = 2; 
             b.taken = false;
-            b.xCoord = 300000;
+            b.height = 5;
             c.taken = false;
-            c.xCoord = 300000;
+            c.height = 7;
         }
         //compare size of objects and put them in an array from biggest to smallest.
         public object_seen[] findBiggest(object_seen a, object_seen b, object_seen c)
@@ -110,29 +112,16 @@ namespace WpfApplication1
 
         public bool helperMethod(object_seen a, object_seen b, object_seen c, int x, int y)
         {
-            if (a.taken == false && (positiveResult(x, a.xCoord) > 10 || positiveResult(y, a.yCoord) > 10))
+            if (a.taken == false)
             {
-                return true;
-               /* if(b.xCoord!=300000)
+                if (a.height != b.height)
                 {
-                    if (positiveResult(x, b.xCoord)>5 ||positiveResult(y,b.yCoord)>5)
+                    if (a.height != c.height)
                     {
                         return true;
                     }
                 }
-                else if (c.xCoord!=300000)
-                {
-                    if (positiveResult(x, c.xCoord)>5|| positiveResult(y, c.yCoord)>5)
-                    {
-                        return true;
-                    }
-                }
-                else 
-                {
-                    return true;
-                }*/
             }
-
             return false;
         }
         //checks if any of the objects given are empty
@@ -148,7 +137,7 @@ namespace WpfApplication1
             }
         }
         //figure out where each object is relative to the desired location.
-        public void get_barring(object_seen a, object_seen b, object_seen c, int destinationX, int destinationY, bool d)
+        public void get_barring(object_seen a, object_seen b, object_seen c, int destinationX, int destinationY, bool d, String color)
         {
             
             if(d==false)
@@ -176,7 +165,24 @@ namespace WpfApplication1
                 distance_to_middle = System.Math.Sqrt(System.Math.Pow((arr[1].xCoord - destinationX), 2.0) + System.Math.Pow((arr[1].yCoord - destinationY), 2.0));
                 distance_to_smallest = System.Math.Sqrt(System.Math.Pow((arr[2].xCoord - destinationX), 2.0) + System.Math.Pow((arr[2].yCoord - destinationY), 2.0));
 
-                if (positiveResult(distance_to_middle, distance_to_smallest) < 10)
+                if(positiveResult(distance_to_biggest, distance_to_middle)<20 && positiveResult(distance_to_biggest, distance_to_smallest)<20)
+                {
+                    if (color == "blue")
+                    {
+                        Bluedone = true;
+                    }
+                    else if (color == "red")
+                    {
+                        Reddone = true;
+                    }
+                    else if (color == "black")
+                    {
+                        Blackdone = true;
+                    }
+                    //at the destination
+                    //stop
+                }
+                if (positiveResult(distance_to_middle, distance_to_smallest) < 30)
                 {
                     if (distance_to_smallest < distance_to_biggest && distance_to_middle < distance_to_biggest)
                     {
