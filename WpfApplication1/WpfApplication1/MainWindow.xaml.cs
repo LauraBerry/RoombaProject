@@ -53,7 +53,11 @@ namespace WpfApplication1
             arr.init();
             aname.init();
             InitializeComponent();
+            video();
+        }
 
+        public void video()
+        {
             //find video device
             videoDevices = new AForge.Video.DirectShow.FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
             // create video source
@@ -66,13 +70,13 @@ namespace WpfApplication1
             // start the video source
             videoSource.Start();
 
-                // set NewFrame event handler
-                videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
-                // wait until we have two acquired images
-                /*camera1Acquired.WaitOne();
-                camera2Acquired.WaitOne();*/
+            // set NewFrame event handler
+            videoSource.NewFrame += new AForge.Video.NewFrameEventHandler(video_NewFrame);
+            // wait until we have two acquired images
+            /*camera1Acquired.WaitOne();
+            camera2Acquired.WaitOne();*/
 
-            
+
             //timer
             //call getBarring
 
@@ -84,25 +88,7 @@ namespace WpfApplication1
         private void video_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
             System.Drawing.Image image = (Bitmap)eventArgs.Frame.Clone();
-            try
-            {
-                //Width==640 , Height==480
-                System.IO.MemoryStream mssg = new System.IO.MemoryStream();
-                image.Save(mssg, System.Drawing.Imaging.ImageFormat.Bmp);
-                mssg.Seek(0, System.IO.SeekOrigin.Begin);
-                BitmapImage bitmap1 = new BitmapImage();
-                bitmap1.BeginInit();
-                bitmap1.StreamSource = mssg;                                                    //creates a bitmap of the frame from the camera
-                bitmap1.EndInit();
-
-                bitmap1.Freeze();
-                Dispatcher.BeginInvoke(new System.Threading.ThreadStart(delegate { camera_input.Source = bitmap1; })); //sets image source to be the bitmap image
-            }
-            catch (Exception ex)
-            {
-                Console.Write("can't get frame");
-                Console.Write(ex);
-            }
+            BitmapImage bitmap1 = new BitmapImage();
             System.Drawing.Bitmap bitmapRed = (Bitmap)eventArgs.Frame.Clone();
             System.Drawing.Bitmap bitmapBlue = (Bitmap)eventArgs.Frame.Clone();
             System.Drawing.Bitmap bitmapGreen = (Bitmap)eventArgs.Frame.Clone();
@@ -120,10 +106,10 @@ namespace WpfApplication1
 
             /// create blob counter and configure it
             BlobCounter blobCounter = new BlobCounter();
-            blobCounter.MinHeight = 4;
+            blobCounter.MinHeight = 10;
             blobCounter.MaxHeight = 100;
             blobCounter.MaxWidth = 100;
-            blobCounter.MinWidth = 4;
+            blobCounter.MinWidth = 10;
             blobCounter.FilterBlobs = true;                                         // filter blobs by size
             blobCounter.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
             // locate blobs 
@@ -166,17 +152,17 @@ namespace WpfApplication1
                         g.Dispose();
                     }
                 }
-                colorFilter.Red = new AForge.IntRange(0,20);
-                colorFilter.Green = new AForge.IntRange(0,20);
-                colorFilter.Blue = new AForge.IntRange(0,20);
+                colorFilter.Red = new AForge.IntRange(0,40);
+                colorFilter.Green = new AForge.IntRange(0,40);
+                colorFilter.Blue = new AForge.IntRange(0,40);
                 colorFilter.ApplyInPlace(bitmapBlue);
 
                 /// create blob counter and configure it
                 BlobCounter blobCounterBlue = new BlobCounter();
-                blobCounterBlue.MinHeight = 10;
-                blobCounterBlue.MaxHeight = 100;
-                blobCounterBlue.MaxWidth = 100;
-                blobCounterBlue.MinWidth = 10;
+                blobCounter.MinHeight = 10;
+                blobCounter.MaxHeight = 150;
+                blobCounter.MaxWidth = 150;
+                blobCounter.MinWidth = 10;
                 blobCounterBlue.FilterBlobs = true;                                         // filter blobs by size
                 blobCounterBlue.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
                 // locate blobs 
@@ -228,10 +214,10 @@ namespace WpfApplication1
 
                 /// create blob counter and configure it
                 BlobCounter blobCounterGreen = new BlobCounter();
-                blobCounterGreen.MinHeight = 10;
-                blobCounterGreen.MaxHeight = 100;
-                blobCounterGreen.MaxWidth = 100;
-                blobCounterGreen.MinWidth = 10;
+                blobCounter.MinHeight = 10;
+                blobCounter.MaxHeight = 100;
+                blobCounter.MaxWidth = 100;
+                blobCounter.MinWidth = 10;
                 blobCounterGreen.FilterBlobs = true;                                         // filter blobs by size
                 blobCounterGreen.ObjectsOrder = ObjectsOrder.Size;                           // order found object by size
                 // locate blobs 
@@ -275,6 +261,25 @@ namespace WpfApplication1
                         }
                     }
                 }
+            }
+            try
+            {
+                //Width==640 , Height==480
+                System.IO.MemoryStream mssg = new System.IO.MemoryStream();
+                image.Save(mssg, System.Drawing.Imaging.ImageFormat.Bmp);
+                mssg.Seek(0, System.IO.SeekOrigin.Begin);
+
+                bitmap1.BeginInit();
+                bitmap1.StreamSource = mssg;                                                    //creates a bitmap of the frame from the camera
+                bitmap1.EndInit();
+
+                bitmap1.Freeze();
+                Dispatcher.BeginInvoke(new System.Threading.ThreadStart(delegate { camera_input.Source = bitmap1; })); //sets image source to be the bitmap image
+            }
+            catch (Exception ex)
+            {
+                Console.Write("can't get frame");
+                Console.Write(ex);
             }
         }
 
@@ -1167,10 +1172,6 @@ namespace WpfApplication1
          */
         private void start_clicked(object sender, RoutedEventArgs e)
         {  
-            roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
-            Roomba1.Margin = new Thickness(411, 44, 0, 0);
-            Roomba2.Margin = new Thickness(411, 78, 0, 0);
-            Roomba3.Margin = new Thickness(411, 112, 0, 0);
             clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
             if (blueHead != null && aname.Bluedone == false)
             {
@@ -1233,6 +1234,7 @@ namespace WpfApplication1
             {
                 greenHead = greenHead.Next;
             }
+            video();
         }
 
 

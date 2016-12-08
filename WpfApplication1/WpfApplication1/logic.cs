@@ -70,46 +70,6 @@ namespace WpfApplication1
             c.taken = false;
             c.height = 7;
         }
-        //compare size of objects and put them in an array from biggest to smallest.
-        public object_seen[] findBiggest(object_seen a, object_seen b, object_seen c)
-        {
-            object_seen[] inOrder;
-            inOrder= new object_seen[3];
-            if (a.height>b.height)
-            {
-                if(b.height>c.height)
-                {
-                    inOrder[0] = a;
-                    inOrder[1] = b;
-                    inOrder[2] = c;
-                }
-                else if(c.height>a.height)
-                {
-                    inOrder[0] = c;
-                    inOrder[1] = a;
-                    inOrder[2] = b;
-                }
-            }
-            else if (a.height>c.height)
-            {
-                inOrder[0] = b;
-                inOrder[1] = a;
-                inOrder[2] = c;
-            }
-            else if (b.height>c.height)
-            {
-                inOrder[0] = b;
-                inOrder[1] = c;
-                inOrder[2] = a;
-            }
-            else
-            {
-                inOrder[0] = c;
-                inOrder[1] = b;
-                inOrder[2] = a;
-            }
-            return inOrder;
-        }
 
         public bool helperMethod(object_seen a, object_seen b, object_seen c, int x, int y)
         {
@@ -154,17 +114,14 @@ namespace WpfApplication1
             }
             else
             {
-                object_seen[] arr;
-                arr = new object_seen[3];
-                arr = findBiggest(a, b, c);
                 //math stuff
                 double distance_to_biggest;
                 double distance_to_middle;  
                 double distance_to_smallest;
 
-                distance_to_biggest = System.Math.Sqrt(System.Math.Pow((arr[0].xCoord - destinationX), 2.0) + System.Math.Pow((arr[0].yCoord - destinationY), 2.0));
-                distance_to_middle = System.Math.Sqrt(System.Math.Pow((arr[1].xCoord - destinationX), 2.0) + System.Math.Pow((arr[1].yCoord - destinationY), 2.0));
-                distance_to_smallest = System.Math.Sqrt(System.Math.Pow((arr[2].xCoord - destinationX), 2.0) + System.Math.Pow((arr[2].yCoord - destinationY), 2.0));
+                distance_to_biggest = System.Math.Sqrt(System.Math.Pow((c.xCoord - destinationX), 2.0) + System.Math.Pow((c.yCoord - destinationY), 2.0));
+                distance_to_middle = System.Math.Sqrt(System.Math.Pow((b.xCoord - destinationX), 2.0) + System.Math.Pow((b.yCoord - destinationY), 2.0));
+                distance_to_smallest = System.Math.Sqrt(System.Math.Pow((a.xCoord - destinationX), 2.0) + System.Math.Pow((a.yCoord - destinationY), 2.0));
 
                 if(positiveResult(distance_to_biggest, distance_to_middle)<20 && positiveResult(distance_to_biggest, distance_to_smallest)<20)
                 {
@@ -183,18 +140,18 @@ namespace WpfApplication1
                     //at the destination
                     //stop
                 }
-                if (positiveResult(distance_to_middle, distance_to_smallest) < 30)
+                if (positiveResult(distance_to_middle, distance_to_smallest) < 25)
                 {
-                    if (distance_to_smallest < distance_to_biggest && distance_to_middle < distance_to_biggest)
+                    if (distance_to_smallest < distance_to_biggest)
                     {
                         Console.WriteLine("go forward");
-                        csclient.StartClient("blue", "f");
+                        csclient.StartClient(color, "f");
                         //go forward
                     }
                     else
                     {
                         Console.WriteLine("long turn");
-                        csclient.StartClient("blue", "a");
+                        csclient.StartClient(color, "a");
                         //long turn
                     }
                 }
@@ -203,13 +160,13 @@ namespace WpfApplication1
                     if (distance_to_middle < distance_to_smallest)
                     {
                         Console.WriteLine("turn towards middle");
-                        csclient.StartClient("blue", "r");
+                        csclient.StartClient(color, "r");
                         //turn towards middle
                     }
                     else if (distance_to_smallest<distance_to_middle)
                     {
                         Console.WriteLine("turn towards smallest");
-                        csclient.StartClient("blue", "l");
+                        csclient.StartClient(color, "l");
                         //turn towards smallest
                     }
                 }
