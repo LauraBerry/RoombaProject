@@ -11,7 +11,9 @@ namespace WpfApplication1
 
     class logic
     {
-        public bool done = false;
+        public bool Bluedone = false;
+        public bool Reddone = false;
+        public bool Blackdone = false;
         public object_seen blue1;
         public object_seen blue2;
         public object_seen blue3;
@@ -26,6 +28,7 @@ namespace WpfApplication1
         public string NayruID = "FireFly-E5AE";
         public string password = "1234";
         arrayClass arr = new arrayClass();
+        MainWindow main;
         
         //struct to hold things the camera recognizes in the frame
         public struct object_seen
@@ -135,7 +138,7 @@ namespace WpfApplication1
             }
         }
         //figure out where each object is relative to the desired location.
-        public void get_barring(object_seen a, object_seen b, object_seen c, int destinationX, int destinationY, bool d)
+        public void get_barring(object_seen a, object_seen b, object_seen c, int destinationX, int destinationY, bool d, String color)
         {
             
             if(d==false)
@@ -163,7 +166,24 @@ namespace WpfApplication1
                 distance_to_middle = System.Math.Sqrt(System.Math.Pow((arr[1].xCoord - destinationX), 2.0) + System.Math.Pow((arr[1].yCoord - destinationY), 2.0));
                 distance_to_smallest = System.Math.Sqrt(System.Math.Pow((arr[2].xCoord - destinationX), 2.0) + System.Math.Pow((arr[2].yCoord - destinationY), 2.0));
 
-                if (positiveResult(distance_to_middle, distance_to_smallest) < 10)
+                if(positiveResult(distance_to_biggest, distance_to_middle)<20 && positiveResult(distance_to_biggest, distance_to_smallest)<20)
+                {
+                    if (color == "blue")
+                    {
+                        Bluedone = true;
+                    }
+                    else if (color == "red")
+                    {
+                        Reddone = true;
+                    }
+                    else if (color == "black")
+                    {
+                        Blackdone = true;
+                    }
+                    //at the destination
+                    //stop
+                }
+                if (positiveResult(distance_to_middle, distance_to_smallest) < 30)
                 {
                     if (distance_to_smallest < distance_to_biggest && distance_to_middle < distance_to_biggest)
                     {

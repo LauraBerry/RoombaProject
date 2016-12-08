@@ -129,7 +129,6 @@ namespace WpfApplication1
             // locate blobs 
             blobCounter.ProcessImage(bitmapRed);
             System.Drawing.Rectangle[] rects = blobCounter.GetObjectsRectangles();
-            //Console.WriteLine(rects.Count());
             // draw rectangle around all seen objects
             if (rects.Length > 0)
             {
@@ -183,7 +182,6 @@ namespace WpfApplication1
                 // locate blobs 
                 blobCounterBlue.ProcessImage(bitmapBlue);
                 System.Drawing.Rectangle[] rectsBlue = blobCounterBlue.GetObjectsRectangles();
-                //Console.WriteLine(rects.Count());
                 // draw rectangle around all seen objects
                 if (rectsBlue.Length > 0)
                 {
@@ -239,7 +237,6 @@ namespace WpfApplication1
                 // locate blobs 
                 blobCounterGreen.ProcessImage(bitmapBlue);
                 System.Drawing.Rectangle[] rectsGreen = blobCounterGreen.GetObjectsRectangles();
-                //Console.WriteLine(rects.Count());
                 // draw rectangle around all seen objects
                 if (rectsGreen.Length > 0)
                 {
@@ -300,12 +297,6 @@ namespace WpfApplication1
           float color = a.GetHue();
           if (color < 5)//black
           {
-              /*if (biggest < rec.Width)
-              {
-                  biggest = rec.Width;
-              }
-              Console.WriteLine(biggest);
-              Console.WriteLine(rec.Size);*/
               if ((rec.Width < 15 || rec.Height < 15) && aname.blue1.taken == false)
               {
                   Console.WriteLine("saw a black thing 1");
@@ -339,11 +330,9 @@ namespace WpfApplication1
           }
           else if (color < 100)//red
           {
-             // Console.WriteLine(rec.Size);
               if (rec.Width<15  && aname.red1.taken==false)
               {
                   Console.WriteLine("saw a red thing 1");
-                  Console.WriteLine(rec.Size);
                   aname.red1.xCoord = x1;
                   aname.red1.yCoord = y1;
                   aname.red1.height = rec.Height;
@@ -354,7 +343,6 @@ namespace WpfApplication1
               else if (16 <= rec.Width && rec.Width< 50 && aname.red2.taken == false)
               {
                   Console.WriteLine("saw a red thing 2");
-                  Console.WriteLine(rec.Size);
                   aname.red2.xCoord = x1;
                   aname.red2.yCoord = y1;
                   aname.red2.height = rec.Height;
@@ -365,7 +353,6 @@ namespace WpfApplication1
               else if (rec.Width>=51 && rec.Width < 100 && aname.red3.taken == false)
               {
                   Console.WriteLine("saw a red thing 3");
-                  Console.WriteLine(rec.Size);
                   aname.red3.xCoord = x1;
                   aname.red3.yCoord = y1;
                   aname.red3.height = rec.Height;
@@ -376,7 +363,6 @@ namespace WpfApplication1
           }
           else if (color <250)
           {
-              //Console.WriteLine("green: " + rec.Size);
               if ((rec.Width < 15 || rec.Height < 15) && aname.green1.taken == false)
               {
                   Console.WriteLine("saw a blue thing 1");
@@ -416,60 +402,81 @@ namespace WpfApplication1
          */
       private void Din_clicked(object sender, RoutedEventArgs e)
       {
-          if (!start_pressed)
-          {
-              if (roomba1_pressed == false)
-              {
-                  roomba1_pressed = true;
-                  Roomba1.Width = 106;
-                  Roomba1.Margin = new Thickness(401, 44, 0, 0);
-              }
-              else
-              {
-                  Roomba1.Width = 96;
-                  Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                  roomba1_pressed = false;
-              }
-          }
-          test_printer();
+         if (roomba1_pressed == false)
+         {
+             roomba1_pressed = true;
+             Roomba1.Width = 106;
+             Roomba1.Margin = new Thickness(401, 44, 0, 0);
+         }
+         else
+         {
+             Roomba1.Width = 96;
+             Roomba1.Margin = new Thickness(411, 44, 0, 0);
+             roomba1_pressed = false;
+             
+         }
+         if (!manual_control)
+         {
+             Roomba2.Width = 96;
+             Roomba2.Margin = new Thickness(411, 78, 0, 0);
+             roomba2_pressed = false;
+        
+             Roomba3.Width = 96;
+             Roomba3.Margin = new Thickness(411, 112, 0, 0);
+             roomba3_pressed = false;
+         }
       }
+
       private void Farore_clicked(object sender, RoutedEventArgs e)
       {
-          if (!start_pressed)
-          {
-              if (roomba2_pressed == false)
-              {
-                  roomba2_pressed = true;
-                  Roomba2.Width = 106;
-                  Roomba2.Margin = new Thickness(401, 78, 0, 0);
-              }
-              else
-              {
-                  Roomba2.Width = 96;
-                  Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                  roomba2_pressed = false;
-              }
-          }
-          test_printer();
+            if (roomba2_pressed == false)
+            {
+                roomba2_pressed = true;
+                Roomba2.Width = 106;
+                Roomba2.Margin = new Thickness(401, 78, 0, 0);
+            }
+            else
+            {
+                Roomba2.Width = 96;
+                Roomba2.Margin = new Thickness(411, 78, 0, 0);
+                roomba2_pressed = false;
+            }
+            if (!manual_control)
+            {
+                Roomba1.Width = 96;
+                Roomba1.Margin = new Thickness(411, 44, 0, 0);
+                roomba1_pressed = false;
+            
+                Roomba3.Width = 96;
+                Roomba3.Margin = new Thickness(411, 112, 0, 0);
+                roomba3_pressed = false;
+            }
       }
+
       private void Nayru_clicked(object sender, RoutedEventArgs e)
       {
-          if (!start_pressed)
-          {
-              if (roomba3_pressed == false)
-              {
-                  roomba3_pressed = true;
-                  Roomba3.Width = 106;
-                  Roomba3.Margin = new Thickness(401, 112, 0, 0);
-              }
-              else
-              {
-                  Roomba3.Width = 96;
-                  Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                  roomba3_pressed = false;
-              }
-          }
-          test_printer();
+            if (roomba3_pressed == false)
+            {
+                roomba3_pressed = true;
+                Roomba3.Width = 106;
+                Roomba3.Margin = new Thickness(401, 112, 0, 0);
+            }
+            else
+            {
+                Roomba3.Width = 96;
+                Roomba3.Margin = new Thickness(411, 112, 0, 0);
+                roomba3_pressed = false;
+            }
+            if (!manual_control)
+            {
+                Roomba1.Width = 96;
+                Roomba1.Margin = new Thickness(411, 44, 0, 0);
+                roomba1_pressed = false;
+            
+                Roomba2.Width = 96;
+                Roomba2.Margin = new Thickness(411, 78, 0, 0);
+                roomba2_pressed = false;
+            }
       }
 
         /*
@@ -477,143 +484,143 @@ namespace WpfApplication1
          */
         private void selected_11(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed){change(Rec_11, 0, 0, 45,48);}
+            change(Rec_11, 0, 0, 45,48);
         }
         private void selected_12(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_12, 0, 1, 137, 48); }
+             change(Rec_12, 0, 1, 137, 48); 
         }
         private void selected_13(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed){change(Rec_13, 0, 2, 228, 48);}
+            change(Rec_13, 0, 2, 228, 48);
         }
         private void selected_14(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_14, 0, 3, 320, 48); }
+            change(Rec_14, 0, 3, 320, 48); 
         }
         private void selected_15(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed){change(Rec_15, 0, 4, 411, 48);}
+            change(Rec_15, 0, 4, 411, 48);
         }
         private void selected_16(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_16, 0, 5, 502, 48); }
+            change(Rec_16, 0, 5, 502, 48); 
         }
         private void selected_17(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed){change(Rec_17, 0, 6, 594, 48);}
+            change(Rec_17, 0, 6, 594, 48);
         }
         private void selected_21(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_21, 1, 0, 45, 48); }
+             change(Rec_21, 1, 0, 45, 48); 
         }
         private void selected_22(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed){change(Rec_22, 1, 1, 137,144);}
+            change(Rec_22, 1, 1, 137,144);
         }
         private void selected_23(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_23, 1, 2, 228, 144); }
+             change(Rec_23, 1, 2, 228, 144); 
         }
         private void selected_24(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_24, 1, 3, 320, 144); }
+             change(Rec_24, 1, 3, 320,144);
         }
         private void selected_25(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_25, 1, 4, 411, 144); }
+             change(Rec_25, 1, 4, 411,144);
         }
         private void selected_26(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_26, 1, 5, 502, 144); }
+             change(Rec_26, 1, 5, 502,144);
         }
         private void selected_27(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_27, 1, 6, 594, 144); }
+             change(Rec_27, 1, 6, 594,144);
         }
         private void selected_31(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_31, 2, 0, 45, 240); }
+             change(Rec_31, 2, 0, 45,240);
         }
         private void selected_32(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_32, 2, 1, 137, 240); }
+             change(Rec_32, 2, 1, 137,240);
         }
         private void selected_33(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_33, 2, 2, 228, 240); }
+             change(Rec_33, 2, 2, 228,240);
         }
         private void selected_34(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_34, 2, 3, 320, 240); }
+             change(Rec_34, 2, 3, 320,240);
         }
         private void selected_35(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_35, 2, 4, 411, 240); }
+             change(Rec_35, 2, 4, 411,240);
         }
         private void selected_36(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_36, 2, 5, 502, 240); }
+             change(Rec_36, 2, 5, 502,240);
         }
         private void selected_37(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_37, 2, 6, 594, 240); }
+             change(Rec_37, 2, 6, 594,240);
         }
         private void selected_41(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed){change(Rec_41, 3, 0, 45, 336);}
+            change(Rec_41, 3, 0, 45, 336);
         }
         private void selected_42(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed){change(Rec_42, 3, 1, 137,336);}
+            change(Rec_42, 3, 1, 137,336);
         }
         private void selected_43(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_43, 3, 2, 228, 336); }
+             change(Rec_43, 3, 2, 228,336);
         }
         private void selected_44(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_44, 3, 3, 320, 336); }
+             change(Rec_44, 3, 3, 320,336);
         }
         private void selected_45(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_45, 3, 4, 411, 336); }
+             change(Rec_45, 3, 4, 411,336);
         }
         private void selected_46(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_46, 3, 5, 502, 336); }
+             change(Rec_46, 3, 5, 502,336);
         }
         private void selected_47(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_47, 3, 6, 594, 336); }
+             change(Rec_47, 3, 6, 594,336);
         }
         private void selected_51(object sender, MouseButtonEventArgs e)
         {
-            if(!start_pressed){change(Rec_51, 4, 0, 45, 432);}
+            change(Rec_51, 4, 0, 45, 432);
         }
         private void selected_52(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_52, 4, 1, 137, 432); }
+             change(Rec_52, 4, 1, 137,432);
         }
         private void selected_53(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_53, 4, 2, 228, 432); }
+             change(Rec_53, 4, 2, 228,432);
         }
         private void selected_54(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_54, 4, 3, 320, 432); }
+             change(Rec_54, 4, 3, 320,432);
         }
         private void selected_55(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_55, 4, 4, 411, 432); }
+             change(Rec_55, 4, 4, 411,432);
         }
         private void selected_56(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_56, 4, 5, 500, 432); }
+             change(Rec_56, 4, 5, 500,432);
         }
         private void selected_57(object sender, MouseButtonEventArgs e)
         {
-            if (!start_pressed) { change(Rec_57, 4, 6, 594, 432); }
+             change(Rec_57, 4, 6, 594,432);
         }
 
 
@@ -706,10 +713,20 @@ namespace WpfApplication1
                 findnode = redHead;
                 if (findnode.x_coord==x&&findnode.y_coord==y)
                 {
-                    redHead = findnode.Next;
-                    findnode.Next = null;
-                    return;
+                    if (findnode.Next == null)
+                    {
+                        redHead = null;
+                        red_list_started = false;
+                        return;
+                    }
+                    else
+                    {
+                        redHead = findnode.Next;
+                        findnode.Next = null;
+                        return;
+                    }
                 }
+                
             }
             else if (roomba2_pressed == true)
             {
@@ -717,10 +734,20 @@ namespace WpfApplication1
                 findnode = blueHead;
                 if (findnode.x_coord == x && findnode.y_coord == y)
                 {
-                    blueHead = findnode.Next;
-                    findnode.Next = null;
-                    return;
+                    if (findnode.Next == null)
+                    {
+                        blueHead = null;
+                        blue_list_started = false;
+                        return;
+                    }
+                    else
+                    {
+                        blueHead = findnode.Next;
+                        findnode.Next = null;
+                        return;
+                    }
                 }
+
             }
             else if (roomba3_pressed==true)
             {
@@ -728,9 +755,18 @@ namespace WpfApplication1
                 findnode = greenHead;
                 if (findnode.x_coord == x && findnode.y_coord == y)
                 {
-                    greenHead = findnode.Next;
-                    findnode.Next = null;
-                    return;
+                    if (findnode.Next == null)
+                    {
+                        greenHead = null;
+                        green_list_started = false;
+                        return;
+                    }
+                    else
+                    {
+                        greenHead = findnode.Next;
+                        findnode.Next = null;
+                        return;
+                    }
                 }
             }
             else
@@ -904,7 +940,7 @@ namespace WpfApplication1
                 }
                 else if (arr.board[x, y] == 0)
                 {
-                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(13, 41, 168));
+                    Rec.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(10,164,17));
                     arr.board[x, y] = 2;
                     add_to_linkedList(midX, midY);
                 }
@@ -1130,56 +1166,83 @@ namespace WpfApplication1
          * this well eventuall call the logic class and run the program but for not it prints out the path arrays to the console
          */
         private void start_clicked(object sender, RoutedEventArgs e)
-        {
-            if (start_pressed == false)
+        {  
+            roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
+            Roomba1.Margin = new Thickness(411, 44, 0, 0);
+            Roomba2.Margin = new Thickness(411, 78, 0, 0);
+            Roomba3.Margin = new Thickness(411, 112, 0, 0);
+            clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
+            if (blueHead != null && aname.Bluedone == false)
             {
-                start_pressed = true;
-                roomba1_pressed = roomba2_pressed = roomba3_pressed = false;
-                Roomba1.Margin = new Thickness(411, 44, 0, 0);
-                Roomba2.Margin = new Thickness(411, 78, 0, 0);
-                Roomba3.Margin = new Thickness(411, 112, 0, 0);
-                clear_button.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221));
                 bool filled = aname.three_filled(aname.blue1, aname.blue2, aname.blue3);
                 if (filled == true)
                 {
                     try
                     {
-                        aname.get_barring(aname.blue1, aname.blue2, aname.blue3, blueHead.x_coord, blueHead.y_coord, blue_list_started);   //get the barring and decide if and where to turn
+                        aname.get_barring(aname.blue1, aname.blue2, aname.blue3, blueHead.x_coord, blueHead.y_coord, blue_list_started, "blue");   //get the barring and decide if and where to turn
+                        //wait loop?
                     }
                     catch (Exception except)
                     {
                         Console.Write("objects are null");
-                        Console.WriteLine(except);
+                    }
+                 }
+            }
+            if (blueHead != null && aname.Blackdone==true)
+            {
+                blueHead = blueHead.Next;
+            }
+            if (redHead != null && aname.Reddone == false)
+            {
+                bool filled = aname.three_filled(aname.red1, aname.red2, aname.red3);
+                if (filled == true)
+                {
+                    try
+                    {
+                        aname.get_barring(aname.red1, aname.red2, aname.red3, redHead.x_coord, redHead.y_coord, red_list_started, "red");   //get the barring and decide if and where to turn
+                        //wait loop?
+                    }
+                    catch (Exception except)
+                    {
+                        Console.Write("objects are null");
+                       // Console.WriteLine(except);
                     }
                 }
             }
-        }
-
-        private void pause_clicked(object sender, RoutedEventArgs e)
-        {
-            if (start_pressed)
+            if (redHead != null && aname.Reddone==true)
             {
-                start_pressed = false;
-                clear_board_2();
-                try
+                redHead = redHead.Next;
+            }
+            if (greenHead != null && aname.Blackdone == false)
+            {
+                bool filled = aname.three_filled(aname.green1, aname.green2, aname.green3);
+                if (filled == true)
                 {
-                    //aname.stop(aname.FaroreID);
-                }
-                catch (Exception exc)
-                {
-                    Console.Write("problem with pause button");
-                    Console.WriteLine(exc);
+                    try
+                    {
+                        aname.get_barring(aname.green1, aname.green2, aname.green3, greenHead.x_coord, greenHead.y_coord, green_list_started, "Black");   //get the barring and decide if and where to turn
+                        //wait loop?
+                    }
+                    catch (Exception except)
+                    {
+                        Console.Write("objects are null");
+                    }
                 }
             }
+            if (greenHead != null && aname.Blackdone==true)
+            {
+                greenHead = greenHead.Next;
+            }
         }
+
 
         private void switch_to_maual(object sender, RoutedEventArgs e)
         {
             manual_control = true;
+            start_pressed = false;
             control_switcher.Visibility = System.Windows.Visibility.Collapsed;
             Start_button.Visibility= System.Windows.Visibility.Collapsed;
             clear_button.Visibility = System.Windows.Visibility.Collapsed;
-            Pause_button.Visibility = System.Windows.Visibility.Collapsed;
             Automatic_button.Visibility = System.Windows.Visibility.Visible;
             Roomba1.Margin = new Thickness(411, 44, 0, 0);
             roomba1_pressed = false;
@@ -1193,25 +1256,10 @@ namespace WpfApplication1
             right_button.Visibility = System.Windows.Visibility.Visible;
             turn_around.Visibility = System.Windows.Visibility.Visible;
         }
-        public void test_printer()
-        {
-            if (roomba1_pressed==true)
-            {
-                Console.WriteLine("red selected");
-            }
-            if (roomba2_pressed==true)
-            {
-                Console.WriteLine("blue selected");
-            }
-            if (roomba3_pressed==true)
-            {
-                Console.WriteLine("green selected");
-            }
-        }
+        
 
         private void move_forward(object sender, RoutedEventArgs e)
         {
-            test_printer();
             if (roomba1_pressed == true)
             {
                 csclient.StartClient("red", "f");
@@ -1228,7 +1276,6 @@ namespace WpfApplication1
 
         private void turn_left(object sender, RoutedEventArgs e)
         {
-            test_printer();
             if (roomba1_pressed == true)
             {
                 csclient.StartClient("red", "l");
@@ -1245,7 +1292,6 @@ namespace WpfApplication1
 
         private void turn_right(object sender, RoutedEventArgs e)
         {
-            test_printer();
             if (roomba1_pressed == true)
             {
                 csclient.StartClient("red", "r");
@@ -1256,14 +1302,12 @@ namespace WpfApplication1
             }
             if (roomba3_pressed == true)
             {
-                Console.WriteLine("in green");
                 csclient.StartClient("green", "r");
             }
         }
 
         private void turn_around_pressed(object sender, RoutedEventArgs e)
         {
-            test_printer();
             if (roomba1_pressed == true)
             {
                 csclient.StartClient("red", "a");
@@ -1285,7 +1329,6 @@ namespace WpfApplication1
             control_switcher.Visibility = System.Windows.Visibility.Visible;
             Start_button.Visibility = System.Windows.Visibility.Visible;
             clear_button.Visibility = System.Windows.Visibility.Visible;
-            Pause_button.Visibility = System.Windows.Visibility.Visible;
             Automatic_button.Visibility = System.Windows.Visibility.Collapsed;
             Roomba1.Margin = new Thickness(411, 44, 0, 0);
             roomba1_pressed = false;

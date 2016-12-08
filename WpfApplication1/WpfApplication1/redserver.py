@@ -6,7 +6,7 @@ import task1
 
 from task1 import *
 
-b = create.Create(8)
+b = create.Create(7)
 
 
 

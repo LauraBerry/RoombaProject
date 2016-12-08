@@ -5,12 +5,9 @@
     <Grid>
         <Button x:Name="Roomba1" Content="Din" HorizontalAlignment="Left" Margin="411,44,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FFA20D0D" Click="Din_clicked"/>
         <Button x:Name="Roomba2" Content="Farore" HorizontalAlignment="Left" Margin="411,78,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF09090A" Click="Farore_clicked" Foreground="#FFFBECEC"/>
-        <Button x:Name="Roomba3" Content="Nayru" HorizontalAlignment="Left" Margin="411,112,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF0A11A4" Click="Nayru_clicked"/>
-
-        <Button x:Name="Pause_button" Content="Pause" HorizontalAlignment="Left" Margin="386,179,0,0" VerticalAlignment="Top" Width="58" Height="49" Click="pause_clicked"/>
-        <Button x:Name="clear_button" Content="clear" HorizontalAlignment="Left" Margin="449,179,0,0" VerticalAlignment="Top" Width="58" Height="49" Click="clear_board"/>
-
-        <Button x:Name="Start_button" Content="Start" HorizontalAlignment="Left" Margin="411,233,0,0" VerticalAlignment="Top" Width="58" Height="49" Click="start_clicked"/>
+        <Button x:Name="Roomba3" Content="Nayru" HorizontalAlignment="Left" Margin="411,112,0,0" VerticalAlignment="Top" Width="96" Height="34" Background="#FF0AA411" Click="Nayru_clicked"/>
+        <Button x:Name="clear_button" Content="clear" HorizontalAlignment="Left" Margin="435,190,0,0" VerticalAlignment="Top" Width="58" Height="49" Click="clear_board"/>
+        <Button x:Name="Start_button" Content="Step" HorizontalAlignment="Left" Margin="367,191,0,0" VerticalAlignment="Top" Width="58" Height="49" Click="start_clicked"/>
 
         <Canvas HorizontalAlignment="Left" Height="217" Margin="32,41,0,0" VerticalAlignment="Top" Width="308" Opacity="0.4">
             <Image x:Name="camera_input" HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="308" Stretch="Fill"/>
@@ -56,6 +53,5 @@
         <Button x:Name="right_button" Content="R" Width="33" Height="35" Canvas.Top="39" Canvas.Left="71" Click="turn_right" Margin="469,205,15,79" Visibility="Collapsed"/>
         <Button x:Name="turn_around" Content="TA" Width="39" Height="35" Canvas.Top="70" Canvas.Left="33" Click="turn_around_pressed" Margin="430,239,48,45" Visibility="Collapsed"/>
         <Button x:Name="Automatic_button" Content="Automatic" HorizontalAlignment="Left" Margin="306,290,0,0" VerticalAlignment="Top" Width="75" Visibility="Collapsed" Click="auto_control"/>
-
     </Grid>
 </Window>
